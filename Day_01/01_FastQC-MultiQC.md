@@ -6,7 +6,14 @@
 
 ### Solicitar recursos usando `srun`
 
-En primer lugar, para poder correr un análisis en el servidor, tenemos que usar SLURM (Simple Linux Utility for Resource Management). Esto lo podemos hacer mediante un script o, como lo haremos ahora, de forma "interactiva". Para esto, tenemos usar el comando `srun` y distintas *flags* con detalles de lo que solicitaremos a SLURM.
+En primer lugar, para poder correr un análisis en el servidor (o nodo), tenemos que solicitar recursos (CPUs y RAM) al clúster usando **SLURM** (Simple Linux Utility for Resource Management). SLURM es un software que funciona como un gestor de cargas de trabajo (*workload manager*) y planificador de trabajos (*__job__ scheduler*).
+
+Sus funciones principales son:
+- Asignación de recursos: Otorga a los usuarios acceso exclusivo a recursos informáticos (nodos) durante un tiempo determinado.
+- Gestión de trabajos: Provee un framework para iniciar, ejecutar, monitorizar y gestionar las tareas (trabajos) en los nodos asignados.
+- Planificación: Administra una cola de trabajos pendientes y decide cuándo y dónde se ejecutarán en el clúster.
+
+En resumen, SLURM es el "cerebro" del clúster HPC que organiza y optimiza cómo se utilizan todos los servidores interconectados. La solicitud de recursos lo podemos hacer mediante un script de shell (`sbatch`) o, como lo haremos ahora, de forma "interactiva". Para esto, tenemos usar el comando `srun` y distintas opciones o argumentos (comúnmente llamados *flags*) con detalles de lo que solicitaremos a SLURM.
 
 ```
 srun --nodes=1 --cpus-per-task=8 --time=00:30:00 --mem=8G --pty bash

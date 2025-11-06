@@ -91,14 +91,14 @@ wc -l documento.txt     # muestra solo la cantidad de líneas del archivo
 
 ### 3.2 Comandos `cp` y `mv`
 
-Para copiar en el mismo u otro directorio un archivo, usamos el comando `cp`. Este comando necesita al menos dos argumentos: el origen (lo que quieres copiar) y el destino (dónde quieres poner la copia y con qué nombre).
+Para copiar un archivo en el mismo u otro directorio, usamos el comando `cp`. Este comando necesita al menos dos argumentos: el origen (lo que quieres copiar) y el destino (dónde quieres poner la copia y con qué nombre).
 
 - Para copiar y pegar el archivo en el mismo directorio con otro nombre (i.e. duplicar el archivo):
 ```bash
 cp documento.txt copia_de_documento.txt
 ```
 
-Antes de continuar usando `cp`, creamos un directorio llamado `prueba` donde copiaremos y moveremos nuestro `documento.txt`.
+Antes de continuar usando `cp`, creamos un directorio llamado `prueba` hacia donde copiaremos nuestro `documento.txt`.
 ```bash
 # Primero nos aseguramos de encontrarnos en el directorio day_1
 # Reemplacen student21 por su nombre de usuario
@@ -114,22 +114,24 @@ mkdir prueba
 ls
 ```
 
-- Para copiar el documento y pegarlo en otro directorio manteniendo el nombre. En este caso lo pegaremos en el directorio que creamos en el paso anterior.
+- Ahora veremos cómo copiar el documento y pegarlo en otro directorio **manteniendo** el nombre. En este caso lo pegaremos en el directorio que creamos en el paso anterior.
 ```bash
 # Reemplacen student21 por su nombre de usuario
 cp documento.txt /home/courses/student21/day_1/prueba/
 ```
-- Para copiar el documento y pegarlo en otro directorio **cambiando** el nombre.
+- En cambio, para copiar el documento y pegarlo en otro directorio **cambiando** el nombre usamos:
 ```bash
 # Reemplacen student21 por su nombre de usuario
 cp documento.txt /home/courses/student21/day_1/prueba/copia_de_documento_otro_directorio.txt
 ```
-- Opción recursiva `-r` o `-R`: esta opción es obligatoria si queremos copiar un directorio completo (carpetas y todo su contenido).
+- Extra: opción recursiva `-r` o `-R`: esta opción es obligatoria si queremos copiar un directorio completo (carpetas y todo su contenido).
 ```bash
 # Por ahora no correremos este comando
 # Reemplacen student21 por su nombre de usuario
 # cp -r /home/courses/student21/day01/ /home/courses/student21/day02/
 ```
+
+---
 
 Para mover y renombrar archivos, usamos el comando `mv`. Este comando también necesita al menos dos argumentos.
 

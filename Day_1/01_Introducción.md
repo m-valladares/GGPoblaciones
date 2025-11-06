@@ -9,7 +9,6 @@ El objetivo de esta sesión es familiarizar a las y los participantes con el ent
 - Presentación del curso y de los instructores.
 - Por qué usamos HPC en genómica: volumen de datos, complejidad computacional y reproducibilidad.
 - Breve repaso: ¿Qué es un lenguaje de programación?  
-  Ejemplos: **bash**, **Python**, **R**.
 - Lenguajes que utilizaremos en el curso:
   - **bash**: automatización de flujos.
   - **R**: análisis estadístico y genómico.
@@ -238,7 +237,7 @@ cat ezekiel.txt
 
 ---
 
-Ya hemos creado un archivo de texto usando `grep` y `echo`, ahora veremos una opción para editarlo usando `nano`. A diferencia de editores gráficos como Visual Studio Code, Sublime Text o el Bloc de notas, `nano` se ejecuta directamente en la terminal, lo cual es esencial en entornos de servidores, sistemas remotos vía SSH o clústeres HPC, donde a menudo no hay una interfaz gráfica disponible. Mediante `nano` podemos crear y editar archivos de texto plano directamente dentro de tu ventana de terminal, navegar por el texto usando las teclas de flecha, guardar cambios en el archivo (`Ctrl + O`), buscar texto en el archivo (`Ctrl + W`), etc. Es popular por su facilidad de uso. A diferencia de editores más potentes pero complejos, `nano` muestra los comandos básicos que puedes usar con Ctrl + [letra] en la parte inferior de la pantalla, haciendo que la curva de aprendizaje sea muy baja. Editemos el archivo que creamos:
+Ya hemos creado un archivo de texto usando `grep` y `echo`, ahora veremos una opción para editarlo usando `nano`. A diferencia de editores gráficos como Visual Studio Code, Sublime Text o el Bloc de notas, `nano` se ejecuta directamente en la terminal, lo cual es esencial en entornos de servidores, sistemas remotos vía SSH o clústeres HPC, donde a menudo no hay una interfaz gráfica disponible. Mediante `nano` podemos crear y editar archivos de texto plano directamente dentro de tu ventana de terminal, navegar por el texto usando las teclas de flecha, guardar cambios en el archivo (`Ctrl + O`), buscar texto en el archivo (`Ctrl + W`), etc. Es popular por su facilidad de uso. A diferencia de editores más potentes pero complejos, `nano` muestra los comandos básicos que puedes usar con `Ctrl + [letra]` en la parte inferior de la pantalla, haciendo que la curva de aprendizaje sea muy baja. Editemos el archivo que creamos:
 ```bash
 nano ezekiel.txt
 ```

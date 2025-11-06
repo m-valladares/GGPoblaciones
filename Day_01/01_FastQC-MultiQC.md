@@ -1,15 +1,10 @@
----
-output:
-  pdf_document: default
-  html_document: default
----
 # Día 2 - Taller
 
 # Calidad de los datos
 
 ## FastQC y MultiQC
 
-### Solicitar recursos
+### Solicitar recursos usando `srun`
 
 En primer lugar, para poder correr un análisis en el servidor, tenemos que usar SLURM (Simple Linux Utility for Resource Management). Esto lo podemos hacer mediante un script o, como lo haremos ahora, de forma "interactiva". Para esto, tenemos usar el comando `srun` y distintas *flags* con detalles de lo que solicitaremos a SLURM.
 

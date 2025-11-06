@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 # Calidad de los datos
 
 ## FastQC y MultiQC

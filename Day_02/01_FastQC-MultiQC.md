@@ -27,7 +27,8 @@ Cabe mencionar que en el comando anterior hemos indicado nuestras opciones usand
 
 ```bash
 # No es necesario correr este comando
-srun -N 1 -c 8 -t 00:30:00 --mem=8G --pty bash
+# Cuando usamos "#" antes de un comando, el programa bash no ejecutará esa línea
+# srun -N 1 -c 8 -t 00:30:00 --mem=8G --pty bash
 ```
 
 Al ejecutar `srun` hemos solicitado recursos a través de SLURM al clúster y ahora podremos disponer de esos recursos para ejecutar los análisis. Podemos ver la información de los trabajos que están corriendo (incluyendo el nuestro) mediante el comando `squeue`. 

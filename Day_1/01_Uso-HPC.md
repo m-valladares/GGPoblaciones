@@ -37,7 +37,7 @@ El **NLHPC (National Laboratory for High Performance Computing)** es el centro n
 
 **Arquitectura general del sistema:**
 ```
-Usuario local (studentXX) ──▶ Nodo de acceso (login) ──▶ SLURM scheduler ──▶ Nodos de cómputo
+Usuario local (student21) ──▶ Nodo de acceso (login) ──▶ SLURM scheduler ──▶ Nodos de cómputo
 ```
 
 ### 2.3 Cuentas personales para el curso
@@ -98,39 +98,60 @@ Para copiar en el mismo u otro directorio un archivo, usamos el comando `cp`. Es
 cp documento.txt copia_de_documento.txt
 ```
 
-Antes de continuar usando `cp`, creamos un directorio donde copiaremos y moveremos nuestro `documento.txt`.
+Antes de continuar usando `cp`, creamos un directorio llamado `prueba` donde copiaremos y moveremos nuestro `documento.txt`.
 ```bash
 # Primero nos aseguramos de encontrarnos en el directorio day_1
+# Reemplacen student21 por su nombre de usuario
+cd /home/courses/student21/day_1
+
+# Nos aseguramos de la ruta en la que estamos usando:
+pwd
+
+# Ahora crearemos el directorio dentro de day_1 (será una subcarpeta)
+mkdir prueba
+
+# Confirmamos que creamos la carpeta usando:
+ls
+```
 
 - Para copiar el documento y pegarlo en otro directorio manteniendo el nombre. En este caso lo pegaremos en el directorio que creamos en el paso anterior.
 ```bash
-# Reemplacen studentXX por su nombre de usuario
-cp documento.txt /home/courses/studentXX/
+# Reemplacen student21 por su nombre de usuario
+cp documento.txt /home/courses/student21/day_1/prueba/
 ```
 - Para copiar el documento y pegarlo en otro directorio **cambiando** el nombre.
 ```bash
-# Reemplacen studentXX por su nombre de usuario
-cp documento.txt /home/courses/studentXX/copia_de_documento.txt
+# Reemplacen student21 por su nombre de usuario
+cp documento.txt /home/courses/student21/day_1/prueba/copia_de_documento_otro_directorio.txt
 ```
 - Opción recursiva `-r` o `-R`: esta opción es obligatoria si queremos copiar un directorio completo (carpetas y todo su contenido).
 ```bash
 # Por ahora no correremos este comando
-# Reemplacen studentXX por su nombre de usuario
-# cp -r /home/courses/studentXX/day01/ /home/courses/studentXX/day02/
+# Reemplacen student21 por su nombre de usuario
+# cp -r /home/courses/student21/day01/ /home/courses/student21/day02/
 ```
 
 Para mover y renombrar archivos, usamos el comando `mv`. Este comando también necesita al menos dos argumentos.
 
 - La función principal de `mv` es trasladar un archivo o directorio de una ubicación a otra. El archivo original desaparece de su ubicación anterior y aparece en la nueva.
 ```bash
-mv copia_de_documento.txt copia_de_documento.txt
+mv copia_de_documento.txt /home/courses/student21/day_1/prueba/
 ```
 
+También podemos usar `mv` para renombrar archivos o directorios. Si el destino especificado es un nuevo nombre dentro del mismo directorio, el comando funciona como un renombrador. En sistemas Linux/Unix, renombrar un archivo es conceptualmente lo mismo que "moverlo" a un nombre de archivo diferente en la misma ubicación.
+```bash
+# Haremos estos cambios en los documentos de la carpeta prueba, así que asegurémonos de estar en ese directorio
+cd /home/courses/student21/day_1/prueba
 
+# Veamos los contenidos de la carpeta:
+ls
 
-mv
-cp
+# Renombraremos el archivo copia_de_documento.txt a copia_de_documento_renombrado.txt
+mv copia_de_documento.txt copia_de_documento_renombrado.txt
 
+# Podemos ver el resultado con:
+ls
+```
 
 ---
 
@@ -187,14 +208,14 @@ done
 3. Conectarse al NLHPC:  
    Ejemplo de conexión:
    ```bash
-   ssh -p 4603 studentXX@leftraru.nlhpc.cl
+   ssh -p 4603 student21@leftraru.nlhpc.cl
    ```
 4. (Opcional) Configurar el archivo `~/.ssh/config` para evitar escribir la contraseña:
    ```bash
    Host leftraru
        HostName leftraru.nlhpc.cl
        Port 4603
-       User studentXX
+       User student21
    ```
 5. Abrir carpetas remotas y usar el terminal integrado para ejecutar comandos.
 

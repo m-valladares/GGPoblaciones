@@ -97,7 +97,12 @@ Para copiar en el mismo u otro directorio un archivo, usamos el comando `cp`. Es
 ```bash
 cp documento.txt copia_de_documento.txt
 ```
-- Para copiar el documento y pegarlo en otro directorio manteniendo el nombre. En este caso lo pegaremos en el directorio base de cada usuario.
+
+Antes de continuar usando `cp`, creamos un directorio donde copiaremos y moveremos nuestro `documento.txt`.
+```bash
+# Primero nos aseguramos de encontrarnos en el directorio day_1
+
+- Para copiar el documento y pegarlo en otro directorio manteniendo el nombre. En este caso lo pegaremos en el directorio que creamos en el paso anterior.
 ```bash
 # Reemplacen studentXX por su nombre de usuario
 cp documento.txt /home/courses/studentXX/

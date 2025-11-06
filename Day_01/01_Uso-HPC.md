@@ -1,4 +1,4 @@
-# Introducción a la Línea de Comandos, Visual Studio Code y Uso del HPC (NLHPC)
+# Introducción a la línea de comandos y uso del HPC (NLHPC)
 
 El objetivo de esta sesión es familiarizar a las y los participantes con el entorno de trabajo en sistemas Linux y en el clúster del NLHPC (Leftraru), utilizando la línea de comandos, Visual Studio Code y R/RStudio como herramientas integradas para reproducir análisis de genómica de poblaciones.
 

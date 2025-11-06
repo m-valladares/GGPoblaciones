@@ -58,17 +58,85 @@ El NLHPC nos ha facilitado cuentas para todas/os los estudiantes del curso, a co
 ## 3. Primeros pasos en la línea de comandos
 
 ### 3.1 Navegación y manejo de archivos
+
+A continuación se muestran los comandos necesarios para movernos dentro del árbol de directorios o carpetas, además se muestran los comandos más usados para visualizar, crear o eliminar archivos.
+
 ```bash
-ls          # listar archivos y carpetas
-ls -lh      # listar archivos con detalles
-pwd         # mostrar ruta actual (de la carpeta en que estamos)
-cd          # cambiar de directorio
-cd ..       # "subir" de directorio
-mkdir test  # crear carpeta
-rm archivo  # eliminar archivo (usar con precaución)
-rmdir test  # eliminar carpetas vacías (usar con precaución)
-rm -r test  # eliminar carpetas con archivos (usar con precaución)
+whoami                # muetra el usuario logeado
+ls                    # listar archivos y carpetas
+ls -lh                # listar archivos con detalles
+pwd                   # mostrar ruta actual (de la carpeta en que estamos)
+cd                    # cambiar de directorio al home
+cd /ruta              # cambiar de directorio a la ruta que indicamos
+cd ..                 # "subir" de directorio
+mkdir nombre_carpeta  # crear carpeta
+rm nombre_archivo     # eliminar archivo (usar con precaución)
+rmdir nombre_carpeta  # eliminar carpetas vacías (usar con precaución)
+rm -r nombre_carpeta  # eliminar carpetas con archivos (usar con precaución)
 ```
+
+Otros comandos de uso común pueden encontrarse en internet si buscan **referencias de comandos UNIX**, o comúnmente llamadas __UNIX *cheat sheets*__.
+
+A continuación se muestran algunos comandos clásicos para renombrar o copiar elementos. Para usarlos es necesario tener un elemento, objeto o documento de interés. En la carpeta `day01` incluimos un archivo de prueba llamado `documento.txt` para probar estos comandos.
+
+```bash
+head documento.txt      # muestra las primeras 10 líneas del archivo
+tail documento.txt      # muestra las últimas 10 líneas del archivo
+cat documento.txt       # muestra el contenido completo del archivo
+wc documento.txt        # muestra la cantidad de líneas, palabras y bytes del archivo
+wc -l documento.txt     # muestra solo la cantidad de líneas del archivo
+```
+
+---
+
+### 3.2 Comandos `cp` y `mv`
+
+Para copiar en el mismo u otro directorio un archivo, usamos el comando `cp`. Este comando necesita al menos dos argumentos: el origen (lo que quieres copiar) y el destino (dónde quieres poner la copia y con qué nombre).
+
+- Para copiar y pegar el archivo en el mismo directorio con otro nombre (i.e. duplicar el archivo):
+```bash
+cp documento.txt copia_de_documento.txt
+```
+- Para copiar el documento y pegarlo en otro directorio manteniendo el nombre. En este caso lo pegaremos en el directorio base de cada usuario.
+```bash
+# Reemplacen studentXX por su nombre de usuario
+cp documento.txt /home/courses/studentXX/
+```
+- Para copiar el documento y pegarlo en otro directorio **cambiando** el nombre.
+```bash
+# Reemplacen studentXX por su nombre de usuario
+cp documento.txt /home/courses/studentXX/copia_de_documento.txt
+```
+- Opción recursiva `-r` o `-R`: esta opción es obligatoria si queremos copiar un directorio completo (carpetas y todo su contenido).
+```bash
+# Por ahora no correremos este comando
+# Reemplacen studentXX por su nombre de usuario
+# cp -r /home/courses/studentXX/day01/ /home/courses/studentXX/day02/
+```
+
+Para mover y renombrar archivos, usamos el comando `mv`. Este comando también necesita al menos dos argumentos.
+
+- La función principal de `mv` es trasladar un archivo o directorio de una ubicación a otra. El archivo original desaparece de su ubicación anterior y aparece en la nueva.
+```bash
+mv copia_de_documento.txt copia_de_documento.txt
+```
+
+
+
+mv
+cp
+
+
+---
+
+### 3.2 Comandos `grep`, `echo` y `nano`
+
+grep -m 1 -A 4 Ezekiel Archivo.txt 
+grep -n -A 4 Ezekiel Archivo.txt
+
+echo
+
+nano
 
 ### 3.2 Compresión y permisos
 ```bash

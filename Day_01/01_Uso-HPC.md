@@ -4,7 +4,7 @@ El objetivo de esta sesión es familiarizar a las y los participantes con el ent
 
 ---
 
-## Presentación
+## 1. Presentación
 
 - Presentación del curso y de los instructores.
 - Por qué usamos HPC en genómica: volumen de datos, complejidad computacional y reproducibilidad.
@@ -17,9 +17,9 @@ El objetivo de esta sesión es familiarizar a las y los participantes con el ent
 
 ---
 
-## Qué es un HPC y cómo está estructurado el NLHPC
+## 2. Qué es un HPC y cómo está estructurado el NLHPC
 
-### Conceptos básicos
+### 2.1 Conceptos básicos
 
 - **High Performance Computing (HPC):** infraestructura de cómputo diseñada para procesar grandes volúmenes de datos o realizar cálculos intensivos.
 - **Componentes principales:**
@@ -27,7 +27,7 @@ El objetivo de esta sesión es familiarizar a las y los participantes con el ent
   - **Compute nodes:** donde se ejecutan los trabajos enviados al planificador de trabajos (*scheduler*). En estos nodos solicitaremos recursos (CPUs y memoria) para ejecutar nuestros análisis. A diferencia del nodo de acceso (*login node*), están designados para correr análisis. Casi la totalidad de los recursos que dispone un clúster están divididos en estos nodos. Además, dependiendo del clúster, pueden definirse nodos especializados (GPU, walltime, etc).
   - **Job scheduler (SLURM):** es el software que gestiona la cola de tareas. Usando SLURM podremos solicitar recursos y enviar trabajos a los nodos de cómputo. 
 
-### Clúster del NLHPC (Guacolda-Leftraru Epu)
+### 2.2 Clúster del NLHPC (Guacolda-Leftraru Epu)
 
 El **NLHPC (National Laboratory for High Performance Computing)** es el centro nacional de supercómputo de Chile. Su infraestructura principal es el clúster **Guacolda-Leftraru Epu**, compuesto por múltiples nodos con miles de CPUs disponibles para investigación científica.
 
@@ -40,48 +40,24 @@ El **NLHPC (National Laboratory for High Performance Computing)** es el centro n
 Usuario local (studentXX) ──▶ Nodo de acceso (login) ──▶ SLURM scheduler ──▶ Nodos de cómputo
 ```
 
----
+### 2.3 Cuentas personales para el curso
 
-## Introducción a Visual Studio Code (VSC)
+El NLHPC nos ha facilitado cuentas para todas/os los estudiantes del curso, a continuación se indica la asignación de usuarios. Antes del comienzo del curso les enviaremos por correo las contraseñas para que puedan acceder al clúster. La mayoría de los datos y entornos de trabajo ya han sido instalados en sus cuentas, de esta forma agilizaremos el trabajo. Estas cuentas son personales e intransferibles, además son temporales y serán desactivadas una vez que termine el curso.
 
-### Por qué usar VSC en el curso
-- Editor multiplataforma y liviano con soporte para **bash**, **R**, **Python**, **Markdown** y **Git**.
-- Permite trabajar remotamente mediante **SSH** y editar código directamente en el HPC.
-- Terminal integrada que facilita el uso de la línea de comandos.
-
-### Pasos básicos de configuración
-1. Instalar [Visual Studio Code](https://code.visualstudio.com/).
-2. Instalar la extensión **Remote - SSH**.
-3. Conectarse al NLHPC:  
-   Ejemplo de conexión:
-   ```bash
-   ssh -p 4603 student21@leftraru.nlhpc.cl
-   ```
-4. (Opcional) Configurar el archivo `~/.ssh/config` para evitar escribir la contraseña:
-   ```bash
-   Host leftraru
-       HostName leftraru.nlhpc.cl
-       Port 4603
-       User student21
-   ```
-5. Abrir carpetas remotas y usar el terminal integrado para ejecutar comandos.
-
-### 3.3 Ejemplo práctico
-- Crear un script `hola.sh`:
-  ```bash
-  #!/usr/bin/env bash
-  echo "Hola desde Leftraru!"
-  ```
-- Guardar y ejecutar desde el terminal:
-  ```bash
-  bash hola.sh
-  ```
+| Nombre Estudiante | Usuario asignado |
+|:---------------:|:---------------:|
+| Moisés V.  | student01  |
+| Pamela M.  | student02  |
+| Paulo Z.   | student03  |
+| ...  | student04  |
+| ...  | student05  |
+| ...  | student06  |
 
 ---
 
-## 4. Primeros pasos en la línea de comandos (Linux)
+## 3. Primeros pasos en la línea de comandos
 
-### 4.1 Navegación y manejo de archivos
+### 3.1 Navegación y manejo de archivos
 ```bash
 ls -l       # listar archivos con detalles
 pwd         # mostrar ruta actual
@@ -90,13 +66,13 @@ mkdir test  # crear carpeta
 rm archivo  # eliminar archivo
 ```
 
-### 4.2 Compresión y permisos
+### 3.2 Compresión y permisos
 ```bash
 tar -czf datos.tar.gz carpeta/   # comprimir
 chmod +x script.sh               # dar permiso de ejecución
 ```
 
-### 4.3 Redirecciones y ejecución en background
+### 3.3 Redirecciones y ejecución en background
 ```bash
 comando > salida.txt     # guardar salida
 comando >> salida.txt    # agregar al final
@@ -105,9 +81,9 @@ comando &                # ejecutar en segundo plano
 
 ---
 
-## 5. Scripts y automatización
+## 4. Scripts y automatización
 
-### 5.1 Estructura básica de un script Bash
+### 4.1 Estructura básica de un script Bash
 ```bash
 #!/usr/bin/env bash
 echo "Ejemplo de script en bash"
@@ -116,8 +92,34 @@ for i in {1..3}; do
 done
 ```
 
-### 5.2 Mini-ejercicio
+### 4.2 Mini-ejercicio
 - Crear un script que liste archivos `.fastq.gz` dentro de `RAW/` y los copie a `CLEAN/`.
+
+---
+
+## 5. Introducción a Visual Studio Code (VSC)
+
+### 5.1 Por qué usar VSC en el curso
+- Editor multiplataforma y liviano con soporte para **bash**, **R**, **Python**, **Markdown** y **Git**.
+- Permite trabajar remotamente mediante **SSH** y editar código directamente en el HPC.
+- Terminal integrada que facilita el uso de la línea de comandos.
+
+### 5.2 Pasos básicos de configuración
+1. Instalar [Visual Studio Code](https://code.visualstudio.com/).
+2. Instalar la extensión **Remote - SSH**.
+3. Conectarse al NLHPC:  
+   Ejemplo de conexión:
+   ```bash
+   ssh -p 4603 studentXX@leftraru.nlhpc.cl
+   ```
+4. (Opcional) Configurar el archivo `~/.ssh/config` para evitar escribir la contraseña:
+   ```bash
+   Host leftraru
+       HostName leftraru.nlhpc.cl
+       Port 4603
+       User studentXX
+   ```
+5. Abrir carpetas remotas y usar el terminal integrado para ejecutar comandos.
 
 ---
 

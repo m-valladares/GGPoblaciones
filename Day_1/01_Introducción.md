@@ -52,6 +52,8 @@ El NLHPC nos ha facilitado cuentas para todas/os los estudiantes del curso, a co
 | ...  | student05  |
 | ...  | student06  |
 
+Para acceder al clúster con sus cuentas personales, no olviden revisar el **Tutorial de acceso a Leftraru** indicado más arriba.
+
 ---
 
 ## 3. Primeros pasos en la línea de comandos

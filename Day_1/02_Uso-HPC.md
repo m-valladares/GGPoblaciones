@@ -77,6 +77,12 @@ En la siguiente tabla se muestra la explicación de cada línea del script anter
 
 ## 5. Introducción a Visual Studio Code (VSC)
 
+El uso exclusivo de la terminal (*Command-Line Interface*, CLI) puede ser un obstáculo para los estudiantes que están iniciando análisis genómicos. Trabajar directamente con `bash` requiere memorización de comandos, manejo de permisos, y una curva de aprendizaje pronunciada para tareas básicas como la navegación de archivos (`cd`, `ls`) y la edición de texto (`nano`). Es una experiencia similar a usar el lenguaje de programación `R` puro frente a **RStudio**. RStudio proporciona una interfaz gráfica integrada (*Integrated Development Environment*, IDE) que facilita la gestión de proyectos, visualización de datos, autocompletado de código y depuración, haciendo que la entrada al análisis estadístico sea mucho más amigable. Mientras que el uso de `R` en línea de comandos es potente pero menos intuitivo para el aprendizaje inicial. 
+
+Es por lo anterior que en curso usaremos **Visual Studio Code**, ya que proporciona un puente GUI (*Graphical User Interface*) que suaviza la transición al entorno de servidor de HPC. Visual Studio Code (VSC o VS Code) es un editor de código fuente gratuito, ligero y multiplataforma desarrollado por Microsoft.
+
+**Comentario:** Usar VSC no reemplaza la necesidad de **entender los comandos de Linux** (`grep`, `nano`, `sbatch`), pero sí que minimiza las barreras de entrada al proporcionar un entorno visual familiar y centralizado.
+
 ### 5.1 Por qué usar VSC en el curso
 - Editor multiplataforma y liviano con soporte para **bash**, **R**, **Python**, **Markdown** y **Git**.
 - Permite trabajar remotamente mediante **SSH** y editar código directamente en el HPC.

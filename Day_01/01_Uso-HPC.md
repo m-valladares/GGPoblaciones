@@ -59,11 +59,15 @@ El NLHPC nos ha facilitado cuentas para todas/os los estudiantes del curso, a co
 
 ### 3.1 Navegación y manejo de archivos
 ```bash
-ls -l       # listar archivos con detalles
-pwd         # mostrar ruta actual
-cd ..       # subir un nivel
+ls          # listar archivos y carpetas
+ls -lh      # listar archivos con detalles
+pwd         # mostrar ruta actual (de la carpeta en que estamos)
+cd          # cambiar de directorio
+cd ..       # "subir" de directorio
 mkdir test  # crear carpeta
-rm archivo  # eliminar archivo
+rm archivo  # eliminar archivo (usar con precaución)
+rmdir test  # eliminar carpetas vacías (usar con precaución)
+rm -r test  # eliminar carpetas con archivos (usar con precaución)
 ```
 
 ### 3.2 Compresión y permisos

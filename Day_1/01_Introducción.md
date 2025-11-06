@@ -201,7 +201,7 @@ ezekiel=$(grep -m 1 -A 9 Ezekiel documento.txt)
 
 ---
 
-Si bien ya creamos la variable, para poder visualizarla tenemos que usar el comando `echo`. Su función principal es mostrar una línea de texto que se le pasa como argumento en la pantalla (la salida estándar, o *stdout*). En términos sencillos, es el equivalente en la terminal a la función `print()` en la mayoría de los lenguajes de programación. En su forma más simple, solo "imprimirá" en pantalla lo que indiquemos:
+Si bien ya creamos la variable `ezekiel` con el fragmento del libreto, para poder visualizarla tenemos que usar el comando `echo`. Su función principal es mostrar una línea de texto que se le pasa como argumento en la pantalla (la salida estándar, o *stdout*). En términos sencillos, es el equivalente en la terminal a la función `print()` en la mayoría de los lenguajes de programación. En su forma más simple, solo "imprimirá" en pantalla lo que indiquemos:
 
 ```bash
 echo "Genética y Genómica de Poblaciones 2026"

@@ -3,6 +3,8 @@ output:
   pdf_document: default
   html_document: default
 ---
+# Día 2 - Taller
+
 # Calidad de los datos
 
 ## FastQC y MultiQC

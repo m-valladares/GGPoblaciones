@@ -159,10 +159,77 @@ ls
 
 ### 3.2 Comandos `grep`, `echo` y `nano`
 
-grep -m 1 -A 4 Ezekiel Archivo.txt 
-grep -n -A 4 Ezekiel Archivo.txt
+Ahora veremos unos comandos más avanzados para trabajar con variables y realizar búsquedas en archivos. El comando `grep` es fundamental en sistemas Unix/Linux que significa *Global Regular Expression Print* (Impresión Global de Expresiones Regulares). Su función principal es buscar líneas de texto que coincidan con un patrón específico dentro de uno o varios archivos. Es muy útil para encontrar información específica rápidamente dentro de archivos de registro largos, código fuente o cualquier tipo de texto plano. La sintaxis básica del comando es:
 
-echo
+```bash
+grep [flags] palabra_que_buscamos nombre_del_archivo
+```
+
+En el la línea anterior se muestra el uso de las *flags*, que son distintas opciones o argumentos que contienen instrucciones de cómo (o con qué restricciones) queremos ejecutar el comando. 
+
+Ahora veamos cómo usar `grep` sin *flags* y luego iremos complejizando el comando. Como ya notaron, el `documento.txt` es el libreto de Pulp Fiction (1994) escrito por Quentin Tarantino y Roger Avary, así que ahora usaremos `grep` para buscar dentro del archivo. Intentaremos encontrar las existencias de la palabra **Ezekiel**, que corresponde al inicio de la frase popularizada por Samuel L. Jackson.
+
+```bash
+# Primero nos aseguramos de encontrarnos en el directorio day_1
+# Reemplacen student21 por su nombre de usuario
+cd /home/courses/student21/day_1
+
+# Ahora usemos el comando grep:
+grep Ezekiel documento.txt
+```
+
+El resultado nos muestra todas las ocurrencias de la palabra `Ezekiel` a lo largo del texto. Además, nos muestra el contenido de toda la línea donde encontró a la palabra de interés. Como se indicó, el comando `grep` se puede complejizar agregando *flags*, ahora veremos cómo podemos buscar la palabra `Ezekiel` y que también nos muestre en qué líneas la encontró:
+
+```bash
+grep -n Ezekiel documento.txt
+```
+
+También podemos usar otra opciones (o combinaciones de ellas) para obtener más información o información más filtrada a partir del documento.
+
+```bash
+# Si queremos que nos muestre todos los match con el número de línea y también las siguientes 4 líneas:
+grep -n -A 4 Ezekiel documento.txt
+
+# Si queremos que nos muestre solo el primer match y también las siguientes 4 líneas:
+grep -m 1 -A 4 Ezekiel documento.txt 
+```
+
+Otra utilidad muy importante de `grep` es que nos permite guardar el resultados de una búsqueda en una **variable** para luego usarla en otro comando (o en otra función), o también guardar el resultado en un archivo. Las variables son un concepto fundamental en programación y en los sistemas operativos. Se pueden visualizar como "cajas" o "contenedores" con nombre, diseñados para almacenar temporalmente un dato o un valor. Ahora veremos como guardar la frase de Samuel L. Jackson (y las siguientes 9 líneas) en una variable que llamaremos `ezekiel`.
+
+```bash
+ezekiel=$(grep -m 1 -A 9 Ezekiel documento.txt)
+```
+
+---
+
+Si bien ya creamos la variable, para poder visualizarla tenemos que usar el comando `echo`. Su función principal es mostrar una línea de texto que se le pasa como argumento en la pantalla (la salida estándar, o *stdout*). En términos sencillos, es el equivalente en la terminal a la función print() en la mayoría de los lenguajes de programación. En su forma más simple, solo "imprimirá" en pantalla lo que indiquemos:
+
+```bash
+echo "Genética y Genómica de Poblaciones 2026"
+```
+
+También podemos usar `echo` para mostrar el valor de variables de entorno. Se usa frecuentemente con el signo de peso ($) para mostrar el contenido de variables del sistema o definidas por el usuario (como la que creamos anteriormente).
+
+```bash
+echo $USER
+echo $HOME
+```
+
+Como ya creamos la variable `ezekiel` con el fragmento de la película, ahora podemos verla en pantalla usando `echo`:
+```bash
+echo $ezekiel
+```
+
+Otra utilidad de `echo` es que nos permite escribir texto en un archivo. Usando el operador de redirección (`>`) podemos enviar la salida de `echo` a un archivo, creando el archivo si no existe o sobrescribiéndolo si ya existe.
+```bash
+echo $ezekiel > ezekiel.txt
+```
+
+También podemos añadir texto al final de un archivo (*append*) usando el operador de redirección doble (>>). Esto añadirá la línea al final de un archivo existente sin borrar el contenido anterior.
+```bash
+echo Samuel L. Jackson >> ezekiel.txt
+```
+
 
 nano
 

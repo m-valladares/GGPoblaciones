@@ -93,7 +93,7 @@ Es por lo anterior que en curso usaremos **Visual Studio Code**, ya que proporci
 
 Como se indicó, VSC puede utilizar varios GB de almacenamiento en sus cuentas solo para funcionar. Así que recomendamos otras aplicaciones que funcionan de forma similar a VSC. Cabe mencionar que son aplicaciones más ligeras, lo que es favorable, sin embargo, no tienen todas las prestaciones que dispone VSC. De todos modos, para los objetivos del curso, las siguientes opciones funcionarían sin mayores problemas.
 
-1. **MobaXterm**
+1. [**MobaXterm**](https://mobaxterm.mobatek.net/)
 - Sistema operativo: solo para Windows.
 - Descripción: MobaXterm combina en una sola herramienta una terminal UNIX, un cliente SSH y un entorno gráfico remoto (X11), ideal para conectarse a servidores HPC.
 - Ventajas:
@@ -104,7 +104,7 @@ Como se indicó, VSC puede utilizar varios GB de almacenamiento en sus cuentas s
    - Solo disponible en Windows (aunque puede ejecutarse en macOS/Linux mediante emuladores).
    - La versión gratuita tiene algunas limitaciones (ninguna que afecte el desarrollo del curso).
 
-2. **Termius**
+2. [**Termius**](https://termius.com/)
 - Sistema operativo: multiplataforma (Windows, macOS, Linux, Android, iOS).
 - Descripción: Cliente SSH moderno y limpio, enfocado en la conexión y gestión de servidores remotos. Cuenta con versiones móviles que permiten cargar una terminal.
 - Ventajas:
@@ -115,7 +115,7 @@ Como se indicó, VSC puede utilizar varios GB de almacenamiento en sus cuentas s
    - No incluye un editor de texto integrado tan completo como VSC.
    - Algunas funciones avanzadas (sincronización, snippets, grupos) requieren la versión de pago.
 
-3. **FileZilla**
+3. [**FileZilla**](https://filezilla-project.org/)
 - Sistema operativo: multiplataforma (Windows, macOS, Linux).
 - Descripción: Cliente FTP/SFTP ampliamente usado para transferir archivos entre el computador local y el servidor. FileZilla no contiene un cliente SSH, es decir, no se puede acceder mediante terminal integrada al clúster. Esta aplicación está enfocada en la transferencia de archivos.
 - Ventajas:
@@ -126,7 +126,7 @@ Como se indicó, VSC puede utilizar varios GB de almacenamiento en sus cuentas s
    - Solo gestiona archivos (no permite ejecutar comandos ni editar scripts directamente).
    - No incluye terminal ni integración con entornos de desarrollo.
 
-4. **PuTTY**
+4. [**PuTTY**](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)
 - Sistema operativo: principalmente Windows (disponible también para Linux/macOS).
 - Descripción: Uno de los clientes SSH más antiguos y confiables, permite conectarse a servidores remotos de forma segura. El NLHPC recomienda usar PuTTy para conectarse al clúster Leftraru-Guacolda Epu.
 - Ventajas:
@@ -138,16 +138,19 @@ Como se indicó, VSC puede utilizar varios GB de almacenamiento en sus cuentas s
    - No incluye editor de texto ni herramientas integradas (como VSC o MobaXterm).
 
 ### 5.2 Pasos básicos de configuración de VSC
+
 1. Instalar [Visual Studio Code](https://code.visualstudio.com/) acorde al sistema operativo.
+
 2. Abrir VSC e instalar la extensión **Remote - SSH**, que permitirá conectarse al servidor. SSH significa "Secure Shell" (Shell Seguro). Es un protocolo de red criptográfico que permite a los usuarios acceder y controlar un servidor o computadora remota de forma segura a través de una red insegura (como Internet). La función principal de SSH es establecer una conexión cifrada entre dos máquinas: una computadora local (el cliente SSH) y la máquina remota (el servidor SSH). 
+
 3. Conectarse al NLHPC: en caso que ya hayan modificado el archivo `~/.ssh/config` para conectarse al clúster siguiendo las instrucciones de la [Wiki del NLHPC](https://wiki.nlhpc.cl/Tutorial_de_acceso_a_Leftraru_via_SSH), VSC reconocerá la cuenta como un host conocido (opción `Connect to host`).
-Si no lo han hecho deben seguir las instruciones detallas en la página de [VSC](https://code.visualstudio.com/docs/remote/ssh).
-A continuación se muestra la opción para conectarse a través de la terminal integrada en VSC:
-   Ejemplo de conexión:
+   - Si no lo han hecho deben seguir las instruciones detallas en la página de [VSC](https://code.visualstudio.com/docs/remote/ssh).
+   - A continuación se muestra la opción para conectarse a través de la terminal integrada en VSC:
    ```bash
    # Reemplacen student21 por su nombre de usuario
    ssh -p 4603 student21@leftraru.nlhpc.cl
    ```
+
 4. (Opcional) Configurar el archivo `~/.ssh/config` para evitar escribir la contraseña:
    ```bash
    Host leftraru
@@ -155,6 +158,7 @@ A continuación se muestra la opción para conectarse a través de la terminal i
        Port 4603
        User student21
    ```
+
 5. Si realizaron exitosamente la instalación de VSC y el acceso mediante SSH al clúster del NLHPC, podrán abrir carpetas remotas y usar el terminal integrado para ejecutar comandos.
 
 ---

@@ -83,6 +83,8 @@ Es por lo anterior que en curso usaremos **Visual Studio Code**, ya que proporci
 
 **Comentario:** Usar VSC no reemplaza la necesidad de **entender los comandos de Linux** (`grep`, `nano`, `sbatch`), pero sí que minimiza las barreras de entrada al proporcionar un entorno visual familiar y centralizado.
 
+Inconvenientes de VSC: tamaño y peso de archivos
+
 ### 5.1 Por qué usar VSC en el curso
 - Editor multiplataforma y liviano con soporte para **bash**, **R**, **Python**, **Markdown** y **Git**.
 - Permite trabajar remotamente mediante **SSH** y editar código directamente en el HPC.

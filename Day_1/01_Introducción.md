@@ -32,7 +32,7 @@ El **NLHPC (National Laboratory for High Performance Computing)** es el centro n
 
 - Sitio oficial: [https://www.nlhpc.cl/](https://www.nlhpc.cl/)
 - Wiki general del NLHPC (información técnica, manuales, tutoriales): [https://wiki.nlhpc.cl/P%C3%A1gina_principal](https://wiki.nlhpc.cl/P%C3%A1gina_principal)
-- Tutorial específico de acceso a Leftraru (SSH): [https://wiki.nlhpc.cl/Tutorial_de_acceso_a_Leftraru_via_SSH](https://wiki.nlhpc.cl/Tutorial_de_acceso_a_Leftraru_via_SSH)
+- <a id="leftraru"></a>Tutorial específico de acceso a Leftraru (SSH): [https://wiki.nlhpc.cl/Tutorial_de_acceso_a_Leftraru_via_SSH](https://wiki.nlhpc.cl/Tutorial_de_acceso_a_Leftraru_via_SSH)
 
 **Arquitectura general del sistema:**
 ```
@@ -52,7 +52,7 @@ El NLHPC nos ha facilitado cuentas para todas/os los estudiantes del curso, a co
 | ...  | student05  |
 | ...  | student06  |
 
-Para acceder al clúster con sus cuentas personales, no olviden revisar el **Tutorial de acceso a Leftraru** indicado más arriba.
+Para acceder al clúster con sus cuentas personales, no olviden revisar el [**Tutorial de acceso a Leftraru**](#leftraru) indicado más arriba.
 
 ---
 
@@ -244,10 +244,12 @@ Ya hemos creado un archivo de texto usando `grep` y `echo`, ahora veremos una op
 nano ezekiel.txt
 ```
 
+Una vez editado el archivo de texto con `nano`, usando `Ctrl + O` pueden guardar los cambios y con `Ctrl + X` cierran el editor.
+
+
 También podemos usar `nano` para crear archivos, por lo cual es una herramienta fundamental para crear scripts. La sintaxis es la misma que la anterior, pero debemos indicar el nombre del archivo que queremos crear:
 ```bash
 nano creando_archivos.txt
 ```
 
 ---
-

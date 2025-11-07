@@ -79,23 +79,73 @@ En la siguiente tabla se muestra la explicación de cada línea del script anter
 
 El uso exclusivo de la terminal (*Command-Line Interface*, CLI) puede ser un obstáculo para los estudiantes que están iniciando análisis genómicos. Trabajar directamente con `bash` requiere memorización de comandos, manejo de permisos, y una curva de aprendizaje pronunciada para tareas básicas como la navegación de archivos (`cd`, `ls`) y la edición de texto (`nano`). Es una experiencia similar a usar el lenguaje de programación `R` puro frente a **RStudio**. RStudio proporciona una interfaz gráfica integrada (*Integrated Development Environment*, IDE) que facilita la gestión de proyectos, visualización de datos, autocompletado de código y depuración, haciendo que la entrada al análisis estadístico sea mucho más amigable. Mientras que el uso de `R` en línea de comandos es potente pero menos intuitivo para el aprendizaje inicial. 
 
-Es por lo anterior que en curso usaremos **Visual Studio Code**, ya que proporciona un puente GUI (*Graphical User Interface*) que suaviza la transición al entorno de servidor de HPC. Visual Studio Code (VSC o VS Code) es un editor de código fuente gratuito, ligero y multiplataforma desarrollado por Microsoft.
+Es por lo anterior que en curso usaremos **Visual Studio Code**, ya que proporciona un puente GUI (*Graphical User Interface*) que suaviza la transición al entorno de servidor de HPC. Visual Studio Code (VSC o VS Code) es un editor de código fuente gratuito, ligero y multiplataforma desarrollado por Microsoft. Entre las características de VSC destacan:
 
-**Comentario:** Usar VSC no reemplaza la necesidad de **entender los comandos de Linux** (`grep`, `nano`, `sbatch`), pero sí que minimiza las barreras de entrada al proporcionar un entorno visual familiar y centralizado.
-
-Inconvenientes de VSC: tamaño y peso de archivos
-
-### 5.1 Por qué usar VSC en el curso
 - Editor multiplataforma y liviano con soporte para **bash**, **R**, **Python**, **Markdown** y **Git**.
 - Permite trabajar remotamente mediante **SSH** y editar código directamente en el HPC.
 - Terminal integrada que facilita el uso de la línea de comandos.
 
-### 5.2 Pasos básicos de configuración
-1. Instalar [Visual Studio Code](https://code.visualstudio.com/).
-2. Instalar la extensión **Remote - SSH**.
-3. Conectarse al NLHPC:  
+**Comentario 1:** usar VSC no reemplaza la necesidad de **entender los comandos de Linux** (`grep`, `nano`, `sbatch`), pero sí que minimiza las barreras de entrada al proporcionar un entorno visual familiar y centralizado.
+
+**Comentario 2:** un inconveniente de VSC es que crea múltiples directorios y archivos que utilizan recursos y memoria (**7 - 10 GB**) del usuario, lo que disminuye el almacenamiento disponible para datos.
+
+### 5.1 Opciones a Visual Studio Code
+
+Como se indicó, VSC puede utilizar varios GB de almacenamiento en sus cuentas solo para funcionar. Así que recomendamos otras aplicaciones que funcionan de forma similar a VSC. Cabe mencionar que son aplicaciones más ligeras, lo que es favorable, sin embargo, no tienen todas las prestaciones que dispone VSC. De todos modos, para los objetivos del curso, las siguientes opciones funcionarían sin mayores problemas.
+
+1. **MobaXterm**
+- Sistema operativo: solo para Windows.
+- Descripción: MobaXterm combina en una sola herramienta una terminal UNIX, un cliente SSH y un entorno gráfico remoto (X11), ideal para conectarse a servidores HPC.
+- Ventajas:
+   - Incluye soporte nativo para SSH, SFTP y X11 (interfaz gráfica remota).
+   - Permite **ver y transferir archivos** del servidor en una ventana lateral.
+   - No requiere instalación de software adicional.
+- Desventajas:
+   - Solo disponible en Windows (aunque puede ejecutarse en macOS/Linux mediante emuladores).
+   - La versión gratuita tiene algunas limitaciones (ninguna que afecte el desarrollo del curso).
+
+2. **Termius**
+- Sistema operativo: multiplataforma (Windows, macOS, Linux, Android, iOS).
+- Descripción: Cliente SSH moderno y limpio, enfocado en la conexión y gestión de servidores remotos. Cuenta con versiones móviles que permiten cargar una terminal.
+- Ventajas:
+   - Permite **ver y transferir archivos** del servidor.
+   - Sincroniza conexiones entre dispositivos (opcional).
+   - Permite guardar credenciales y claves SSH de forma segura.
+- Desventajas:
+   - No incluye un editor de texto integrado tan completo como VSC.
+   - Algunas funciones avanzadas (sincronización, snippets, grupos) requieren la versión de pago.
+
+3. **FileZilla**
+- Sistema operativo: multiplataforma (Windows, macOS, Linux).
+- Descripción: Cliente FTP/SFTP ampliamente usado para transferir archivos entre el computador local y el servidor. FileZilla no contiene un cliente SSH, es decir, no se puede acceder mediante terminal integrada al clúster. Esta aplicación está enfocada en la transferencia de archivos.
+- Ventajas:
+   - Ideal para subir y descargar archivos grandes entre el equipo y el HPC.
+   - Interfaz simple, *drag-and-drop*, sin necesidad de comandos.
+   - Gratuito y de código abierto.
+- Desventajas:
+   - Solo gestiona archivos (no permite ejecutar comandos ni editar scripts directamente).
+   - No incluye terminal ni integración con entornos de desarrollo.
+
+4. **PuTTY**
+- Sistema operativo: principalmente Windows (disponible también para Linux/macOS).
+- Descripción: Uno de los clientes SSH más antiguos y confiables, permite conectarse a servidores remotos de forma segura. El NLHPC recomienda usar PuTTy para conectarse al clúster Leftraru-Guacolda Epu.
+- Ventajas:
+   - Ligero, rápido y muy estable.
+   - Ideal para conexiones rápidas o para quienes prefieren una terminal simple.
+   - Permite guardar sesiones y usar claves SSH.
+- Desventajas:
+   - Interfaz muy básica (sin autocompletado ni gestión de archivos).
+   - No incluye editor de texto ni herramientas integradas (como VSC o MobaXterm).
+
+### 5.2 Pasos básicos de configuración de VSC
+1. Instalar [Visual Studio Code](https://code.visualstudio.com/) acorde al sistema operativo.
+2. Abrir VSC e instalar la extensión **Remote - SSH**, que permitirá conectarse al servidor. SSH significa "Secure Shell" (Shell Seguro). Es un protocolo de red criptográfico que permite a los usuarios acceder y controlar un servidor o computadora remota de forma segura a través de una red insegura (como Internet). La función principal de SSH es establecer una conexión cifrada entre dos máquinas: una computadora local (el cliente SSH) y la máquina remota (el servidor SSH). 
+3. Conectarse al NLHPC: en caso que ya hayan modificado el archivo `~/.ssh/config` para conectarse al clúster siguiendo las instrucciones de la [Wiki del NLHPC](https://wiki.nlhpc.cl/Tutorial_de_acceso_a_Leftraru_via_SSH), VSC reconocerá la cuenta como un host conocido (opción `Connect to host`).
+Si no lo han hecho deben seguir las instruciones detallas en la página de [VSC](https://code.visualstudio.com/docs/remote/ssh).
+A continuación se muestra la opción para conectarse a través de la terminal integrada en VSC:
    Ejemplo de conexión:
    ```bash
+   # Reemplacen student21 por su nombre de usuario
    ssh -p 4603 student21@leftraru.nlhpc.cl
    ```
 4. (Opcional) Configurar el archivo `~/.ssh/config` para evitar escribir la contraseña:
@@ -105,7 +155,7 @@ Inconvenientes de VSC: tamaño y peso de archivos
        Port 4603
        User student21
    ```
-5. Abrir carpetas remotas y usar el terminal integrado para ejecutar comandos.
+5. Si realizaron exitosamente la instalación de VSC y el acceso mediante SSH al clúster del NLHPC, podrán abrir carpetas remotas y usar el terminal integrado para ejecutar comandos.
 
 ---
 
@@ -198,8 +248,5 @@ dev.off()
 ---
 
 **Tarea para el Día 2:**
-- Verificar acceso al clúster.
-- Crear su carpeta de trabajo.
-- Probar un script bash y un job SLURM.
-- Confirmar ejecución exitosa de un script R en el HPC.
+- Verificar acceso al clúster: el resto de los días del curso correremos continuamente análisis en el clúster del NLHPC, así que que les solicitamos que se cercioren que tiene acceso. El uso de VSC no es obligatorio, pero sí es recomendable para agilizar el desarrollo de los talleres. Por ende, si no pudieron vincularlo al clúster de todos modos podrán realizar los talleres, pero es recomendable que lo instalen.
 

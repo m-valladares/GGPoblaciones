@@ -165,16 +165,55 @@ Como se indicó, VSC puede utilizar varios GB de almacenamiento en sus cuentas s
 
 ## 6. Introducción a SLURM
 
-### 6.1 Comandos básicos
+SLURM (acrónimo de *Simple Linux Utility for Resource Management*) es un gestor de recursos y planificador de trabajos (*job scheduler*) utilizado en la mayoría de los sistemas HPC del mundo, incluyendo el clúster Leftraru del NLHPC en Chile. Su función principal es administrar los recursos de hardware disponibles (como CPUs, memoria y nodos de cómputo) y distribuirlos entre los usuarios que envían tareas o análisis. En un entorno donde decenas o cientos de personas utilizan el mismo servidor, SLURM garantiza que cada trabajo reciba los recursos solicitados, que no haya conflictos, y que las tareas se ejecuten de forma ordenada y reproducible.
+
+#### ¿Por qué se usa SLURM?
+
+En un clúster HPC no es posible “abrir un programa y ejecutarlo directamente” como en un computador personal, ya que los recursos están compartidos entre múltiples usuarios. SLURM automatiza la gestión de estos recursos, de modo que cada usuario describe en un script de envío qué necesita (por ejemplo, 8 CPUs, 16 GB de RAM y 4 horas de tiempo), y el sistema decide cuándo y dónde ejecutar esa tarea.
+
+#### Principales funciones
+
+- Gestión de recursos: asigna CPUs, memoria, GPU, tiempo de ejecución, y nodos de cómputo según lo solicitado.
+
+- Cola de trabajos (*queue*): organiza los trabajos en espera según disponibilidad y prioridad.
+
+- Monitoreo: permite consultar el estado de los trabajos y de los nodos.
+
+- Escalabilidad: puede gestionar desde unos pocos hasta miles de nodos sin pérdida de eficiencia.
+
+- Tolerancia a fallos: maneja errores de hardware o software y puede reprogramar trabajos fallidos.
+
+- Integración: es compatible con sistemas de archivos paralelos y herramientas de análisis (*e.g.* conda, R, Python).
+
+#### Ventajas de SLURM
+
+- Software libre y altamente personalizable.
+
+- Amplia adopción: usado por la mayoría de los supercomputadores. Además, tiene una interfaz consistente, los mismos comandos funcionan en distintos HPC del mundo.
+
+- Permite reproducibilidad: los recursos y parámetros quedan documentados en el script de envío (`.sbatch`).
+
+#### Desventajas o desafíos
+
+- Curva de aprendizaje inicial: requiere familiarizarse con la línea de comandos y con la sintaxis de los scripts de envío.
+
+- Ejecución no interactiva: una vez enviado el trabajo, no se puede “ver” en tiempo real como en un computador local (aunque se pueden revisar logs). Una alternativa a esto es usar `srun` (lo veremos durante el curso).
+
+- Latencia en la cola: cuando hay alta demanda, los trabajos pueden esperar minutos u horas antes de ser ejecutados.
+
+- Requiere planificación: los usuarios deben estimar bien tiempo y recursos; pedir de más puede generar ineficiencia, y pedir de menos puede causar errores.
+
+---
+
+### 6.1 Ejemplo de script SLURM
+
+Un script de SLURM es simplemente un archivo de texto con una lista de instrucciones que le indican al clúster qué ejecutar y con qué recursos hacerlo. Por convención, se guarda con extensión `.sbatch` y se envía ("lanzar el trabajo") con el comando:
 ```bash
-squeue          # ver trabajos en cola
-sinfo           # ver particiones
-sbatch script.sbatch   # enviar trabajo
-scancel JOBID   # cancelar trabajo
-sacct           # ver historial de jobs
+sbatch nombre_del_script.sbatch
 ```
 
-### 6.2 Ejemplo de script SLURM
+A continuación, se muestra un ejemplo simple y comentado:
+
 ```bash
 #!/usr/bin/env bash
 #SBATCH -J test_job
@@ -184,10 +223,60 @@ sacct           # ver historial de jobs
 #SBATCH -o test_%j.out
 #SBATCH -e test_%j.err
 
-echo "Ejecutando en $(hostname)"
-sleep 60
-echo "Job completado"
+# ==============================
+#     SCRIPT DE EJEMPLO
+# ==============================
+
+# 1. Mostrar información básica
+echo "====================================="
+echo "Ejecutando trabajo en SLURM"
+echo "Nodo: $(hostname)"
+echo "Usuario: $USER"
+echo "Fecha: $(date)"
+echo "Directorio actual: $(pwd)"
+echo "====================================="
+
+# 2. Ejecutar una tarea simple
+echo "Iniciando conteo..."
+for i in {1..5}; do
+  echo "Iteración $i"
+  sleep 1
+done
+
+# 3. Finalizar
+echo "Trabajo completado exitosamente."
 ```
+
+El detalle de los comandos del script es el siguiente:
+
+
+| Línea                       | Descripción                                                                                   |
+| :-------------------------- | :-------------------------------------------------------------------------------------------- |
+| `#!/usr/bin/env bash`       | Línea *shebang* indica que el script debe ejecutarse con bash.                                |
+| `#SBATCH -J test_job`       | Asigna un nombre al trabajo (aparecerá cuando usemos `squeue`).                               |
+| `#SBATCH -c 2`              | Solicita 2 CPUs (núcleos).                                                                    |
+| `#SBATCH --mem=2G`          | Solicita 2 GB de memoria RAM.                                                                 |
+| `#SBATCH -t 00:05:00`       | Tiempo máximo permitido (5 minutos).                                                          |
+| `#SBATCH -o` y `#SBATCH -e` | Archivos de salida estándar y de error, respectivamente. `%j` se reemplaza por el ID del job. |
+| `echo`, `sleep`, `for`      | Comandos bash que se ejecutan dentro del nodo asignado.                                       |
+
+
+
+
+
+
+
+
+### 6.2 Comandos básicos
+```bash
+squeue          # ver trabajos en cola
+sinfo           # ver particiones
+sbatch script.sbatch   # enviar trabajo
+scancel JOBID   # cancelar trabajo
+sacct           # ver historial de jobs
+```
+
+
 
 ### 6.3 Mini-ejercicio
 - Enviar el script anterior y revisar el estado con `squeue`.

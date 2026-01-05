@@ -9,7 +9,7 @@
 #### Plano Campus JGM y ubicación de la Sala Alberto Veloso:
 
 <p align="center">
-  <img src="Images/Plano_GGPoblaciones_2026.png" alt="Plano JGM" width="600">
+  <img src="Images/Plano_GGPoblaciones_2026.png" alt="Plano JGM">
 </p>
 
 El curso tiene como objetivo que las/os participantes adquieran conocimientos teóricos y prácticos en los principales métodos de la genética y genómica de poblaciones, comprendiendo su aplicación en el estudio de procesos evolutivos, ecológicos y de conservación. Está dirigido a estudiantes de pregrado avanzado, postgrado (magíster y doctorado) y personas dedicadas a la investigación en biología, bioinformática y disciplinas afines interesadas en el uso de secuenciación de genomas completos (whole genome sequencing, WGS).

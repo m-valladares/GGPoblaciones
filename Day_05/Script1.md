@@ -1,22 +1,28 @@
 Script1.md
 
-Taller Práctico: Detección de Señales de Selección en Especies Invasoras
+#Taller Práctico: Detección de Señales de Selección en Especies Invasoras
 
 
 Modelo de Estudio: Rattus rattus (Población Santiago) Objetivo: Identificar loci outliers y genes candidatos bajo selección utilizando múltiples aproximaciones (RAiSD y SweepFinder2).
 
-📂 Estructura de Trabajo
+ ---
+
+## 📂 Estructura de Trabajo
 
 Para optimizar el tiempo, trabajaremos simulando un flujo real pero con "redes de seguridad".
+
+```bash
 
     ~/Day05/Data: Aquí se encuentran los archivos crudos y copias de seguridad (backups) de todos los resultados. Si un análisis tarda mucho o falla, podrás copiar el archivo desde aquí.
 
     ~/Day05/Resultados_Estudiante: Esta será tu carpeta de trabajo. Aquí ejecutarás los códigos y guardarás tus salidas.
 
-0. Configuración Inicial del Espacio de Trabajo
+```
+
+## 0. Configuración Inicial del Espacio de Trabajo
 
 Lo primero es crear tu directorio personal y cargar las herramientas necesarias.
-Bash
+
 
 # 1. Cargar módulos necesarios
 

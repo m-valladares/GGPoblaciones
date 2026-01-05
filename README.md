@@ -7,9 +7,9 @@
 ### Lugar: Sala Alberto Veloso, Facultad de Ciencias, Campus JGM, Universidad de Chile
 #### Link de [Google Maps](https://maps.app.goo.gl/tbFGmuPNUwphpwpx9) con la ubicación del Campus Juan Gómez Millas.
 
-## 📍 Lugar del curso
-
-![Mapa del lugar del curso](Images/Plano_GGPoblaciones_2026.png)
+<p align="center">
+  <img src="Images/Plano_GGPoblaciones_2026.png" alt="Plano JGM" width="600">
+</p>
 
 El curso tiene como objetivo que las/os participantes adquieran conocimientos teóricos y prácticos en los principales métodos de la genética y genómica de poblaciones, comprendiendo su aplicación en el estudio de procesos evolutivos, ecológicos y de conservación. Está dirigido a estudiantes de pregrado avanzado, postgrado (magíster y doctorado) y personas dedicadas a la investigación en biología, bioinformática y disciplinas afines interesadas en el uso de secuenciación de genomas completos (whole genome sequencing, WGS).
 

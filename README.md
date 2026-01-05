@@ -6,6 +6,7 @@
 ### Horario: 9:30 – 18:00
 ### Lugar: Sala Alberto Veloso, Facultad de Ciencias, Campus JGM, Universidad de Chile
 #### Link de [Google Maps](https://maps.app.goo.gl/tbFGmuPNUwphpwpx9) con la ubicación del Campus Juan Gómez Millas.
+#### Plano Campus JGM y ubicación de la Sala Alberto Veloso:
 
 <p align="center">
   <img src="Images/Plano_GGPoblaciones_2026.png" alt="Plano JGM" width="600">

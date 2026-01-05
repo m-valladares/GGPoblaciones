@@ -3,8 +3,8 @@
 ## Dr. Moisés A. Valladares, Dra. Pamela Morales, MSc. Paulo S. Zepeda
 
 ### Fechas: lunes 12 al sábado 17 de enero de 2026 (6 días)
-### Horario: 9:30 – 18:00
-### Lugar: Sala Alberto Veloso, Facultad de Ciencias, Campus JGM, Universidad de Chile
+### Horario: 9:30 – 17:30
+### Lugar: Sala Alberto Veloso, Facultad de Ciencias, Universidad de Chile
 #### Link de [Google Maps](https://maps.app.goo.gl/tbFGmuPNUwphpwpx9) con la ubicación del Campus Juan Gómez Millas.
 #### Plano Campus JGM y ubicación de la Sala Alberto Veloso:
 

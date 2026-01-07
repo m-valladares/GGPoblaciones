@@ -35,25 +35,40 @@ module load bedtools
 ```
 
 # 2. Crear tu carpeta de resultados
+
 ```bash
+
 mkdir -p ~/Day05/Resultados_Estudiante
+
 ```
+
 # 3. Ir a la carpeta Data para inspeccionar los archivos
+
 ```bash
+
 cd ~/Day05/Data
 ls -lh
+
 ```
+
 # 4. Copiar el archivo input inicial a tu carpeta de trabajo
+
 ```bash
 cp santiago.vcf.gz ~/Day05/Resultados_Estudiante/
 cp CDS_genes_Rra.bed ~/Day05/Resultados_Estudiante/
+
 ```
+
 # 5. Moverse a tu carpeta de trabajo
+
 ```bash
+
 cd ~/Day05/Resultados_Estudiante
+
 ```
 
 ## Parte 1: Método RAiSD 
+
 
 RAiSD busca una combinación de reducción de diversidad, LD y SFS.
 
@@ -62,12 +77,15 @@ RAiSD busca una combinación de reducción de diversidad, LD y SFS.
 ```bash
 
 # 1. Descomprimir VCF (RAiSD requiere texto plano)
+
 gunzip -c santiago.vcf.gz > santiago.vcf
 
 # 2. Ejecutar RAiSD
 # -n: Nombre de la salida
 # -I: Input
 # -f: Forzar sobreescritura
+
+
 ../../bin_taller/RAiSD -n RUN_SANTIAGO -I santiago.vcf -f
 
 ```
@@ -76,6 +94,7 @@ gunzip -c santiago.vcf.gz > santiago.vcf
 2. Procesamiento de Resultados (Filtrado Manual)
 
 El reporte crudo tiene miles de líneas. Vamos a extraer manualmente el Top 1% de los sitios con mayor señal de selección (Columna 7: Estadístico Mu).
+
 
 ```bash
 
@@ -156,6 +175,7 @@ Ahora calculamos el Composite Likelihood Ratio (CLR) a lo largo del cromosoma us
 ```
 ⏳ (Nuevamente, si este paso tarda más de 2-3 minutos, usa Ctrl+C y copia Output_SF2_Santiago.txt desde ../Data)
 
+
 4. Procesamiento de Resultados SF2
 
 El archivo de salida tiene coordenadas y valores de CLR, pero necesitamos filtrar los picos más altos.
@@ -169,6 +189,7 @@ head Output_SF2_Santiago.txt
 # sort -k2,2nr: Ordena numéricamente reverso por la columna 2
 # head -n 20: Nos quedamos con los Top 20 sitios
 sort -k2,2nr Output_SF2_Santiago.txt | head -n 20 > top_sf2_raw.txt
+
 
 # 3. Crear un archivo BED para poder cruzarlo con genes
 # SF2 nos da un punto exacto (ej. pb 5000).

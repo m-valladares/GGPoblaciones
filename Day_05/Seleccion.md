@@ -1,4 +1,3 @@
-Script1.md
 
 ## Taller Práctico: Detección de Señales de Selección en Especies Invasoras
 

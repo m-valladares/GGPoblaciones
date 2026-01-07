@@ -1,6 +1,6 @@
 Script1.md
 
-#Taller Práctico: Detección de Señales de Selección en Especies Invasoras
+# Taller Práctico: Detección de Señales de Selección en Especies Invasoras
 
 
 Modelo de Estudio: Rattus rattus (Población Santiago) Objetivo: Identificar loci outliers y genes candidatos bajo selección utilizando múltiples aproximaciones (RAiSD y SweepFinder2).

@@ -1,6 +1,6 @@
 Script1.md
 
-# Taller Práctico: Detección de Señales de Selección en Especies Invasoras
+## Taller Práctico: Detección de Señales de Selección en Especies Invasoras
 
 
 Modelo de Estudio: Rattus rattus (Población Santiago) Objetivo: Identificar loci outliers y genes candidatos bajo selección utilizando múltiples aproximaciones (RAiSD y SweepFinder2).
@@ -26,108 +26,163 @@ Lo primero es crear tu directorio personal y cargar las herramientas necesarias.
 
 # 1. Cargar módulos necesarios
 
+```bash
+
 module load gsl
 module load bcftools
 module load bedtools
 
+```
+
 # 2. Crear tu carpeta de resultados
+```bash
 mkdir -p ~/Day05/Resultados_Estudiante
-
+```
 # 3. Ir a la carpeta Data para inspeccionar los archivos
-
+```bash
 cd ~/Day05/Data
 ls -lh
-
+```
 # 4. Copiar el archivo input inicial a tu carpeta de trabajo
+```bash
 cp santiago.vcf.gz ~/Day05/Resultados_Estudiante/
 cp CDS_genes_Rra.bed ~/Day05/Resultados_Estudiante/
-
+```
 # 5. Moverse a tu carpeta de trabajo
-
+```bash
 cd ~/Day05/Resultados_Estudiante
+```
 
-Paso 1: Preparación de los Datos
+## Parte 1: Método RAiSD 
 
-(Contexto: Los datos provienen de un VCF genómico completo. Para este taller, el instructor ya ha filtrado la población de "Santiago" y el cromosoma NC_046157.1 para agilizar el cómputo).
+RAiSD busca una combinación de reducción de diversidad, LD y SFS.
 
-El formato .vcf.gz está comprimido. Para que herramientas como RAiSD lo lean eficientemente (dependiendo de la versión), lo descomprimiremos.
-Bash
+1. Preparación y Ejecución
 
-# Descomprimir el archivo VCF manteniendo el original
+```bash
+
+# 1. Descomprimir VCF (RAiSD requiere texto plano)
 gunzip -c santiago.vcf.gz > santiago.vcf
 
-# Verificar que el archivo existe
-ls -lh santiago.vcf
-
-Paso 2: Ejecución de RAiSD (Raised Accuracy in Sweep Detection)
-
-RAiSD es una herramienta que calcula un índice compuesto (μ) basado en tres señales: reducción de diversidad, desequilibrio de ligamiento y cambios en el espectro de frecuencias.
-2.1. Ejecutar el software
-
-Ejecutaremos el análisis sobre nuestro cromosoma.
-
-    -n: Nombre del prefijo para los archivos de salida (ej. RUN_SANTIAGO).
-
-    -I: Archivo de entrada (Input).
-
-    -f: Forzar sobreescritura si los archivos ya existen.
-
-Bash
-
-# Ejecutar RAiSD (Asegúrate de apuntar correctamente al ejecutable)
+# 2. Ejecutar RAiSD
+# -n: Nombre de la salida
+# -I: Input
+# -f: Forzar sobreescritura
 ../../bin_taller/RAiSD -n RUN_SANTIAGO -I santiago.vcf -f
 
-⏳ ¿Está tardando mucho? (PUNTO DE CONTROL) El análisis debería ser rápido (menos de 2-3 minutos). Si por alguna razón falla o demora demasiado, no te preocupes. Copia los resultados listos desde la carpeta Data:
-Bash
+```
+(Si el análisis tarda más de 5 minutos, copia RAiSD_Report.RUN_SANTIAGO desde la carpeta ../Data)
 
-# SOLO EJECUTAR SI EL PASO ANTERIOR FALLÓ
-cp ~/Day05/Data/RAiSD_Report.RUN_SANTIAGO ~/Day05/Resultados_Estudiante/
-cp ~/Day05/Data/RAiSD_Info.RUN_SANTIAGO ~/Day05/Resultados_Estudiante/
+2. Procesamiento de Resultados (Filtrado Manual)
 
-Paso 3: Procesamiento y Filtrado de Resultados
+El reporte crudo tiene miles de líneas. Vamos a extraer manualmente el Top 1% de los sitios con mayor señal de selección (Columna 7: Estadístico Mu).
 
-RAiSD genera un reporte (RAiSD_Report.RUN_SANTIAGO) con puntuaciones para miles de posiciones. Nuestro objetivo es quedarnos solo con el Top 1% de los valores más altos (los outliers más extremos).
-3.1. Inspeccionar el archivo
+```bash
 
-Mira las primeras líneas para entender el formato:
-Bash
+# 1. Ordenar el reporte por score (Col 7) de mayor a menor y quitar encabezados
+# grep -v "VAR": Quita la línea de título
+# sort -k7,7nr: Orden numérico reverso por columna 7
+grep -v "VAR" RAiSD_Report.RUN_SANTIAGO | sort -k7,7nr > raisd_ordenado.txt
 
-head RAiSD_Report.RUN_SANTIAGO
+# 2. Extraer el Top 200 sitios (aprox top 1% para este set de datos) y crear un BED
+# El formato BED requiere: Cromosoma (col1), Inicio (col2), Fin (col3)
+head -n 200 raisd_ordenado.txt | awk '{print $1, $2, $3}' > top_raisd.bed
 
-3.2. Filtrar el Top 1% (Generar archivo BED)
+# 3. Cruzar con genes (Anotación)
+bedtools intersect -a top_raisd.bed -b CDS_genes_Rra.bed -wb > raisd_hits.txt
 
-Para no complicarnos con cálculos manuales de líneas, utilizaremos un archivo BED que ya contiene las coordenadas del Top 1% de outliers de esta población.
+# 4. Limpiar lista de genes (Nombres únicos)
+cut -f 8 raisd_hits.txt | sort | uniq > genes_candidatos_SANTIAGO_raisd.txt
 
-Nota: En un análisis real, usarías scripts de R o Python para determinar este umbral estadístico.
-Bash
+# Ver resultados
+head genes_candidatos_SANTIAGO_raisd.txt
 
-# Copiamos el archivo de outliers (Top 1%) pre-calculado
-cp ~/Day05/Data/raisd_top1_percent.bed .
+```
+## PARTE 2: Método SweepFinder2 (SFS local)
 
-# Veamos cómo luce (Formato: Cromosoma | Inicio | Fin | Score_Mu)
-head raisd_top1_percent.bed
+SweepFinder2 detecta barridos selectivos comparando el espectro de frecuencias alélicas (SFS) local contra el genómico.
 
-Paso 4: Anotación Biológica (Cruce con Genes)
+A diferencia de RAiSD, SweepFinder2 no lee archivos VCF directamente. Requiere un formato específico que contenga la posición genómica y las frecuencias alélicas.
 
-Ahora tenemos coordenadas estadísticas ("Aquí pasa algo raro"), pero necesitamos saber biología ("¿Qué gen está ahí?"). Para esto, cruzaremos nuestros outliers con el archivo de anotación CDS_genes_Rra.bed.
+Preparación de Inputs
 
-Usaremos bedtools intersect:
+Para correr SF2, necesitamos dos cosas:
 
-    -a: Nuestro archivo de outliers (RAiSD).
+    Un archivo de frecuencias (Input file).
 
-    -b: El archivo de genes.
+    El espectro de frecuencias genómico (Spectrum).
 
-    -wb: Escribe también la información del archivo B (para ver el nombre del gen).
+1. Generación del Archivo de Input
 
-Bash
+Vamos a transformar nuestro VCF (santiago.vcf) al formato requerido por SweepFinder2. Este paso suele ser computacionalmente costoso porque debe leer línea por línea cada variante.
 
-# 1. Intersectar
-bedtools intersect -a raisd_top1_percent.bed -b CDS_genes_Rra.bed -wb > raisd_genes_hit.txt
+Instrucciones:
 
-# 2. Limpiar la lista para obtener solo los nombres de los genes únicos
-# (Cortamos la columna 8 que tiene el nombre del gen, ordenamos y quitamos duplicados)
-cut -f 8 raisd_genes_hit.txt | sort | uniq > lista_genes_raisd.txt
+    Ejecuta el comando de conversión.
 
-# 3. ¡Veamos nuestros candidatos!
-echo "Genes candidatos detectados por RAiSD:"
-cat lista_genes_raisd_santiago.txt
+    Espera unos 30 segundos.
+
+    Si notas que la terminal "se queda pegada" o tarda mucho, cancelaremos el proceso para no perder tiempo del taller.
+
+```bash
+
+# Ejecutar script de conversión (Python)
+# Este script toma el VCF y cuenta alelos para crear el input de SF2
+python3 ../../bin_taller/vcf2sf.py -i santiago.vcf -o mi_input_lento.sf2
+
+```
+⏳ ¡STOP! ¿Notas que tarda? En un genoma completo esto podría tomar horas. Para efectos del taller, vamos a interrumpir este proceso.
+
+    Presiona Ctrl + C en tu teclado para "matar" el proceso.
+
+    Copia el archivo de input ya listo desde la carpeta de Backups.
+
+```bash
+
+# Copiar el archivo pre-calculado
+cp ../Data/input_santiago.sf2 .
+```
+Verificar que lo tenemos (debe pesar algunos MB)
+```bash
+ls -lh input_santiago.sf2
+```
+3. Ejecución del Barrido (Scan)
+
+Ahora calculamos el Composite Likelihood Ratio (CLR) a lo largo del cromosoma usando el espectro que acabamos de crear.
+```bash
+# -l: Calcular LR (Likelihood Ratio)
+# 1000: Tamaño de la grilla (puntos a evaluar a lo largo del cromosoma)
+../../bin_taller/SweepFinder2 -l 1000 input_santiago.sf2 Spectrum_Santiago.txt Output_SF2_Santiago.txt
+```
+⏳ (Nuevamente, si este paso tarda más de 2-3 minutos, usa Ctrl+C y copia Output_SF2_Santiago.txt desde ../Data)
+
+4. Procesamiento de Resultados SF2
+
+El archivo de salida tiene coordenadas y valores de CLR, pero necesitamos filtrar los picos más altos.
+
+El formato de salida es: Position | CLR | Alpha.
+```bash
+# 1. Ver las primeras líneas (observa que puede haber encabezados)
+head Output_SF2_Santiago.txt
+
+# 2. Ordenar por CLR (Columna 2) de mayor a menor
+# sort -k2,2nr: Ordena numéricamente reverso por la columna 2
+# head -n 20: Nos quedamos con los Top 20 sitios
+sort -k2,2nr Output_SF2_Santiago.txt | head -n 20 > top_sf2_raw.txt
+
+# 3. Crear un archivo BED para poder cruzarlo con genes
+# SF2 nos da un punto exacto (ej. pb 5000).
+# Crearemos una ventana de 100pb alrededor de ese punto (4950-5050) para ver qué gen cae cerca.
+# Usamos 'awk' para hacer la matemática.
+awk '{print "NC_046157.1", int($1)-50, int($1)+50}' top_sf2_raw.txt > top_sf2.bed
+
+# 4. Cruzar con la anotación de genes (Igual que con RAiSD)
+bedtools intersect -a top_sf2.bed -b CDS_genes_Rra.bed -wb > sf2_hits.txt
+
+# 5. Obtener lista final de genes candidatos por SF2
+cut -f 7 sf2_hits.txt | sort | uniq > genes_candidatos_SANTIAGO_sf2.txt
+
+# Revisar resultado
+cat genes_candidatos_SANTIAGO_sf2.txt
+
+```

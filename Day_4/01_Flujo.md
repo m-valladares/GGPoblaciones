@@ -1,4 +1,4 @@
-# Mapeo
+# Calidad de los datos y trimeo
 
 El objetivo de esta sesión es verificar la calidad de las secuencias y aprender algunos índices tradicionales para describir esta calidad. Para esto usaremos los programas `FastQC` y `MultiQC`. También realizaremos el trimeo de adaptadores y reads de mala calidad usando `fastp`. Con estos pasos dejaremos el set de datos preparado para realizar el mapeo de los reads y proceder con el llamado de variantes.
 

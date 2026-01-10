@@ -35,7 +35,11 @@ conda activate filt_vcf
 
 ```
 
-Nota: Si es la primera vez que usas conda y recibes un mensaje indicando que debes inicializarlo, ejecuta conda init, cierra tu sesión y vuelve a entrar. Si ya lo has usado, puedes recargar tu configuración con: source ~/.bashrc y activar de nuevo: conda activate filt_vcf.
+*Nota:* Solo en caso que solicite iniciar conda, indicaremos `conda init`. Y luego, para poder activar ambientes conda en la sesión actual, recargamos la configuración del shell:
+
+```bash
+source ~/.bashrc
+```
 
 3. Instalación de herramientas (BCFtools y VCFtools)
 Instalaremos las versiones más recientes desde los canales oficiales de Bioinformática.
@@ -154,80 +158,82 @@ PREFIX="stats_full/Orestias_full"
 
 ```
 
+### 1. CALIDAD POR SITIO (.lqual)
+Calcula el puntaje Phred de calidad para cada variante.
+Útil para identificar qué tan confiable es el llamado de cada SNP.
+
 ```bash
 echo "1/7 Calculando Calidad por sitio..."
 vcftools --gzvcf $VCF --site-quality --out $PREFIX
 ```
+
+### 2. PROFUNDIDAD MEDIA POR SITIO (.ldepth.mean)
+Calcula cuántas lecturas (reads) hay en promedio para cada posición genómica sumando todos los individuos.
+Ayuda a identificar regiones mal mapeadas (exceso de profundidad) o con poca confianza (baja profundidad).
 
 ```bash
 echo "2/7 Calculando Profundidad media por sitio..."
 vcftools --gzvcf $VCF --site-mean-depth --out $PREFIX
 ```
 
+### 3. DATOS FALTANTES POR SITIO (.lmiss)
+Reporta qué proporción de individuos NO tiene un genotipo para cada variante.
+Sirve para eliminar SNPs que solo están presentes en unos pocos individuos.
+
 ```bash
 echo "3/7 Calculando Datos faltantes por sitio..."
 vcftools --gzvcf $VCF --missing-site --out $PREFIX
 ```
-
-```bash
-echo "4/7 Calculando Frecuencias alélicas..."
-vcftools --gzvcf $VCF --freq2 --out $PREFIX --max-alleles 2
-```
-
-```bash
-echo "5/7 Calculando Profundidad por individuo..."
-vcftools --gzvcf $VCF --depth --out $PREFIX
-```
-
-```bash
-echo "6/7 Calculando Datos faltantes por individuo..."
-vcftools --gzvcf $VCF --missing-indv --out $PREFIX
-```
-
-```bash
-echo "7/7 Calculando Heterocigosidad por individuo..."
-vcftools --gzvcf $VCF --het --out $PREFIX
-echo "¡Todo listo! Revisa la carpeta 'stats_full'"
-```
-
-### 1. CALIDAD POR SITIO (.lqual)
-Calcula el puntaje Phred de calidad para cada variante.
-Útil para identificar qué tan confiable es el llamado de cada SNP.
-
-### 2. PROFUNDIDAD MEDIA POR SITIO (.ldepth.mean)
-Calcula cuántas lecturas (reads) hay en promedio para cada posición genómica sumando todos los individuos.
-Ayuda a identificar regiones mal mapeadas (exceso de profundidad) o con poca confianza (baja profundidad).
-
-### 3. DATOS FALTANTES POR SITIO (.lmiss)
-Reporta qué proporción de individuos NO tiene un genotipo para cada variante.
-Sirve para eliminar SNPs que solo están presentes en unos pocos individuos.
 
 ### 4. FRECUENCIA ALÉLICA (.frq)
 Calcula la frecuencia de los alelos en cada sitio.
 El flag `--max-alleles 2` asegura que solo analicemos sitios bialélicos (más simples para análisis de poblaciones).
 Sirve para filtrar por Minor Allele Frequency (MAF).
 
+```bash
+echo "4/7 Calculando Frecuencias alélicas..."
+vcftools --gzvcf $VCF --freq2 --out $PREFIX --max-alleles 2
+```
+
 ### 5. PROFUNDIDAD POR INDIVIDUO (.idepth)
 Calcula la profundidad media de lecturas para cada pez individualmente.
 Permite identificar si alguna muestra falló en la secuenciación o tiene mucho menos datos que el resto.
+
+```bash
+echo "5/7 Calculando Profundidad por individuo..."
+vcftools --gzvcf $VCF --depth --out $PREFIX
+```
 
 ### 6. DATOS FALTANTES POR INDIVIDUO (.imiss)
 Reporta cuántos sitios le faltan a cada individuo.
 Es crucial para decidir si debemos descartar un individuo completo antes de filtrar SNPs.
 
+```bash
+echo "6/7 Calculando Datos faltantes por individuo..."
+vcftools --gzvcf $VCF --missing-indv --out $PREFIX
+```
+
 ### 7. HETEROCIGOSIDAD POR INDIVIDUO (.het)
 Calcula el coeficiente de consanguinidad (F) y la heterocigosidad observada/esperada.
 Ayuda a detectar contaminación de muestras (exceso de heterocigotos) o individuos muy endogámicos.
 
+```bash
+echo "7/7 Calculando Heterocigosidad por individuo..."
+vcftools --gzvcf $VCF --het --out $PREFIX
+echo "¡Todo listo! Revisa la carpeta 'stats_full'"
+```
 ---
 
 Ahora, tendremos los archivos resultantes que podemos clasificarlos en dos:
 
-- Los análisis "por Sitio" (Site): Son para limpiar el genoma. Buscamos las mejores "posiciones" para estudiar.
+**- Los análisis "por Sitio" (Site):** Son para limpiar el genoma. Buscamos las mejores "posiciones" para estudiar.
 
-- Los análisis "por Individuo" (Indv): Son para limpiar la población. Buscamos si algún pez tiene tan mala calidad que nos va a sesgar los resultados (ej. un pez con mucho missing data hará que perdamos miles de SNPs en el filtrado final).
+**- Los análisis "por Individuo" (Indv):** Son para limpiar la población. Buscamos si algún pez tiene tan mala calidad que nos va a sesgar los resultados (ej. un pez con mucho missing data hará que perdamos miles de SNPs en el filtrado final).
 
-* "vistazo rápido" desde la terminal para tener una idea de lo que te vas a encontrar. Por ejemplo, mira el archivo de datos faltantes por individuo para ver si hay algún pez que destaque negativamente:
+---
+
+*"vistazo rápido"* desde la terminal para tener una idea de lo que te vas a encontrar:
+Por ejemplo, mira el archivo de datos faltantes por individuo para ver si hay algún pez que destaque negativamente:
 
 ```bash
 column -t stats_full/Orestias_full.imiss | head -n 10
@@ -235,6 +241,7 @@ column -t stats_full/Orestias_full.imiss | head -n 10
 ```
 
 ### Resultado:
+
 ```bash
 INDV    N_DATA  N_GENOTYPES_FILTERED  N_MISS  F_MISS
 ASC01   260377  0                     223395  0.857967
@@ -248,15 +255,15 @@ ASC09   260377  0                     222431  0.854265
 ASC10   260377  0                     222931  0.856185
 ```
 
-Tenemos una situación importante aquí: un nivel de datos faltantes extremadamente alto.
+Tenemos una situación importante aquí: un nivel de datos faltantes **extremadamente alto**.
 
-Fíjate en la columna `F_MISS`: tus muestras tienen alrededor de un 85% de datos faltantes (0.85). Esto significa que de cada 100 sitios que el programa intentó llamar, solo encontró información en 15.
+Fíjate en la columna `F_MISS`: las muestras tienen alrededor de un **85% de datos faltantes (0.85)**. Esto significa que de cada 100 sitios que el programa intentó llamar, solo encontró información en 15.
 
-## ¿Por qué está pasando esto?
-Si tus datos provienen de secuenciación de representación reducida, esto es relativamente común en archivos VCF "crudos". La razón es que el comando de `bcftools mpileup` que se ejecutó para hacer el llamado de variantes antes intentó llamar variantes en todos los lugares donde al menos un individuo tenía una lectura. Como RADseq solo secuencia pequeños fragmentos dispersos, la gran mayoría de los individuos no tendrán lecturas en los sitios que sí tiene el individuo de al lado.
+### ¿Por qué está pasando esto?
+Si los datos provienen de secuenciación de representación reducida, esto es relativamente común en archivos VCF "crudos". La razón es que el comando de `bcftools mpileup` que se ejecutó para hacer el llamado de variantes antes intentó llamar variantes en todos los lugares donde al menos un individuo tenía una lectura. Como RADseq solo secuencia pequeños fragmentos dispersos, la gran mayoría de los individuos no tendrán lecturas en los sitios que sí tiene el individuo de al lado.
 
-## ¿Qué significa para nuestro filtrado?
-Olvídate de hacer un filtro del 90% (que se hace rutinariamente): Si aplicas un filtro estricto como `--max-missing 0.9` (que exige que el 90% de los individuos tengan el SNP), te vas a quedar con cero variantes.
+### ¿Qué significa para nuestro filtrado?
+Olvídate de hacer un filtro del 90% (que se usa rutinariamente): Si aplicas un filtro estricto como `--max-missing 0.9` (que exige que el 90% de los individuos tengan el SNP), te vas a quedar con cero variantes.
 
 ### Ajuste de expectativas:
 Para RADseq en especies silvestres, solemos ser más permisivos. Un umbral común es 0.5 (50%) o incluso 0.25 (25%) si el objetivo es tener muchos SNPs para filogenia o estructura.
@@ -266,7 +273,6 @@ Para RADseq en especies silvestres, solemos ser más permisivos. Un umbral comú
 Si tienes un 85% de missing data inicial, filtrar al 90% es un suicidio de datos.
 
 Tienes que encontrar el balance entre "sitios muy confiables pero pocos" vs "muchos sitios con algunos datos faltantes".
-
 
 Para ver si hay algún sitio que realmente valga la pena rescatar, corre este comando en la terminal:
 
@@ -294,17 +300,20 @@ Este es un buen ejemplo de por qué el filtrado por sitio es más importante que
 En este caso, al ser 95 individuos, el `mean_depth` se calcula sumando la profundidad de todos y dividiéndola por 95. Si un sitio tiene un `mean_depth` de 500x, significa que o es una zona de ADN repetitivo (donde se pegan lecturas de muchas partes del genoma) o es un parálogo (un gen duplicado que se mapea erróneamente en el mismo lugar).
 
 ### Ejecuta esto en tu consola de R:
+
 ```bash
 summary(var_depth$mean_depth)
 ```
 
 Fíjate en los cuantiles (5% y 95%)
 Esto te dará los umbrales basados puramente en tus datos, sin adivinar:
+
 ```bash
 quantile(var_depth$mean_depth, probs = c(0.05, 0.95))
 ```
 
 ### El diagnóstico: Una distribución con "inflación de ceros"
+
 - Media vs. Mediana: La media es 4.11, pero la mediana es casi cero (0.03). Esto sucede porque tenemos una cantidad masiva de sitios que solo están presentes en 1 o 2 individuos (profundidades bajísimas), lo que arrastra la mediana al suelo.
 
 - El 75% de los datos (3rd Qu.): Sigue siendo bajísimo (0.06). Esto significa que la gran mayoría de los sitios en el VCF crudo son "sitios huérfanos" que no nos sirven para genética de poblaciones.

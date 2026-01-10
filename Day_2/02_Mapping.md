@@ -82,5 +82,3 @@ bwa-mem2 index Dsuzukii.chrNC_092080.1.fa
 ```
 
 Tras este comando se crean varios archivos adicionales asociados al FASTA original, que BWA-MEM2 utilizará durante el mapeo.
-
-a

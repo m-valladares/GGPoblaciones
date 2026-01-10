@@ -218,12 +218,14 @@ A continuación, activamos el ambiente recién creado:
 conda activate fastp_trim
 ```
 
-Para poder activar ambientes conda en la sesión actual, recargamos la configuración del shell:
+---
+**Solo en caso que solicite iniciar conda**, indicaremos `conda init`. Y luego, para poder activar ambientes conda en la sesión actual, recargamos la configuración del shell:
 
 ```bash
 source ~/.bashrc
 ```
 
+---
 A continuación, activamos el ambiente recién creado:
 
 ```bash

@@ -38,14 +38,6 @@ Cabe mencionar que en el comando anterior hemos indicado nuestras opciones usand
 # srun -p labs -N 1 -c 8 -t 04:00:00 --mem=8G --pty bash
 ```
 
-Al ejecutar `srun` hemos solicitado recursos a través de SLURM al clúster y ahora podremos disponer de esos recursos para ejecutar los análisis. Podemos ver la información de los trabajos que están corriendo (incluyendo el nuestro) mediante el comando `squeue`. 
-
-```bash
-squeue
-```
-
-El comando `squeue` nos permite ver la información y el estado de los trabajos hayan sido enviados a SLURM. Usando este comando podemos ver si el trabajo está corriendo (*running*, **R**), está pendiente a la espera de recursos (*pending*, **PD**), alcanzó su límite de tiempo (*timeout*, **TO**), u otro estado.
-
 **Comentario:** como el NLHPC nos reservó la partición `labs` que está destinada a cursos y actividades docentes, al usar `srun --partition=labs` automáticamente nos asigna a un nodo de cómputo.
 
 
@@ -61,7 +53,7 @@ OUT_QC="${BASE}/QC_pre/fastqc"
 OUT_MQC="${BASE}/QC_pre/multiqc"
 ```
 
-Hemos definido 4 variables: `BASE` es la ruta *base* del Día 2 del curso; `RAW` es la ruta hacia los datos brutos (`*.fq.gz`), nótese que podemos usar la variable `BASE` para no tener que escribir toda la ruta hacia `RAW`; `OUT_QC` es la ruta de salida donde guardaremos los resultados de FastQC; y `OUT_MQC` es donde guardaremos los resultados de MultiQC. Las carpetas `BASE` y `RAW` ya existen, pero tenemos que crear las carpetas de salida para los resultados:
+Hemos definido 4 variables: `BASE` es la ruta *base* del Día 2 del curso; `RAW` es la ruta hacia los datos brutos (`*.fq.gz`), nótese que podemos usar la variable `BASE` para no tener que escribir toda la ruta hacia `RAW`; `OUT_QC` es la ruta de salida donde guardaremos los resultados de FastQC; y `OUT_MQC` es donde guardaremos los resultados de MultiQC. Las carpetas `BASE` y `RAW` ya existen, pero tenemos que crear las carpetas de salida para los resultados si es que no existen:
 
 ```bash
 mkdir -p "${OUT_QC}" "${OUT_MQC}"
@@ -71,10 +63,9 @@ mkdir -p "${OUT_QC}" "${OUT_MQC}"
 
 ### 1.2 FastQC
 
-Antes de comenzar, debemos cargar los módulos que necesitamos para FastQC. En este caso, además de FastQC, necesitamos Perl así que lo cargaremos primero.
+Antes de comenzar, debemos cargar los módulos que necesitamos para FastQC.
 
 ```bash
-module load perl/5.40.0-zen4-p
 module load FastQC/0.11.9-Java-1.8.0_232-b09-OpenJDK
 ```
 
@@ -84,13 +75,38 @@ Luego, debemos cambiarnos de directorio a la carpeta donde están los datos brut
 cd "${RAW}"
 ```
 
-Para correr FastQC usaremos el comando `fastqc` usando las *flags*: (i) que se procesen 8 archivos en paralelo (*threads*, `-t`), y (ii) que los archivos de salida con los resultados se guarden en la carpeta `OUT_QC` (*output directory*, `-o`). Por último, este comando considerando las *flags* indicadas, se correrá sobre todo elemento en la carpeta `RAW` que tenga la extensión `*.fq.gz`.
+Una situación particular de la arquitectura de la partición `labs` es que los nodos no son compatibles con las últimas implementaciones de algunos programas. Esto es lo que ocurre con FastQC, así que tendremos que correr el programa directamente desde Java. Para esto primero definiremos una variable con la ruta al ejecutable de Java de FastQC.
 
 ```bash
+FASTQC_DIR="/home/lmod/software/FastQC/0.11.9-Java-1.8.0_232-b09-OpenJDK"
+
+# Ahora podemos correr directamente FastQC desde Java
+java -Xmx2G \
+  -cp ".:${FASTQC_DIR}:${FASTQC_DIR}/jbzip2-0.9.jar:${FASTQC_DIR}/sam-1.103.jar:${FASTQC_DIR}/cisd-jhdf5.jar" \
+  uk.ac.babraham.FastQC.FastQCApplication \
+  *.fq.gz
+```
+
+Lametablemente este camino no nos permite paralelizar el análisis, por ende tardaría mucho tiempo. Así que por ahora cancelaremos el análisis con `CTRL + C` y borraremos los archivos que se crearon.
+
+```bash
+cd "${RAW}"
+ls
+
+rm -r *.html
+rm -r *.zip
+```
+
+---
+Para correr FastQC en un nodo con una arquitectura más reciente podríamos correr FastQC con el comando `fastqc` usando las *flags*: (i) que se procesen 8 archivos en paralelo (*threads*, `-t`), y (ii) que los archivos de salida con los resultados se guarden en la carpeta `OUT_QC` (*output directory*, `-o`). Por último, este comando considerando las *flags* indicadas, se correrá sobre todo elemento en la carpeta `RAW` que tenga la extensión `*.fq.gz`.
+
+```bash
+# Este comando no funcionará al usar la partición labs
 fastqc -t 8 -o "${OUT_QC}" *.fq.gz
 ```
 
-Una vez que termine, los resultados quedarán en `/home/courses/studentXX/Day02/QC_pre/fastqc`. Para ver los resultados debemos descargar la carpeta `fastqc` desde Visual Studio Code a nuestro computador. Luego, podemos abrir los archivos `html` usando nuestro explorador preferido.
+---
+Previamente corrimos FastQC y los resultados están en `/home/courses/studentXX/Day02/QC_pre/fastqc`. Para ver los resultados debemos descargar la carpeta `fastqc` desde Visual Studio Code a nuestro computador. Luego, podemos abrir los archivos `html` usando nuestro explorador preferido.
 
 FastQC ([Andrews, 2010](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)) es una herramienta de control de calidad que evalúa distintos aspectos de las lecturas de secuenciación (FASTQ) antes de los análisis posteriores. Sus resultados se presentan como una serie de gráficos y estadísticas, cada uno acompañado de un estado (pass, warning o fail).
 
@@ -114,6 +130,10 @@ En conjunto, FastQC permite evaluar rápidamente la calidad global de los datos,
 Nuevamente, debemos cargar los módulos necesarios. En este caso, además de MultiQC, necesitamos dos dependencias que cargaremos primero:
 
 ```bash
+# Es recomendable purgar los módulos de FastQC
+module purge
+
+# Ahora cargamos los módulos para MultiQC
 module load intel-compilers/2022.0.1 impi/2021.5.0
 module load MultiQC/1.14
 ```
@@ -175,6 +195,10 @@ En este curso, conda se utiliza a través de Miniconda, que es una versión mín
 Para evitar conflictos de software y asegurar reproducibilidad, fastp se instalará dentro de un ambiente conda específico. En este caso, utilizaremos Miniconda provista como módulo por el cluster. Primero, cargamos el módulo de Miniconda:
 
 ```bash
+# No olviden purgar los módulos anteriores
+module purge
+
+# Ahora cargamos el módulo que nos interesa
 module load miniconda3/24.7.1-zen4-5
 ```
 
@@ -188,12 +212,20 @@ Aquí:
 - `-n` le indica a conda el nombre del ambiente
 - `fastp_trim` es un nombre descriptivo asociado al trimeo de lecturas
 
-Para poder activar ambientes conda en la sesión actual, recargamos la configuración del shell:
+A continuación, activamos el ambiente recién creado:
+
+```bash
+conda activate fastp_trim
+```
+
+---
+**Solo en caso que solicite iniciar conda**, indicaremos `conda init`. Y luego, para poder activar ambientes conda en la sesión actual, recargamos la configuración del shell:
 
 ```bash
 source ~/.bashrc
 ```
 
+---
 A continuación, activamos el ambiente recién creado:
 
 ```bash

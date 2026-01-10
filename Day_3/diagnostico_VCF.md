@@ -24,6 +24,7 @@ srun -p labs --pty --mem=2G -n 1 -c 1 --time=03:00:00 /bin/bash
 
 # Crear tu carpeta de trabajo
 mkdir -p Day03/Resultados_Estudiante
+mkdir -p Day03/Data
 
 # Crear el enlace simbólico a los archivos
 # Esto crea un atajo llamado 'Data' que apunta a los archivos originales
@@ -31,7 +32,7 @@ ln -s /home/courses/student22/Day03/Data ./Day03/Data/
 
 # Entrar a tu carpeta y copiar los inputs
 cd ~/Day03/Resultados_Estudiante
-cp ../Data/Orestias_final_variants.vcf.gz .
+cp ../Data/Data/Orestias_final_variants.vcf.gz .
 
 ```
 

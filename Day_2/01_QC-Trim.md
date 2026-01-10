@@ -73,7 +73,7 @@ Antes de comenzar, debemos cargar los módulos que necesitamos para FastQC. En e
 
 ```bash
 module load perl/5.40.0-zen4-p
-module load FastQC/0.11.9-Java-11
+module load FastQC/0.11.9-Java-1.8.0_232-b09-OpenJDK
 ```
 
 Luego, debemos cambiarnos de directorio a la carpeta donde están los datos brutos. Para esto podemos usar la variable que creamos en el paso anterior.

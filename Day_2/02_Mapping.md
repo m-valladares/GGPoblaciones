@@ -72,15 +72,6 @@ conda activate droso_map
 
 ### 3.1 Preparación del genoma de referencia
 
-Antes de comenzar, debemos cargar los módulos que necesitamos para BWA-MEM2 y sus dependencias.
-
-```bash
-module purge
-module load intel-compilers/2022.0.1 impi/2021.5.0
-module load bwa-mem2/2.2.1
-module load SAMtools/1.21
-```
-
 Antes de mapear, el genoma de referencia debe ser indexado. El indexado genera estructuras auxiliares que permiten a BWA buscar coincidencias de manera eficiente. Este paso se realiza una sola vez por referencia.
 
 ```bash

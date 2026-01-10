@@ -115,7 +115,7 @@ rm -r nombre_carpeta  # eliminar carpetas con archivos (usar con precaución)
 
 Otros comandos de uso común pueden encontrarse en internet si buscan **referencias de comandos UNIX**, o comúnmente llamadas __UNIX *cheat sheets*__.
 
-A continuación se muestran algunos comandos clásicos para renombrar o copiar elementos. Para usarlos es necesario tener un elemento, objeto o documento de interés. En la carpeta `Day01` incluimos un archivo de prueba llamado `documento.txt` para probar estos comandos.
+A continuación se muestran algunos comandos clásicos para renombrar o copiar elementos. Para usarlos es necesario tener un elemento, objeto o documento de interés. En la carpeta `Day01` ahora cuentan con un archivo de prueba llamado `documento.txt` para probar estos comandos.
 
 ```bash
 head documento.txt      # muestra las primeras 10 líneas del archivo

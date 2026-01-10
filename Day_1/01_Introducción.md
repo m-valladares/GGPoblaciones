@@ -60,13 +60,13 @@ Para acceder al clúster con sus cuentas personales, no olviden revisar el [**Tu
 
 Una vez que se conectan por primera vez al servidor, el contenido de su directorio de usuario (studentXX) se encuentra en blanco. Por lo tanto, lo primero que haremos será crear un directorio de trabajo. Al nombrar directorios o archivos no es recomendable usar caracteres especiales, como tildes o la letra ñ. Una buena práctica es usar nombres simples y, preferentemente, en inglés.
 
-Comenzaremos creando un directorio llamado day01. Para esto usamos el comando mkdir:
+Comenzaremos creando un directorio llamado Day01. Para esto usamos el comando mkdir:
 
 ```bash
-mkdir day01
+mkdir Day01
 ```
 
-Este comando crea el directorio `day01` en la ruta donde nos encontramos actualmente. Para saber en qué ruta del sistema estamos trabajando, usamos el comando:
+Este comando crea el directorio `Day01` en la ruta donde nos encontramos actualmente. Para saber en qué ruta del sistema estamos trabajando, usamos el comando:
 
 ```bash
 pwd
@@ -78,20 +78,20 @@ Para listar el contenido del directorio actual, usamos:
 ls
 ```
 
-Si todo salió bien, deberíamos ver el directorio `day01` listado. Ahora entraremos al directorio que acabamos de crear usando el comando *change directory* (`cd`):
+Si todo salió bien, deberíamos ver el directorio `Day01` listado. Ahora entraremos al directorio que acabamos de crear usando el comando *change directory* (`cd`):
 
 ```bash
-cd day01
+cd Day01
 ```
 
 Volvemos a listar su contenido usando `ls`. Como podemos ver, el directorio está vacío. El siguiente paso es copiar un archivo de ejemplo para comenzar a trabajar durante el taller. En este caso, y también lo haremos en los otros días del curso, copiaremos un archivo que se encuentra en el directorio de otro usuario.
 
 ```bash
 # Muy importante: cambien studentXX por el nombre real de su cuenta.
-cp /home/courses/student21/day01/documento.txt /home/courses/studentXX/day01/
+cp /home/courses/student21/Day01/documento.txt /home/courses/studentXX/Day01/
 ```
 
-Este comando copia el archivo `documento.txt` desde la carpeta `day01` del usuario **student21** hacia la carpeta `day01` de **su propia cuenta**.
+Este comando copia el archivo `documento.txt` desde la carpeta `Day01` del usuario **student21** hacia la carpeta `Day01` de **su propia cuenta**.
 
 Finalmente, verificamos que el archivo fue copiado correctamente usando `ls`. Ahora ya disponen de un directorio de trabajo y de un archivo para continuar con el taller.
 
@@ -115,7 +115,7 @@ rm -r nombre_carpeta  # eliminar carpetas con archivos (usar con precaución)
 
 Otros comandos de uso común pueden encontrarse en internet si buscan **referencias de comandos UNIX**, o comúnmente llamadas __UNIX *cheat sheets*__.
 
-A continuación se muestran algunos comandos clásicos para renombrar o copiar elementos. Para usarlos es necesario tener un elemento, objeto o documento de interés. En la carpeta `day01` incluimos un archivo de prueba llamado `documento.txt` para probar estos comandos.
+A continuación se muestran algunos comandos clásicos para renombrar o copiar elementos. Para usarlos es necesario tener un elemento, objeto o documento de interés. En la carpeta `Day01` incluimos un archivo de prueba llamado `documento.txt` para probar estos comandos.
 
 ```bash
 head documento.txt      # muestra las primeras 10 líneas del archivo
@@ -138,14 +138,14 @@ cp documento.txt copia_de_documento.txt
 
 Antes de continuar usando `cp`, creamos un directorio llamado `prueba` hacia donde copiaremos nuestro `documento.txt`.
 ```bash
-# Primero nos aseguramos de encontrarnos en el directorio day_1
+# Primero nos aseguramos de encontrarnos en el directorio Day_1
 # Reemplacen student21 por su nombre de usuario
-cd /home/courses/student21/day_1
+cd /home/courses/student21/Day_1
 
 # Nos aseguramos de la ruta en la que estamos usando:
 pwd
 
-# Ahora crearemos el directorio dentro de day_1 (será una subcarpeta)
+# Ahora crearemos el directorio dentro de Day_1 (será una subcarpeta)
 mkdir prueba
 
 # Confirmamos que creamos la carpeta usando:
@@ -155,18 +155,18 @@ ls
 - Ahora veremos cómo copiar el documento y pegarlo en otro directorio **manteniendo** el nombre. En este caso lo pegaremos en el directorio que creamos en el paso anterior.
 ```bash
 # Reemplacen student21 por su nombre de usuario
-cp documento.txt /home/courses/student21/day_1/prueba/
+cp documento.txt /home/courses/student21/Day_1/prueba/
 ```
 - En cambio, para copiar el documento y pegarlo en otro directorio **cambiando** el nombre usamos:
 ```bash
 # Reemplacen student21 por su nombre de usuario
-cp documento.txt /home/courses/student21/day_1/prueba/copia_de_documento_otro_directorio.txt
+cp documento.txt /home/courses/student21/Day_1/prueba/copia_de_documento_otro_directorio.txt
 ```
 - Extra: opción recursiva `-r` o `-R`: esta opción es obligatoria si queremos copiar un directorio completo (carpetas y todo su contenido).
 ```bash
 # Por ahora no correremos este comando
 # Reemplacen student21 por su nombre de usuario
-# cp -r /home/courses/student21/day01/ /home/courses/student21/day02/
+# cp -r /home/courses/student21/Day01/ /home/courses/student21/Day02/
 ```
 
 ---
@@ -175,13 +175,13 @@ Para mover y renombrar archivos, usamos el comando `mv`. Este comando también n
 
 - La función principal de `mv` es trasladar un archivo o directorio de una ubicación a otra. El archivo original desaparece de su ubicación anterior y aparece en la nueva.
 ```bash
-mv copia_de_documento.txt /home/courses/student21/day_1/prueba/
+mv copia_de_documento.txt /home/courses/student21/Day_1/prueba/
 ```
 
 También podemos usar `mv` para renombrar archivos o directorios. Si el destino especificado es un nuevo nombre dentro del mismo directorio, el comando funciona como un renombrador. En sistemas Linux/Unix, renombrar un archivo es conceptualmente lo mismo que "moverlo" a un nombre de archivo diferente en la misma ubicación.
 ```bash
 # Haremos estos cambios en los documentos de la carpeta prueba, así que asegurémonos de estar en ese directorio
-cd /home/courses/student21/day_1/prueba
+cd /home/courses/student21/Day_1/prueba
 
 # Veamos los contenidos de la carpeta:
 ls
@@ -208,9 +208,9 @@ En el la línea anterior se muestra el uso de las *flags*, que son distintas opc
 Ahora veamos cómo usar `grep` sin *flags* y luego iremos complejizando el comando. Como ya notaron, el `documento.txt` es el libreto de Pulp Fiction (1994) escrito por Quentin Tarantino y Roger Avary, así que ahora usaremos `grep` para buscar dentro del archivo. Intentaremos encontrar las existencias de la palabra **Ezekiel**, que corresponde al inicio de la frase popularizada por Samuel L. Jackson.
 
 ```bash
-# Primero nos aseguramos de encontrarnos en el directorio day_1
+# Primero nos aseguramos de encontrarnos en el directorio Day_1
 # Reemplacen student21 por su nombre de usuario
-cd /home/courses/student21/day_1
+cd /home/courses/student21/Day_1
 
 # Ahora usemos el comando grep:
 grep Ezekiel documento.txt

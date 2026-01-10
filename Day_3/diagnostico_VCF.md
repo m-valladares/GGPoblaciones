@@ -126,5 +126,24 @@ PREFIX="stats_full/Orestias_full"
 echo "1/7 Calculando Calidad por sitio..."
 vcftools --gzvcf $VCF --site-quality --out $PREFIX
 
-```
+echo "2/7 Calculando Profundidad media por sitio..."
+vcftools --gzvcf $VCF --site-mean-depth --out $PREFIX
 
+echo "3/7 Calculando Datos faltantes por sitio..."
+vcftools --gzvcf $VCF --missing-site --out $PREFIX
+
+echo "4/7 Calculando Frecuencias alélicas..."
+vcftools --gzvcf $VCF --freq2 --out $PREFIX --max-alleles 2
+
+echo "5/7 Calculando Profundidad por individuo..."
+vcftools --gzvcf $VCF --depth --out $PREFIX
+
+echo "6/7 Calculando Datos faltantes por individuo..."
+vcftools --gzvcf $VCF --missing-indv --out $PREFIX
+
+echo "7/7 Calculando Heterocigosidad por individuo..."
+vcftools --gzvcf $VCF --het --out $PREFIX
+
+echo "¡Todo listo! Revisa la carpeta 'stats_full'"
+
+```

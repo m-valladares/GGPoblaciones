@@ -26,13 +26,59 @@ En este taller usaremos el actual genoma de referencia de la especie ([RefSeq de
 ---
 ## 3. BWA-MEM2 (Burrows-Wheeler Aligner)
 
+Para evitar conflictos instalaremos los software para el mapeo dentro de un ambiente conda específico. En este caso, utilizaremos Miniconda provista como módulo por el cluster. Primero, cargamos el módulo de Miniconda:
+
+```bash
+# No olviden purgar los módulos anteriores
+module purge
+
+# Ahora cargamos el módulo que nos interesa
+module load miniconda3/24.7.1-zen4-5
+```
+
+Luego, creamos un nuevo ambiente llamado `droso_map` y, a la vez, instalaremos los softwares:
+
+```bash
+conda create -n droso_map \
+  -c bioconda \
+  -c conda-forge \
+  bwa-mem2 \
+  samtools \
+  picard \
+  mosdepth \
+  bedtools \
+  bcftools
+```
+
+A continuación, activamos el ambiente recién creado:
+
+```bash
+conda activate droso_map
+```
+
+---
+**Solo en caso que solicite iniciar conda**, indicaremos `conda init`. Y luego, para poder activar ambientes conda en la sesión actual, recargamos la configuración del shell:
+
+```bash
+source ~/.bashrc
+```
+
+---
+A continuación, activamos el ambiente recién creado:
+
+```bash
+conda activate droso_map
+```
+
 ### 3.1 Preparación del genoma de referencia
 
 Antes de comenzar, debemos cargar los módulos que necesitamos para BWA-MEM2 y sus dependencias.
 
 ```bash
+module purge
 module load intel-compilers/2022.0.1 impi/2021.5.0
 module load bwa-mem2/2.2.1
+module load SAMtools/1.21
 ```
 
 Antes de mapear, el genoma de referencia debe ser indexado. El indexado genera estructuras auxiliares que permiten a BWA buscar coincidencias de manera eficiente. Este paso se realiza una sola vez por referencia.

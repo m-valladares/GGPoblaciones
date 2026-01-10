@@ -323,7 +323,7 @@ Una de las grandes fortalezas de `awk` es que es rápido, liviano y está dispon
 Usemos `awk` en el archivo `ezekiel.txt` que creamos en el paso anterior. Sabemos que el texto termina con la línea **Samuel L. Jackson**, así que queremos leer esa última línea, separar sus palabras por espacios y volver a *imprimirla* usando guiones como separador. Podemos hacerlo con el siguiente comando:
 
 ```bash
-awk 'END { gsub(/ /,"-"); print }' ~/ezekiel.txt
+awk 'END { gsub(/ /,"-"); print }' ezekiel.txt
 ```
 
 En el comando anterior, la función de cada argumento es:
@@ -340,7 +340,7 @@ En el comando anterior, la función de cada argumento es:
 En caso que queramos aplicar el mismo flujo, pero en la línea 3 del texto usaríamos:
 
 ```bash
-awk 'NR==4 { gsub(/ /,"-"); print }' ~/ezekiel.txt
+awk 'NR==4 { gsub(/ /,"-"); print }' ezekiel.txt
 ```
 
 Resumen conceptual:

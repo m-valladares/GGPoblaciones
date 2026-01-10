@@ -401,7 +401,7 @@ Como ya terminamos de correr nuestro trabajo, lo correcto es terminar el *job* i
 scancel XXXXX
 ```
 
-Por último, antes de salir de nuestra sesión, es recomendable cerrar los módulos que cargamos. Esto también es recomendable si realizaré otros análisis que usarán módulos que podrían entrar en conflicto entre ellos. Para cerrar todos los módulos activados se utiliza:
+Por último, antes de salir de nuestra sesión, es recomendable cerrar los módulos que cargamos. Esto también es recomendable si se realizarán otros análisis que con módulos que podrían entrar en conflicto. Para cerrar todos los módulos activados se utiliza:
 
 ```bash
 module purge

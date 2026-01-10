@@ -195,6 +195,10 @@ En este curso, conda se utiliza a través de Miniconda, que es una versión mín
 Para evitar conflictos de software y asegurar reproducibilidad, fastp se instalará dentro de un ambiente conda específico. En este caso, utilizaremos Miniconda provista como módulo por el cluster. Primero, cargamos el módulo de Miniconda:
 
 ```bash
+# No olviden purgar los módulos anteriores
+module purge
+
+# Ahora cargamos el módulo que nos interesa
 module load miniconda3/24.7.1-zen4-5
 ```
 

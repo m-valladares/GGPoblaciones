@@ -73,8 +73,11 @@ cd /mnt/c/Users/pamel/Dropbox/CursoEnero2026/DataOrestias/CursoEnero2026_Orestia
 ```
 
 Ahora transfieran los archivos generados en el servidor a la carpeta que acaban de crear.  Los archivos necesarios son:
+
 **- Heterocigosidad:** `orestias_total.het`
+
 **- Diversidad Nucleotídica ($\pi$):**`pi_Ascotan.sites.pi`, `pi_Carcote.sites.pi`, `pi_Chungara.sites.pi`, y `pi_Lauca.sites.pi`
+
 **- Metadatos:** El archivo `metadatos_orestias.csv`
 
 Ahora, en RStudio, pueden correr el script `Diversidad_Genetica_Orestias.R`.

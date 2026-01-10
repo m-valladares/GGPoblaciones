@@ -125,7 +125,7 @@ multiqc -o "${OUT_MQC}" "${OUT_QC}"
 
 Recuerden que para ver los resultados debemos descargar la carpeta `multiqc` desde Visual Studio Code a nuestro computador. Luego, podemos abrir los archivos `html` usando nuestro explorador preferido.
 
-MultiQC es una herramienta que integra y resume los resultados de control de calidad generados por múltiples programas (como FastQC y fastp) y por múltiples muestras, en un único reporte HTML. Su objetivo principal es facilitar la comparación entre muestras y obtener una visión global del dataset.
+MultiQC ([Ewels et al., 2016](https://doi.org/10.1093/bioinformatics/btw354)) es una herramienta que integra y resume los resultados de control de calidad generados por múltiples programas (como FastQC y fastp) y por múltiples muestras, en un único reporte HTML. Su objetivo principal es facilitar la comparación entre muestras y obtener una visión global del dataset.
 
 En el contexto del curso, MultiQC se utiliza principalmente para agrupar y sintetizar los resultados de FastQC, evitando revisar archivos individuales uno por uno.
 

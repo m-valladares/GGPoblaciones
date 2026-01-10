@@ -365,25 +365,36 @@ La segunda opción es ejecutar el script de R mediante SLURM, que es lo recomend
 Como ya vimos la solicitud de recursos a SLURM lo podemos hacer mediante un script de shell (`sbatch`) o, como lo haremos ahora, de forma "interactiva". Para esto, tenemos usar el comando `srun` y distintas opciones o argumentos (comúnmente llamados *flags*) con detalles de lo que solicitaremos.
 
 ```bash
-srun --nodes=1 --cpus-per-task=2 --time=01:00:00 --mem=2G --pty bash
+srun --partition=labs --nodes=1 --cpus-per-task=2 --time=01:00:00 --mem=2G --pty bash
 ```
 
-En la línea anterior, `srun` es el comando SLURM para ejecutar tareas en un trabajo (*job*) asignado (*allocated*). Además, mediante `--nodes` indicamos en cuántos nodos correremos nuestro trabajo; `--cpus-per-task` indica el número de CPUs requeridas para cada tarea; `--time` es el límite de tiempo para el trabajo (*walltime*); `--mem` es la memoria real solicitada por nodo; `--pty` corre la tarea cero en pseudo-terminal, es decir, asigna una pseudo-terminal al trabajo con la que podremos interactuar. Por último, el comando `bash` (o `/bin/bash`) le indica a SLURM qué programa correr usando los recursos asignados, en este caso le indicamos a SLURM ejecutar el programa Bash (*Bourne Again SHell*). En nuestro ejemplo, hemos solicitado 1 nodo, 2 CPUs por tarea y 2 GB de memoria. Una vez asignados estos recursos, dispondremos de ellos por 1 hora.
+En la línea anterior, `srun` es el comando SLURM para ejecutar tareas en un trabajo (*job*) asignado (*allocated*). Además, mediante `--partition=labs` definimos que usaremos la partición `labs` que nos fue asignada por el NLHPC; de la misma forma, usando `--nodes` indicamos en cuántos nodos correremos nuestro trabajo; `--cpus-per-task` indica el número de CPUs requeridas para cada tarea; `--time` es el límite de tiempo para el trabajo (*walltime*); `--mem` es la memoria real solicitada por nodo; `--pty` corre la tarea cero en pseudo-terminal, es decir, asigna una pseudo-terminal al trabajo con la que podremos interactuar. Por último, el comando `bash` (o `/bin/bash`) le indica a SLURM qué programa correr usando los recursos asignados, en este caso le indicamos a SLURM ejecutar el programa Bash (*Bourne Again SHell*). En nuestro ejemplo, hemos solicitado 1 nodo, 2 CPUs por tarea y 2 GB de memoria. Una vez asignados estos recursos, dispondremos de ellos por 1 hora.
 
 Una vez que corramos el comando `srun`, en la terminal aparecerá algo similar a lo siguiente:
 
 ```bash
+[student21@leftraru2]~% srun --partition=labs --nodes=1 --cpus-per-task=2 --time=01:00:00 --mem=2G --pty bash
+[student21@cn005 ~]$
+```
+
+La primera línea es el comando `srun`, que se realizó desde la cuenta `student21` en el nodo `leftraru2`, este nodo es uno de los nodos login del clúster (donde **no** se deben ejecutar análisis).  La segunda línea indica que el usuario `student21` ahora se encuentra en el nodo `cn005`, que es uno de los nodos de cómputo que dispone el NLHPC en la partición `labs`.
+
+---
+**Comentario:** como el NLHPC nos reservó la partición `labs` que está destinada a cursos y actividades docentes, al usar `srun --partition=labs` automáticamente nos asigna a un nodo de cómputo. Si hubiesemos enviado el job sin indicar la partición `labs` nuestro trabajo hubiese sido enviado a la cola general del clúster. En ese caso en la pantalla aparecería:
+
+```bash
+# Esto es solo demostrativo
 [student21@leftraru2]~% srun --nodes=1 --cpus-per-task=2 --time=01:00:00 --mem=2G --pty bash
 srun: job XXXXX queued and waiting for resources
 srun: job XXXXX has been allocated resources
-[student21@mn015 ~]$
+[student21@mnt015 ~]$
 ```
 
-La primera línea es el comando `srun`, que se realizó desde la cuenta `student21` en el nodo `leftraru2`, este nodo es uno de los nodos login del clúster (donde **no** se deben ejecutar análisis). La segunda línea indica que SLURM asignó nuestra solicitud a un **trabajo** con un código numérico (`job XXXXX` o **JOBID**) y está en espera de recursos. Si el sistema está descongestionado, rápidamente aparecerá la línea 3, donde se indica que a nuestro *job* ya le fueron asignados los recursos solicitados. La cuarta línea indica que el usuario `student21` ahora se encuentra en el nodo `mn015`, que es uno de los nodos de cómputo que dispone el HPC. 
-
+La segunda línea indica que SLURM asignó nuestra solicitud a un **trabajo** con un código numérico (`job XXXXX` o **JOBID**) y está en espera de recursos. Si el sistema está descongestionado, rápidamente aparecerá la línea 3, donde se indica que a nuestro *job* ya le fueron asignados los recursos solicitados.
 Siempre es importante que registren el **JOBID** de su trabajo. En un clúster con múltiple usuarios como el NLHPC, es muy fácil olvidarse del ID ya que constantemente se están enviando trabajos. Pero si queremos supervisar el avance de nuestro análisis o cancelarlo porque cometimos un error, necesitaremos el JOBID.
 
-Al ejecutar `srun` hemos solicitado recursos a través de SLURM al clúster y ahora podremos disponer de esos recursos para ejecutar los análisis. Podemos ver la información de los trabajos que están corriendo (incluyendo el nuestro) mediante el comando `squeue`.
+---
+Al ejecutar `srun` hemos solicitado recursos a través de SLURM al clúster y ahora podremos disponer de esos recursos para ejecutar los análisis. Podemos ver la información de los trabajos que están corriendo (incluyendo el nuestro) mediante el comando `squeue`. Como estamos usando la partición `labs`, no veremos nuestro trabajo.
 
 ```bash
 squeue
@@ -400,6 +411,8 @@ Como ya terminamos de correr nuestro trabajo, lo correcto es terminar el *job* i
 ```bash
 scancel XXXXX
 ```
+
+**En nuestro caso, como estamos usando la partición `labs` que nos asignó el NLHPC, no disponemos de un JOBID. Así que para salir del nodo de cómputo, basta con escribir `exit`.**
 
 Por último, antes de salir de nuestra sesión, es recomendable cerrar los módulos que cargamos. Esto también es recomendable si se realizarán otros análisis que con módulos que podrían entrar en conflicto. Para cerrar todos los módulos activados se utiliza:
 

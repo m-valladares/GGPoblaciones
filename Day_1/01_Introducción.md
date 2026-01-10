@@ -214,7 +214,7 @@ ls
 
 ---
 
-### 3.2 Comandos `grep`, `echo`, `awk` y `nano`
+### 3.3 Comandos `grep`, `echo`, `awk` y `nano`
 
 Ahora veremos unos comandos más avanzados para trabajar con variables y realizar búsquedas en archivos. El comando `grep` es fundamental en sistemas Unix/Linux que significa *Global Regular Expression Print* (Impresión Global de Expresiones Regulares). Su función principal es buscar líneas de texto que coincidan con un patrón específico dentro de uno o varios archivos. Es muy útil para encontrar información específica rápidamente dentro de archivos de registro largos, código fuente o cualquier tipo de texto plano. La sintaxis básica del comando es:
 

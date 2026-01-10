@@ -69,7 +69,7 @@ mkdir -p "${OUT_QC}" "${OUT_MQC}"
 
 ---
 
-### 1.2. FastQC
+### 1.2 FastQC
 
 Antes de comenzar, debemos cargar los módulos que necesitamos para FastQC. En este caso, además de FastQC, necesitamos Perl así que lo cargaremos primero.
 
@@ -109,7 +109,7 @@ En conjunto, FastQC permite evaluar rápidamente la calidad global de los datos,
 
 ---
 
-### 1.3. MultiQC
+### 1.3 MultiQC
 
 Nuevamente, debemos cargar los módulos necesarios. En este caso, además de MultiQC, necesitamos dos dependencias que cargaremos primero:
 
@@ -160,7 +160,7 @@ Si estas regiones no se eliminan, pueden provocar:
 Por estas razones, el trimming es un paso estándar en la mayoría de los pipelines genómicos. Existen varios programas para realizar trimming de lecturas, entre ellos Trimmomatic, Cutadapt, Trim Galore y fastp, cada uno con enfoques y características particulares. En este curso utilizaremos **fastp** ([Chen et al., 2018](https://doi.org/10.1093/bioinformatics/bty560)), una herramienta moderna y eficiente que integra en un solo paso el trimming por calidad, la detección y eliminación de adaptadores, y la generación de reportes de control de calidad, lo que la hace especialmente adecuada para flujos de trabajo en HPC y para fines docentes.
 
 ---
-### 2.1. Creación de ambientes
+### 2.1 Creación de ambientes
 
 Antes de comenzar, debemos asegurarnos que contamos con el software fastp. En primer lugar podemos ver si existe un módulo que lo contenga usando:
 
@@ -219,7 +219,7 @@ fastp -h
 ```
 
 ---
-### 2.2. Trimming con fastp
+### 2.2 Trimming con fastp
 
 Ahora podemos correr fastp, pero primero definimos los directorios donde se guardarán los resultados del trimming y los reportes generados por fastp. Estos directorios se crearán solo si no existen.
 
@@ -288,7 +288,7 @@ El reporte está organizado en secciones que describen distintos aspectos de la 
 En conjunto, estas secciones permiten evaluar de manera detallada y comparativa el impacto del trimming sobre la calidad de los datos, facilitando la validación de los parámetros utilizados y asegurando que las lecturas estén listas para las etapas posteriores del análisis genómico.
 
 ---
-### 2.3. Loop usando fastp
+### 2.3 Loop usando fastp
 
 En la sección anterios corrimos fastp sobre una muestra. En un caso real, lo más práctico sería correr el análisis para todas las muestras que tenga en el directorio. Esto se puede hacer mediante un **loop**
 

@@ -90,7 +90,7 @@ fastqc -t 8 -o "${OUT_QC}" *.fq.gz
 
 Una vez que termine, los resultados quedarán en `/home/courses/studentXX/Day02/QC_pre/fastqc`. Para ver los resultados debemos descargar la carpeta `fastqc` desde Visual Studio Code a nuestro computador. Luego, podemos abrir los archivos `html` usando nuestro explorador preferido.
 
-FastQC es una herramienta de control de calidad que evalúa distintos aspectos de las lecturas de secuenciación (FASTQ) antes de los análisis posteriores. Sus resultados se presentan como una serie de gráficos y estadísticas, cada uno acompañado de un estado (pass, warning o fail).
+FastQC ([Andrews, 2010](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)) es una herramienta de control de calidad que evalúa distintos aspectos de las lecturas de secuenciación (FASTQ) antes de los análisis posteriores. Sus resultados se presentan como una serie de gráficos y estadísticas, cada uno acompañado de un estado (pass, warning o fail).
 
 Los principales módulos que entrega FastQC son:
 - **Basic Statistics:** resumen general del archivo, incluyendo número de lecturas, longitud de las secuencias y contenido global de GC. Sirve como chequeo inicial para verificar que los datos coincidan con lo esperado.
@@ -138,3 +138,29 @@ Los principales elementos que entrega MultiQC son:
 - **Contenido de adaptadores y secuencias sobre-representadas:** permite evaluar si el trimming fue necesario o efectivo, y si aún persisten señales de adaptadores o contaminantes.
 
 En conjunto, MultiQC transforma múltiples reportes individuales en una visión integrada del control de calidad, facilitando la toma de decisiones sobre limpieza de datos y asegurando consistencia antes de avanzar a etapas como mapeo o llamado de variantes.
+
+
+---
+
+## 2. Trimming
+
+El trimming (o trimeo) es el proceso mediante el cual se recortan o eliminan partes no deseadas de las lecturas de secuenciación antes de realizar análisis posteriores, como el mapeo o el llamado de variantes. Su objetivo principal es mejorar la calidad de los datos, reduciendo el impacto de errores técnicos propios del proceso de secuenciación.
+
+Durante la secuenciación, es común que:
+	•	la calidad de las bases disminuya hacia los extremos de las lecturas
+	•	queden restos de adaptadores o primers
+	•	existan bases de muy baja calidad que introducen ruido en los análisis
+
+Si estas regiones no se eliminan, pueden provocar:
+	•	mapeos incorrectos o ambiguos
+	•	disminución de la eficiencia de alineamiento
+	•	falsos positivos en análisis posteriores
+
+Por estas razones, el trimming es un paso estándar en la mayoría de los pipelines genómicos.
+
+Existen varios programas para realizar trimming de lecturas, entre ellos Trimmomatic, Cutadapt, Trim Galore y fastp, cada uno con enfoques y características particulares. En este curso utilizaremos fastp, una herramienta moderna y eficiente que integra en un solo paso el trimming por calidad, la detección y eliminación de adaptadores, y la generación de reportes de control de calidad, lo que la hace especialmente adecuada para flujos de trabajo en HPC y para fines docentes.
+
+
+### 1.1 Solicitar recursos usando `srun`
+
+En primer lugar, para poder correr un análisis en el servidor (o nodo), tenemos que solicitar recursos (CPUs y RAM) al clúster usando **SLURM** (Simple Linux Utility for Resource Management). SLURM es un software que funciona como un gestor de cargas de trabajo (*workload manager*) y planificador de trabajos (*__job__ scheduler*).

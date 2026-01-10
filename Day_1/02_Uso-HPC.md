@@ -300,12 +300,12 @@ Durante el curso, R se utilizará para:
 
 Por esta razón, es importante aprender a ejecutar R directamente en el cluster, y no solo en un computador personal.
 
-⸻
-
+---
 ### 7.1 ¿Cómo se puede usar R en un HPC?
 
 Existen varias formas de usar R en un cluster, y todas se usarán en distintos momentos del curso. La elección depende del tipo de tarea (exploración rápida vs. análisis pesado).
 
+---
 #### 7.1.1 R interactivo en la terminal
 Esta opción es útil para:
 - Pruebas rápidas
@@ -347,10 +347,7 @@ dev.off()
 
 Este script realiza un cálculo simple,luego genera una figura y finalmente guarda el resultado en un archivo PDF. Para ejecutar este script, hay varias opciones, primero lo haremos de ejecución directa (esto es **solo para pruebas rápidas**):
 
-```bash
-module load R/4.3.1
-Rscript test_script.R
-```
+
 
 ---
 #### 7.1.2 R mediante SLURM

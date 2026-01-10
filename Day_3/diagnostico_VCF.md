@@ -190,34 +190,36 @@ vcftools --gzvcf $VCF --het --out $PREFIX
 echo "¡Todo listo! Revisa la carpeta 'stats_full'"
 ```
 
-## 1. CALIDAD POR SITIO (.lqual)
+### 1. CALIDAD POR SITIO (.lqual)
 Calcula el puntaje Phred de calidad para cada variante.
 Útil para identificar qué tan confiable es el llamado de cada SNP.
 
-## 2. PROFUNDIDAD MEDIA POR SITIO (.ldepth.mean)
+### 2. PROFUNDIDAD MEDIA POR SITIO (.ldepth.mean)
 Calcula cuántas lecturas (reads) hay en promedio para cada posición genómica sumando todos los individuos.
 Ayuda a identificar regiones mal mapeadas (exceso de profundidad) o con poca confianza (baja profundidad).
 
-## 3. DATOS FALTANTES POR SITIO (.lmiss)
+### 3. DATOS FALTANTES POR SITIO (.lmiss)
 Reporta qué proporción de individuos NO tiene un genotipo para cada variante.
 Sirve para eliminar SNPs que solo están presentes en unos pocos individuos.
 
-## 4. FRECUENCIA ALÉLICA (.frq)
+### 4. FRECUENCIA ALÉLICA (.frq)
 Calcula la frecuencia de los alelos en cada sitio.
 El flag `--max-alleles 2` asegura que solo analicemos sitios bialélicos (más simples para análisis de poblaciones).
 Sirve para filtrar por Minor Allele Frequency (MAF).
 
-## 5. PROFUNDIDAD POR INDIVIDUO (.idepth)
+### 5. PROFUNDIDAD POR INDIVIDUO (.idepth)
 Calcula la profundidad media de lecturas para cada pez individualmente.
 Permite identificar si alguna muestra falló en la secuenciación o tiene mucho menos datos que el resto.
 
-## 6. DATOS FALTANTES POR INDIVIDUO (.imiss)
+### 6. DATOS FALTANTES POR INDIVIDUO (.imiss)
 Reporta cuántos sitios le faltan a cada individuo.
 Es crucial para decidir si debemos descartar un individuo completo antes de filtrar SNPs.
 
-## 7. HETEROCIGOSIDAD POR INDIVIDUO (.het)
+### 7. HETEROCIGOSIDAD POR INDIVIDUO (.het)
 Calcula el coeficiente de consanguinidad (F) y la heterocigosidad observada/esperada.
 Ayuda a detectar contaminación de muestras (exceso de heterocigotos) o individuos muy endogámicos.
+
+---
 
 Ahora, tendremos los archivos resultantes que podemos clasificarlos en dos:
 

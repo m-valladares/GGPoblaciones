@@ -251,7 +251,7 @@ grep -n -A 4 Ezekiel documento.txt
 grep -m 1 -A 4 Ezekiel documento.txt 
 ```
 
-Otra utilidad muy importante de `grep` es que nos permite guardar el resultados de una búsqueda en una **variable** para luego usarla en otro comando (o en otra función), o también guardar el resultado en un archivo. Las variables son un concepto fundamental en programación y en los sistemas operativos. Se pueden visualizar como "cajas" o "contenedores" con nombre, diseñados para almacenar temporalmente un dato o un valor. Ahora veremos como guardar la frase de Samuel L. Jackson (y las siguientes 9 líneas) en una variable que llamaremos `ezekiel`.
+Otra utilidad muy importante de `grep` es que nos permite guardar el resultados de una búsqueda en una **variable** para luego usarla en otro comando (o en otra función), o también guardar el resultado en un archivo (esto lo haremos en el siguiente paso). Las variables son un concepto fundamental en programación y en los sistemas operativos. Se pueden visualizar como "cajas" o "contenedores" con nombre, diseñados para almacenar temporalmente un dato o un valor. Ahora veremos como guardar la frase de Samuel L. Jackson (y las siguientes 9 líneas) en una variable que llamaremos `ezekiel`.
 
 ```bash
 ezekiel=$(grep -m 1 -A 9 Ezekiel documento.txt)
@@ -285,7 +285,15 @@ echo $ezekiel > ezekiel.txt
 cat ezekiel.txt
 ```
 
-También podemos añadir texto al final de un archivo (*append*) usando el operador de redirección doble (>>). Esto añadirá la línea al final de un archivo existente sin borrar el contenido anterior.
+Sin embargo, en algunos casos, al usar `echo` para crear un archivo se puede perder la estructura del archivo. Esto ocurre porque Bash reemplaza los saltos de línea (`\n`) por espacios. Afortunadamente, podemos usar `grep` directamente para guardar el fragmento que nos interesa:
+
+```bash
+grep -m 1 -A 9 Ezekiel documento.txt > ezekiel.txt
+```
+
+Ahora podemos ver el nuevo archivo usando `cat`.
+
+Otra funcionalidad de `echo`, es que nos permite añadir texto al final de un archivo (*append*) usando el operador de redirección doble (>>). Esto añadirá la línea al final de un archivo existente sin borrar el contenido anterior.
 ```bash
 echo Samuel L. Jackson >> ezekiel.txt
 

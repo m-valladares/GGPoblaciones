@@ -90,7 +90,7 @@ RAiSD -n RUN_SANTIAGO -I santiago.vcf -f
 
 ```bash
 
-cp ../Data/RAiSD_Report.RUN_SANTIAGO .
+#cp ../Data/RAiSD_Report.RUN_SANTIAGO .
 
 ```
 

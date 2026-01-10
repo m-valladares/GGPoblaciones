@@ -216,9 +216,13 @@ fastp -v
 fastp -h
 ```
 
+---
+### 2.2. Trimming con fastp
+
 Ahora podemos correr fastp, pero primero definimos los directorios donde se guardarán los resultados del trimming y los reportes generados por fastp. Estos directorios se crearán solo si no existen.
 
 ```bash
+# No olviden cambiar studentXX por el nombre real de su cuenta.
 CLEAN="/home/courses/student21/Day02/CLEAN"
 REP="/home/courses/student21/Day02/fastp_reports"
 
@@ -280,3 +284,34 @@ El reporte está organizado en secciones que describen distintos aspectos de la 
 - **KMER counting:** esta sección presenta la frecuencia de pequeños motivos de secuencia (k-mers) en las lecturas, nuevamente separadas por read y por estado antes y después del trimming. La sobre-representación de ciertos k-mers puede indicar adaptadores residuales, contaminación o artefactos técnicos. Comparar estas secciones antes y después del trimming permite verificar si estos patrones fueron efectivamente eliminados o reducidos.
 
 En conjunto, estas secciones permiten evaluar de manera detallada y comparativa el impacto del trimming sobre la calidad de los datos, facilitando la validación de los parámetros utilizados y asegurando que las lecturas estén listas para las etapas posteriores del análisis genómico.
+
+---
+### 2.3. Loop usando fastp
+
+En la sección anterios corrimos fastp sobre una muestra. En un caso real, lo más práctico sería correr el análisis para todas las muestras que tenga en el directorio. Esto se puede hacer mediante un **loop**
+
+```bash
+# Loop sobre R1
+for R1 in "${RAW}"/*_1.fq.gz; do
+    # Inferir R2
+    R2="${R1/_1.fq.gz/_2.fq.gz}"
+
+    # Nombre base (sin _1.fq.gz)
+    base=$(basename "${R1}" _1.fq.gz)
+
+    echo "Procesando: ${base}"
+
+    fastp \
+        --in1 "${R1}" --in2 "${R2}" \
+        --out1 "${CLEAN}/${base}_1.clean.fq.gz" \
+        --out2 "${CLEAN}/${base}_2.clean.fq.gz" \
+        --detect_adapter_for_pe \
+        --trim_poly_g \
+        --cut_front --cut_tail --cut_mean_quality 20 \
+        --length_required 50 \
+        --thread 8 \
+        --html "${REP}/${base}.fastp.html" \
+        --json "${REP}/${base}.fastp.json"
+
+done
+```

@@ -45,6 +45,11 @@ Antes de cualquier análisis, es importante saber con cuántos sitios variantes 
 Para ello se puede utilizar una de las herramientas de BCFtools
 
 ```bash
+# Cargar las dependencias y luego BCFtools
+module load icc/2019.2.187-GCC-8.2.0-2.31.1
+module load impi/2019.2.187
+module load BCFtools/1.10.2
+
 bcftools view -H Orestias_final_variants.vcf.gz | wc -l
 ```
 

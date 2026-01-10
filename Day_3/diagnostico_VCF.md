@@ -49,16 +49,6 @@ conda install -c conda-forge -c bioconda vcftools
 
 ```
 
-4. Verificación del análisis
-Ahora que estamos dentro del ambiente filt_vcf, los comandos de conteo deberían funcionar perfectamente, incluso con archivos comprimidos.
-
-```Bash
-
-# Contar el número de SNPs crudos (sin encabezado)
-bcftools view -H Orestias_final_variants.vcf.gz | wc -l
-
-```
-
 ## Inicio de Sesión
 
 Antes de cargar cualquier herramienta, debemos pedir recursos al clúster para no trabajar en el nodo de acceso.
@@ -87,6 +77,17 @@ ln -s /home/courses/student22/Day03/Data ./Day03/Data/
 # Entrar a tu carpeta y copiar los inputs
 cd ~/Day03/Resultados_Estudiante
 cp ../Data/Data/Orestias_final_variants.vcf.gz .
+
+```
+
+---
+4. Verificación del análisis
+Ahora que estamos dentro del ambiente filt_vcf, los comandos de conteo deberían funcionar perfectamente, incluso con archivos comprimidos.
+
+```Bash
+
+# Contar el número de SNPs crudos (sin encabezado)
+bcftools view -H Orestias_final_variants.vcf.gz | wc -l
 
 ```
 

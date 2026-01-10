@@ -162,7 +162,26 @@ cp documento.txt /home/courses/student21/Day01/prueba/
 # Reemplacen student21 por su nombre de usuario
 cp documento.txt /home/courses/student21/Day01/prueba/copia_de_documento_otro_directorio.txt
 ```
-- Extra: opción recursiva `-r` o `-R`: esta opción es obligatoria si queremos copiar un directorio completo (carpetas y todo su contenido).
+
+Si prestaron atención, se habrán dado cuenta que estos últimos pasos los hicimos estando en el directorio `Day01`, pero enviando los archivos al directorio `prueba`. Para confirmarlo veamos en qué directorio estamos y luego (si es necesario) ingresemos al directorio `prueba`:
+
+```bash
+pwd
+# Si están en Day01, ahora ingresemos a prueba:
+cd prueba
+```
+
+Podemos ver los archivos que copiamos usando `ls`. Ahora volvamos al directorio `Day01`, recuerden primero revisar en qué directorio están usando `pwd` y luego cambien de directorio usando `cd`. En este caso como queremos *volver* un directorio, podemos usar `cd ..`:
+
+```bash
+pwd
+# Si estamos en el directorio prueba, podemos volver a Day01 usando:
+cd ..
+```
+
+El comando `cd ..` se utiliza en la línea de comandos para moverse un **nivel hacia arriba** en la estructura de directorios. En sistemas tipo Linux, los directorios están organizados de forma jerárquica (como un árbol), y `..` representa siempre el directorio superior del directorio actual. Por ejemplo, si estamos ubicados en `/home/courses/student21/Day01/prueba`, al ejecutar `cd ..` pasaremos a `/home/courses/student21/Day01`. Este comando es fundamental para navegar por el sistema de archivos de manera rápida y eficiente sin necesidad de escribir rutas largas.
+
+- Extra al usar el comando copiar: opción recursiva `-r` o `-R`: esta opción es obligatoria si queremos copiar un directorio completo (carpetas, subcarpetas y todo su contenido).
 ```bash
 # Por ahora no correremos este comando
 # Reemplacen student21 por su nombre de usuario

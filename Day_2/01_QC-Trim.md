@@ -246,6 +246,8 @@ fastp \
     --json "${REP}/DSTEMU01.fastp.json"
 ```
 
+A continuación se explica qué hace cada parte del comando.
+
 | Categoría | Argumento | Qué hace |
 |---------|-----------|----------|
 | Entradas | `--in1`, `--in2` | Define los archivos de entrada correspondientes a las lecturas pareadas (R1 y R2). |
@@ -260,3 +262,21 @@ fastp \
 | Reportes | `--html` | Genera un reporte HTML interactivo con estadísticas antes y después del trimming. |
 | Reportes | `--json` | Genera un archivo JSON con estadísticas, útil para integración con MultiQC. |
 
+
+Una vez finalizado el proceso, los archivos trimeados quedarán listos para los siguientes pasos del pipeline. Los reportes HTML de fastp permiten además evaluar rápidamente el efecto del trimming sobre la calidad de las lecturas. El reporte HTML de fastp entrega un resumen visual y estadístico del proceso de trimming, permitiendo evaluar cómo eran los datos antes del filtrado y cómo quedaron después.
+
+El reporte está organizado en secciones que describen distintos aspectos de la calidad de los datos. Después del **Summary**, el reporte HTML de fastp presenta una serie de secciones que describen distintos aspectos de la calidad de los datos y del efecto del trimming.
+
+- **Adapters:** en esta sección se reporta la detección de adaptadores. Fastp evalúa de forma separada read1 y read2, mostrando cuántas lecturas contienen secuencias compatibles con adaptadores. Esta información permite confirmar si la presencia de adaptadores era relevante en los datos originales y si su eliminación fue necesaria.
+
+- **Insert size estimation:** esta sección corresponde a una estimación del tamaño del inserto basada en el análisis de solapamiento entre lecturas paired-end. Fastp identifica pares de lecturas que se sobreponen y, a partir de ello, infiere la distancia entre ambos extremos del fragmento original. El reporte indica el porcentaje de lecturas que no pudieron ser solapadas, lo que puede deberse a insertos muy cortos, muy largos o a un alto nivel de errores de secuenciación. Este resultado permite evaluar si el tamaño de inserto concuerda con lo esperado para la librería.
+
+- **Filtering statistics:** en esta sección se muestran gráficos de calidad por posición antes y después del trimming, tanto para read1 como para read2. En estos gráficos, el eje X representa la posición dentro de la lectura y el eje Y representa la calidad promedio de las bases. La comparación entre el estado previo y posterior al filtrado permite visualizar directamente la mejora en la calidad, especialmente en los extremos de las lecturas.
+
+- **Quality score histogram:** estos histogramas muestran la distribución global de la calidad de las bases antes y después del trimming. El eje X corresponde al puntaje de calidad (Phred) y el eje Y al número de bases con ese puntaje. Esta sección permite evaluar si el filtrado produjo un desplazamiento de la distribución hacia valores de mayor calidad.
+
+- **Base counts:** en estos gráficos se muestra la composición de bases a lo largo de la lectura, separados por read1 y read2, y comparando el estado antes y después del trimming. El eje X representa la posición en la lectura y el eje Y muestra la proporción relativa de cada nucleótido (A, T, C y G). Esta sección permite detectar sesgos en la composición de bases y evaluar si el trimming contribuyó a reducirlos.
+
+- **KMER counting:** esta sección presenta la frecuencia de pequeños motivos de secuencia (k-mers) en las lecturas, nuevamente separadas por read y por estado antes y después del trimming. La sobre-representación de ciertos k-mers puede indicar adaptadores residuales, contaminación o artefactos técnicos. Comparar estas secciones antes y después del trimming permite verificar si estos patrones fueron efectivamente eliminados o reducidos.
+
+En conjunto, estas secciones permiten evaluar de manera detallada y comparativa el impacto del trimming sobre la calidad de los datos, facilitando la validación de los parámetros utilizados y asegurando que las lecturas estén listas para las etapas posteriores del análisis genómico.

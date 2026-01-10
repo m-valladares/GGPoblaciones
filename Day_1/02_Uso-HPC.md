@@ -392,7 +392,6 @@ squeue
 Ahora nuevamente podemos correr nuestro script de R (no es necesario cargar el módulo de nuevo), pero esta vez se realizará en uno de los nodos de cómputo:
 
 ```bash
-module load R/4.3.1
 Rscript test_script.R
 ```
 

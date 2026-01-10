@@ -14,7 +14,7 @@ cp -r /home/courses/student21/Day02 /home/courses/studentXX
 
 ## 1. FastQC y MultiQC
 
-### 1.1 Solicitar recursos usando `srun`
+#### 1.1.1 Solicitar recursos usando `srun`
 
 En primer lugar, para poder correr un análisis en el servidor (o nodo), tenemos que solicitar recursos (CPUs y RAM) al clúster usando **SLURM** (Simple Linux Utility for Resource Management). SLURM es un software que funciona como un gestor de cargas de trabajo (*workload manager*) y planificador de trabajos (*__job__ scheduler*).
 
@@ -47,7 +47,7 @@ squeue
 El comando `squeue` nos permite ver la información y el estado de los trabajos hayan sido enviados a SLURM. Usando este comando podemos ver si el trabajo está corriendo (*running*, **R**), está pendiente a la espera de recursos (*pending*, **PD**), alcanzó su límite de tiempo (*timeout*, **TO**), u otro estado.
 
 
-### 1.2 Rutas y carpetas
+#### 1.1.2 Rutas y carpetas
 
 Para simplificar y ayudarnos a no cometer errores en las rutas de las carpetas o archivos, las asignaremos a variables de entorno. Esto lo haremos definiendo una variable (e.g. `BASE`) a la cual se asignaremos un "valor" específico, en este caso el valor será la ruta `"/mnt/beegfs/home/mvalladares/Curso"`. Luego, podremos usar esa variable durante la sesión interactiva `srun` sin la necesidad de indicar la ruta cada vez. Esta asignación de variables de entorno se puede hacer con rutas (como nuestro caso), elementos, objetos, etc.
 
@@ -67,7 +67,7 @@ mkdir -p "${OUT_QC}" "${OUT_MQC}"
 
 ---
 
-## 2. FastQC
+### 1.2. FastQC
 
 Antes de comenzar, debemos cargar los módulos que necesitamos para FastQC. En este caso, además de FastQC, necesitamos Perl así que lo cargaremos primero.
 
@@ -107,7 +107,7 @@ En conjunto, FastQC permite evaluar rápidamente la calidad global de los datos,
 
 ---
 
-## 3. MultiQC
+### 1.3. MultiQC
 
 Nuevamente, debemos cargar los módulos necesarios. En este caso, además de MultiQC, necesitamos dos dependencias que cargaremos primero:
 
@@ -141,26 +141,122 @@ En conjunto, MultiQC transforma múltiples reportes individuales en una visión 
 
 
 ---
-
-## 2. Trimming
+## 2. fastp
 
 El trimming (o trimeo) es el proceso mediante el cual se recortan o eliminan partes no deseadas de las lecturas de secuenciación antes de realizar análisis posteriores, como el mapeo o el llamado de variantes. Su objetivo principal es mejorar la calidad de los datos, reduciendo el impacto de errores técnicos propios del proceso de secuenciación.
 
 Durante la secuenciación, es común que:
-	•	la calidad de las bases disminuya hacia los extremos de las lecturas
-	•	queden restos de adaptadores o primers
-	•	existan bases de muy baja calidad que introducen ruido en los análisis
+- la calidad de las bases disminuya hacia los extremos de las lecturas
+- queden restos de adaptadores o primers
+- existan bases de muy baja calidad que introducen ruido en los análisis
 
 Si estas regiones no se eliminan, pueden provocar:
-	•	mapeos incorrectos o ambiguos
-	•	disminución de la eficiencia de alineamiento
-	•	falsos positivos en análisis posteriores
+- mapeos incorrectos o ambiguos
+- disminución de la eficiencia de alineamiento
+- falsos positivos en análisis posteriores
 
-Por estas razones, el trimming es un paso estándar en la mayoría de los pipelines genómicos.
+Por estas razones, el trimming es un paso estándar en la mayoría de los pipelines genómicos. Existen varios programas para realizar trimming de lecturas, entre ellos Trimmomatic, Cutadapt, Trim Galore y fastp, cada uno con enfoques y características particulares. En este curso utilizaremos **fastp** ([Chen et al., 2018](https://doi.org/10.1093/bioinformatics/bty560)), una herramienta moderna y eficiente que integra en un solo paso el trimming por calidad, la detección y eliminación de adaptadores, y la generación de reportes de control de calidad, lo que la hace especialmente adecuada para flujos de trabajo en HPC y para fines docentes.
 
-Existen varios programas para realizar trimming de lecturas, entre ellos Trimmomatic, Cutadapt, Trim Galore y fastp, cada uno con enfoques y características particulares. En este curso utilizaremos fastp, una herramienta moderna y eficiente que integra en un solo paso el trimming por calidad, la detección y eliminación de adaptadores, y la generación de reportes de control de calidad, lo que la hace especialmente adecuada para flujos de trabajo en HPC y para fines docentes.
+---
+### 2.1. Creación de ambientes
 
+Antes de comenzar, debemos asegurarnos que contamos con el software fastp. En primer lugar podemos ver si existe un módulo que lo contenga usando:
 
-### 1.1 Solicitar recursos usando `srun`
+```bash
+module spider fastp
+```
 
-En primer lugar, para poder correr un análisis en el servidor (o nodo), tenemos que solicitar recursos (CPUs y RAM) al clúster usando **SLURM** (Simple Linux Utility for Resource Management). SLURM es un software que funciona como un gestor de cargas de trabajo (*workload manager*) y planificador de trabajos (*__job__ scheduler*).
+Dado que no existe el módulo, lo instalaremos en un ambiente (*environment*) usando **conda**. En el trabajo con HPC y análisis genómicos es fundamental manejar ambientes de software. Un ambiente es un espacio aislado donde se instalan programas y sus dependencias (librerías, versiones de Python, etc.) sin interferir con otros programas ni con el sistema base del clúster. Esto permite que distintos análisis utilicen herramientas y versiones diferentes de manera segura y reproducible. Para crear y gestionar estos ambientes utilizamos conda, que es un gestor de paquetes y de ambientes. Conda permite crear ambientes independientes, instalar software dentro de ellos y activarlos solo cuando se necesitan. De esta forma, cada etapa del pipeline (por ejemplo, control de calidad, trimeo o mapeo) puede usar su propio ambiente sin generar conflictos.
+
+En este curso, conda se utiliza a través de Miniconda, que es una versión mínima de la plataforma Anaconda. Miniconda incluye únicamente lo esencial (conda y Python), lo que la hace más liviana y adecuada para entornos compartidos como un clúster. A partir de Miniconda, los ambientes se crean indicando un nombre y luego se activan cuando se quiere trabajar dentro de ellos. En la práctica, el flujo de trabajo consiste en: cargar Miniconda (mediante un módulo del clúster), crear un ambiente para una tarea específica, activar ese ambiente, instalar los programas necesarios y ejecutar el análisis. Al terminar, el ambiente puede desactivarse, dejando el sistema limpio para la siguiente etapa. El uso de ambientes es una buena práctica en genómica y en HPC, ya que facilita la reproducibilidad, reduce errores por incompatibilidades de software y permite que distintos usuarios trabajen de forma independiente dentro de un mismo clúster.
+
+Para evitar conflictos de software y asegurar reproducibilidad, fastp se instalará dentro de un ambiente conda específico. En este caso, utilizaremos Miniconda provista como módulo por el cluster. Primero, cargamos el módulo de Miniconda:
+
+```bash
+module load miniconda3/24.7.1-zen4-5
+```
+
+Luego, creamos un nuevo ambiente llamado `fastp_trim`:
+
+```bash
+conda create -n fastp_trim
+```
+
+Aquí:
+- `-n` le indica a conda el nombre del ambiente
+- `fastp_trim` es un nombre descriptivo asociado al trimeo de lecturas
+
+Para poder activar ambientes conda en la sesión actual, recargamos la configuración del shell:
+
+```bash
+source ~/.bashrc
+```
+
+A continuación, activamos el ambiente recién creado:
+
+```bash
+conda activate fastp_trim
+```
+
+Una vez dentro del ambiente, instalamos fastp desde los canales adecuados:
+
+```bash
+conda install -c conda-forge -c bioconda fastp
+```
+
+En este comando:
+- `-c conda-forge` indica el primer repositorio
+- `-c bioconda` indica el segundo repositorio
+- el orden de los canales es importante para evitar conflictos
+
+Podemos verificar que fastp quedó correctamente instalado revisando su versión y su ayuda:
+
+```bash
+fastp -v
+fastp -h
+```
+
+Ahora podemos correr fastp, pero primero definimos los directorios donde se guardarán los resultados del trimming y los reportes generados por fastp. Estos directorios se crearán solo si no existen.
+
+```bash
+CLEAN="/home/courses/student21/Day02/CLEAN"
+REP="/home/courses/student21/Day02/fastp_reports"
+
+mkdir -p "${CLEAN}" "${REP}"
+```
+
+Luego, nos movemos al directorio donde se encuentran los datos brutos de secuenciación.
+```bash
+cd "${RAW}"
+```
+
+El comando para ejecutar fastp en **una** muestra (DSTEMU01) es:
+
+```bash
+fastp \
+    --in1 "${RAW}/DSTEMU01_1.fq.gz" --in2 "${RAW}/DSTEMU01_2.fq.gz" \
+    --out1 "${CLEAN}/DSTEMU01_1.clean.fq.gz" \
+    --out2 "${CLEAN}/DSTEMU01_2.clean.fq.gz" \
+    --detect_adapter_for_pe \
+    --trim_poly_g \
+    --cut_front --cut_tail --cut_mean_quality 20 \
+    --length_required 50 \
+    --thread 8 \
+    --html "${REP}/DSTEMU01.fastp.html" \
+    --json "${REP}/DSTEMU01.fastp.json"
+```
+
+| Categoría | Argumento | Qué hace |
+|---------|-----------|----------|
+| Entradas | `--in1`, `--in2` | Define los archivos de entrada correspondientes a las lecturas pareadas (R1 y R2). |
+| Salidas | `--out1`, `--out2` | Define los archivos de salida para las lecturas trimeadas, manteniendo el nombre de la muestra y añadiendo el sufijo `.clean`. |
+| Adaptadores | `--detect_adapter_for_pe` | Detecta y elimina adaptadores automáticamente en datos paired-end. |
+| Sesgo Illumina | `--trim_poly_g` | Elimina colas de bases G consecutivas, comunes en secuenciación Illumina de dos colores. |
+| Calidad | `--cut_front` | Recorta bases de baja calidad desde el inicio de la lectura. |
+| Calidad | `--cut_tail` | Recorta bases de baja calidad desde el final de la lectura. |
+| Calidad | `--cut_mean_quality 20` | Define un umbral de calidad promedio (Phred 20) para el trimming. |
+| Longitud | `--length_required 50` | Descarta lecturas que quedan con menos de 50 bases tras el trimming. |
+| Rendimiento | `--thread 8` | Indica el número de hilos de CPU usados por fastp. |
+| Reportes | `--html` | Genera un reporte HTML interactivo con estadísticas antes y después del trimming. |
+| Reportes | `--json` | Genera un archivo JSON con estadísticas, útil para integración con MultiQC. |
+

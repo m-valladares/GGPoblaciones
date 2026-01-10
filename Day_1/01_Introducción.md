@@ -45,18 +45,55 @@ El NLHPC nos ha facilitado cuentas para todas/os los estudiantes del curso, a co
 
 | Nombre Estudiante | Usuario asignado |
 |:---------------:|:---------------:|
-| Moisés V.  | student01  |
-| Pamela M.  | student02  |
-| Paulo Z.   | student03  |
-| ...  | student04  |
-| ...  | student05  |
-| ...  | student06  |
+| Moisés V.  | student21  |
+| Pamela M.  | student22  |
+| Paulo Z.   | student23  |
+| ...  | studentXX  |
+| ...  | studentXX  |
+| ...  | studentXX  |
 
 Para acceder al clúster con sus cuentas personales, no olviden revisar el [**Tutorial de acceso a Leftraru**](#leftraru) indicado más arriba.
 
 ---
 
 ## 3. Primeros pasos en la línea de comandos
+
+Una vez que se conectan por primera vez al servidor, el contenido de su directorio de usuario (studentXX) se encuentra en blanco. Por lo tanto, lo primero que haremos será crear un directorio de trabajo. Al nombrar directorios o archivos no es recomendable usar caracteres especiales, como tildes o la letra ñ. Una buena práctica es usar nombres simples y, preferentemente, en inglés.
+
+Comenzaremos creando un directorio llamado day01. Para esto usamos el comando mkdir:
+
+```bash
+mkdir day01
+```
+
+Este comando crea el directorio `day01` en la ruta donde nos encontramos actualmente. Para saber en qué ruta del sistema estamos trabajando, usamos el comando:
+
+```bash
+pwd
+```
+
+Para listar el contenido del directorio actual, usamos:
+
+```bash
+ls
+```
+
+Si todo salió bien, deberíamos ver el directorio `day01` listado. Ahora entraremos al directorio que acabamos de crear usando el comando *change directory* (`cd`):
+
+```bash
+cd day01
+```
+
+Volvemos a listar su contenido usando `ls`. Como podemos ver, el directorio está vacío. El siguiente paso es copiar un archivo de ejemplo para comenzar a trabajar durante el taller. En este caso, y también lo haremos en los otros días del curso, copiaremos un archivo que se encuentra en el directorio de otro usuario.
+
+```bash
+# Muy importante: cambien studentXX por el nombre real de su cuenta.
+cp /home/courses/student21/day01/documento.txt /home/courses/studentXX/day01/
+```
+
+Este comando copia el archivo `documento.txt` desde la carpeta `day01` del usuario **student21** hacia la carpeta `day01` de **su propia cuenta**.
+
+Finalmente, verificamos que el archivo fue copiado correctamente usando `ls`. Ahora ya disponen de un directorio de trabajo y de un archivo para continuar con el taller.
 
 ### 3.1 Navegación y manejo de archivos
 

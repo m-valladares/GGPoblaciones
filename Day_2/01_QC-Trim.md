@@ -69,13 +69,12 @@ mkdir -p "${OUT_QC}" "${OUT_MQC}"
 
 ## 2. FastQC
 
-Antes de comenzar, debemos cargar los módulos que necesitamos para FastQC. En este caso, además de FastQC, necesitamos Perl así que lo cargaremos primero:
+Antes de comenzar, debemos cargar los módulos que necesitamos para FastQC. En este caso, además de FastQC, necesitamos Perl así que lo cargaremos primero.
 
 ```bash
 module load perl/5.40.0-zen4-p
 module load FastQC/0.11.9-Java-11
 ```
-
 
 Luego, debemos cambiarnos de directorio a la carpeta donde están los datos brutos. Para esto podemos usar la variable que creamos en el paso anterior.
 
@@ -89,7 +88,7 @@ Para correr FastQC usaremos el comando `fastqc` usando las *flags*: (i) que se p
 fastqc -t 8 -o "${OUT_QC}" *.fq.gz
 ```
 
-Una vez que termine podemos ver los resultados en `/home/courses/studentXX/Day02/QC_pre/fastqc`.
+Una vez que termine, los resultados quedarán en `/home/courses/studentXX/Day02/QC_pre/fastqc`. Para ver los resultados debemos descargar la carpeta `fastqc` desde Visual Studio Code a nuestro computador. Luego, podemos abrir los archivos `html` usando nuestro explorador preferido.
 
 FastQC es una herramienta de control de calidad que evalúa distintos aspectos de las lecturas de secuenciación (FASTQ) antes de los análisis posteriores. Sus resultados se presentan como una serie de gráficos y estadísticas, cada uno acompañado de un estado (pass, warning o fail).
 
@@ -110,6 +109,13 @@ En conjunto, FastQC permite evaluar rápidamente la calidad global de los datos,
 
 ## 3. MultiQC
 
+Nuevamente, debemos cargar los módulos necesarios. En este caso, además de MultiQC, necesitamos dos dependencias que cargaremos primero:
+
+```bash
+module load intel-compilers/2022.0.1 impi/2021.5.0
+module load MultiQC/1.14
+```
+
 Antes de correr MultiQC, volveremos a la carpeta base, así podremos indicar correctamente las rutas de entrada y salida. Luego, para correr MultiQC usaremos el comando `multiqc` usando una *flag* que indica que el reporte de salida con los resultados se guarde en la carpeta `OUT_MQC` (*output directory*, `-o`). Este comando, se correrá usando todos los reportes de FastQC que se encuentran en la carpeta `OUT_QC`.
 
 ```bash
@@ -117,4 +123,18 @@ cd "${BASE}"
 multiqc -o "${OUT_MQC}" "${OUT_QC}"
 ```
 
-Para ver los resultados de ambos análisis debemos descargar las carpetas `fastqc` y `multiqc` desde Visual Studio Code a nuestro computador. Luego, podemos abrir los archivos `html` usando nuestro explorador preferido.
+Recuerden que para ver los resultados debemos descargar la carpeta `multiqc` desde Visual Studio Code a nuestro computador. Luego, podemos abrir los archivos `html` usando nuestro explorador preferido.
+
+MultiQC es una herramienta que integra y resume los resultados de control de calidad generados por múltiples programas (como FastQC y fastp) y por múltiples muestras, en un único reporte HTML. Su objetivo principal es facilitar la comparación entre muestras y obtener una visión global del dataset.
+
+En el contexto del curso, MultiQC se utiliza principalmente para agrupar y sintetizar los resultados de FastQC, evitando revisar archivos individuales uno por uno.
+
+Los principales elementos que entrega MultiQC son:
+- **General Statistics:** una tabla resumen donde cada fila corresponde a una muestra y cada columna a una métrica clave (por ejemplo, número de lecturas, calidad media, porcentaje de GC, niveles de duplicación). Esta tabla permite comparar rápidamente la calidad entre muestras e identificar outliers.
+- **Resumen de estados (pass/warning/fail):** MultiQC consolida los estados de FastQC para cada módulo, lo que ayuda a detectar patrones sistemáticos de advertencias o fallas en varias muestras.
+- **Gráficos agregados de calidad:** combina los gráficos de FastQC (por ejemplo, calidad por base o contenido GC) mostrando distribuciones globales o superpuestas, lo que permite evaluar la consistencia de la calidad a lo largo de todo el conjunto de datos.
+- **Distribución de longitudes de lectura:** muestra de forma comparativa si todas las muestras tienen longitudes similares o si algunas fueron más afectadas por trimming o filtrado.
+- **Duplicación y complejidad:** resume los niveles de duplicación entre muestras, útil para detectar librerías con baja complejidad o problemas de amplificación.
+- **Contenido de adaptadores y secuencias sobre-representadas:** permite evaluar si el trimming fue necesario o efectivo, y si aún persisten señales de adaptadores o contaminantes.
+
+En conjunto, MultiQC transforma múltiples reportes individuales en una visión integrada del control de calidad, facilitando la toma de decisiones sobre limpieza de datos y asegurando consistencia antes de avanzar a etapas como mapeo o llamado de variantes.

@@ -301,30 +301,37 @@ Durante el curso, R se utilizará para:
 Por esta razón, es importante aprender a ejecutar R directamente en el cluster, y no solo en un computador personal.
 
 ---
-### 7.1 ¿Cómo se puede usar R en un HPC?
-
-Existen varias formas de usar R en un cluster, y todas se usarán en distintos momentos del curso. La elección depende del tipo de tarea (exploración rápida vs. análisis pesado).
-
----
-#### 7.1.1 R interactivo en la terminal
+### 7.1 R interactivo en la terminal
 Esta opción es útil para:
 - Pruebas rápidas
 - Explorar datos pequeños
 - Verificar que R funciona correctamente
 
-En el NLHPC existen módulos
+En un clúster como el NLHPC, el software se gestiona mediante distintos mecanismos para permitir que muchas personas usen el sistema de forma ordenada y reproducible. Una de estas formas son los **módulos**, que corresponden a configuraciones predefinidas del sistema que activan programas específicos (por ejemplo R, Python o compiladores), junto con todas las librerías y variables de entorno necesarias para que funcionen correctamente. Los módulos permiten que distintas versiones de un mismo programa coexistan sin conflictos y suelen ser instalados y mantenidos por los administradores del clúster. Por esta razón, los módulos están disponibles para toda la comunidad de usuarios y normalmente corresponden a software de uso amplio y transversal, como R.
+
+Es importante indicar que los módulos no son la única forma de disponer de software en un clúster. También es posible instalar programas a nivel de usuario, por ejemplo **compilando binarios** propios en el directorio personal, o creando entornos aislados mediante herramientas como **conda, mamba o micromamba**, que veremos más adelante en el curso. En la práctica, el trabajo en HPC combina estas estrategias: los módulos proporcionan un entorno estable y común para software estándar, mientras que las instalaciones a nivel de usuario permiten mayor flexibilidad para necesidades específicas
+
+En el NLHPC podemos ver los módulos de R disponibles mediante:
 
 ```bash
-module load R/4.3.1
+module spider R
+```
+
+Como vemos, hay varias versiones de R disponibles, carguemos el módulo con la versión más reciente:
+
+```bash
+module load R/4.4.0
 R
 ```
-Esto abre una sesión interactiva de R en la terminal. Para salir de R:
+
+Esto abre una sesión interactiva de R en la terminal. Para salir de R tenemos que indicar:
 
 ```bash
 q()
+# También indicar que no queremos guardar el workspace.
 ```
 
-Ahora veamos cómo corer un script de R en el clúster. Primero creemos un script usando `nano`:
+Ahora veamos cómo correr un script de R en el clúster. Primero creemos un script usando `nano`:
 
 ```bash
 nano test_script.R
@@ -345,12 +352,13 @@ plot(x, y, type = "b", col = "blue", pch = 19,
 dev.off()
 ```
 
-Este script realiza un cálculo simple,luego genera una figura y finalmente guarda el resultado en un archivo PDF. Para ejecutar este script, hay varias opciones, primero lo haremos de ejecución directa (esto es **solo para pruebas rápidas**):
-
-
+Este script realiza un cálculo simple,luego genera una figura y finalmente guarda el resultado en un archivo PDF. Para ejecutar este script, hay varias opciones, primero lo haremos de ejecución directa (esto es **solo para pruebas rápidas**). Como ya tenemos el módulo de R cargado, basta con escribir
+```bash
+Rscript test_script.R
+```
 
 ---
-#### 7.1.2 R mediante SLURM
+### 7.2 R mediante SLURM
 
 La segunda opción es ejecutar el script de R mediante SLURM, que es lo recomendado y que haremos durante el curso para análisis reales. Cuando un análisis tarda varios minutos u horas o usa mucha memoria, debe ejecutarse en nodos de cómputo y se debe lanzar mediante SLURM.
 
@@ -388,16 +396,7 @@ Rscript test_script.R
 
 
 ---
-
-## 8. Ejercicios prácticos sugeridos
-1. Crear una carpeta de proyecto con subdirectorios: `RAW`, `CLEAN`, `MAP`, `SCRIPTS`, `LOGS`.
-2. Crear un script bash que copie archivos de un directorio a otro.
-3. Enviar un trabajo de prueba con SLURM y verificar la salida.
-4. Ejecutar un script de R en el clúster.
-
----
-
-## 9. Recursos adicionales
+## 8. Recursos adicionales
 - Wiki NLHPC: [https://wiki.nlhpc.cl/P%C3%A1gina_principal](https://wiki.nlhpc.cl/P%C3%A1gina_principal)
 - Tutorial de acceso SSH: [https://wiki.nlhpc.cl/Tutorial_de_acceso_a_Leftraru_via_SSH](https://wiki.nlhpc.cl/Tutorial_de_acceso_a_Leftraru_via_SSH)
 - Guía rápida de SLURM: [https://slurm.schedmd.com/quickstart.html](https://slurm.schedmd.com/quickstart.html)

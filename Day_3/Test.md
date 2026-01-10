@@ -1,56 +1,60 @@
-# Filtrado y Diagnóstico de un archivo VCF (RADseq)
+# Diagnóstico del VCF posterior al llamado de variantes (RADseq)
 
-Este documento describe paso a paso el **diagnóstico, filtrado y preparación** de un archivo `.vcf.gz` para análisis de **genética de poblaciones**, usando datos RADseq de *Orestias*.
-
-El objetivo no es solo ejecutar comandos, sino **entender qué información tiene el VCF**, **por qué se pierde (o no) información en cada filtro**, y **cómo tomar decisiones informadas** según el tipo de datos.
+Este documento corresponde al **diagnóstico inicial del archivo VCF** generado después del llamado de variantes.  
+El objetivo es **entender la calidad y estructura de los datos antes de aplicar cualquier filtrado**, algo fundamental en genética de poblaciones, especialmente con datos de representación reducida (ddRADseq / GBS).
 
 ---
 
-## Conteo inicial de SNPs crudos
+## Paso siguiente: el filtrado de calidad
 
-Antes de cualquier filtrado, es importante saber con cuántos SNPs estamos partiendo.
+Para genética de poblaciones **no puedes usar el VCF tal cual sale del llamado de variantes**.  
+Es necesario **“limpiarlo”**.
+
+Existen dos tipos de filtrado conceptualmente distintos:
+
+### 1. Filtrado de calidad (VCF → Clean VCF)
+Su objetivo es eliminar el **ruido técnico** (errores de secuenciación, mapeo deficiente, sitios poco confiables).
+
+Aquí decides:
+- qué posiciones del genoma son confiables
+- qué SNPs representan variación biológica real
+
+### 2. Filtrado por ligamiento (LD pruning; Clean VCF → Pruned VCF)
+Su objetivo **NO es eliminar errores**, sino cumplir los **supuestos estadísticos** de ciertos modelos (PCA, Admixture).
+
+Aquí eliminas **redundancia**, no mala calidad.
+
+---
+
+### ¿Por qué separarlos?
+
+- **Para FST y diversidad genética (π, Ho, He, FIS):**  
+  Debes usar el archivo **SIN LD pruning**.  
+  Quieres **todos los SNPs posibles** para maximizar la resolución de la historia evolutiva.
+
+- **Para PCA y Admixture:**  
+  Debes usar el archivo **CON LD pruning**.  
+  Si no lo haces, los SNPs ligados (bloques heredados juntos) “pesan” más en el análisis y pueden crear **estructura artificial**, haciendo parecer que hay diferenciación poblacional cuando solo hay cercanía física en el cromosoma.
+
+---
+
+## Conteo de SNPs crudos
+
+Antes de cualquier análisis, es importante saber con cuántos sitios variantes estamos trabajando.
+
+Para ello se puede utilizar una de las herramientas de BCFtools
 
 ```bash
 bcftools view -H Orestias_final_variants.vcf.gz | wc -l
+```
 
-Este número corresponde al total de sitios variantes detectados en el llamado inicial, incluyendo muchos sitios de baja calidad o presentes en muy pocos individuos.
+Este número incluye:
 
-Objetivos de los análisis posteriores
-1. Diversidad genética
+- SNPs de buena calidad
 
-Se calculará:
+- SNPs de baja calidad
 
-Heterocigosidad observada y esperada (Ho, He)
+- SNPs presentes en muy pocos individuos
 
-Diversidad nucleotídica (π)
-
-Coeficiente de consanguinidad (FIS)
-
-Importante:
-Para estos análisis NO se debe aplicar LD pruning, ya que eliminar SNPs ligados puede sesgar la diversidad real.
-
-2. Estructura poblacional
-
-PCA
-
-Admixture
-
-Estos análisis son los “gráficos estrella” en genética de poblaciones.
-
-Importante:
-Aquí SÍ es obligatorio aplicar LD pruning, porque estos métodos asumen que los marcadores son independientes.
-
-3. Diferenciación genética
-
-FST
-
-Matrices de distancia
-
-Manhattan plots para detectar regiones altamente diferenciadas
-
-Diagnóstico inicial del VCF con VCFtools
-
-Antes de filtrar, debemos mirar los datos.
-
-Cargar módulos necesarios
+---
 

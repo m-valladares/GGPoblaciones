@@ -81,17 +81,6 @@ cp ../Data/Data/Orestias_final_variants.vcf.gz .
 ```
 
 ---
-4. Verificación del análisis
-Ahora que estamos dentro del ambiente filt_vcf, los comandos de conteo deberían funcionar perfectamente, incluso con archivos comprimidos.
-
-```Bash
-
-# Contar el número de SNPs crudos (sin encabezado)
-bcftools view -H Orestias_final_variants.vcf.gz | wc -l
-
-```
-
----
 
 ## Paso siguiente: el filtrado de calidad
 

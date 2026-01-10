@@ -6,7 +6,7 @@ El objetivo de esta sesión es familiarizar a las y los participantes con el ent
 
 ## 4. Scripts y automatización
 
-Ahora que ya aprendimos a correr comandos básicos como `squeue`, `grep` o `nano`, podemos unirlos secuencialmente o que interactúen entre sí mediante un **script**. Un script es un archivo de texto que contiene una secuencia de comandos o instrucciones diseñadas para ser ejecutadas por otro programa (usualmente un intérprete, en nuestro caso **Bash**). Podemos pensar en un script como una receta o una lista de tareas que el computador seguirá paso a paso, de principio a fin, sin intervención nuestra una vez que se inicia (i.e. no es interactivo).
+Ahora que ya aprendimos a correr comandos como `squeue`, `grep` o `nano`, podemos unirlos secuencialmente o que interactúen entre sí mediante un **script**. Un script es un archivo de texto que contiene una secuencia de comandos o instrucciones diseñadas para ser ejecutadas por otro programa (usualmente un intérprete, en nuestro caso **Bash**). Podemos pensar en un script como una receta o una lista de tareas que el computador seguirá paso a paso, de principio a fin, sin intervención nuestra una vez que se inicia (i.e. no es interactivo).
 
 ¿Qué nos permiten los scripts?
 - Automatización: su propósito principal es automatizar tareas repetitivas. En lugar de escribir 20 comandos manualmente en la terminal, los podemos incluir todos en un script y ejecutar el script una sola vez.
@@ -23,11 +23,11 @@ Características clave de un script Bash:
 
 ### 4.1 Estructura básica de un script Bash
 
-Como se mencionó en la sección anterior, los scripts son archivos de texto, por lo que debemos crearlo usando `nano` y guardarlo en algún directorio de nuestra cuenta. Primero revisemos si estamos en el directorio correcto y ejecutemos el editor `nano`.
+Como se mencionó, los scripts son archivos de texto, por lo que debemos crearlo usando `nano` y guardarlo en algún directorio de nuestra cuenta. Primero revisemos si estamos en el directorio correcto y ejecutemos el editor `nano`.
 ```bash
-# Primero nos aseguramos de encontrarnos en el directorio day_1
+# Primero nos aseguramos de encontrarnos en el directorio Day01
 # Reemplacen student21 por su nombre de usuario
-cd /home/courses/student21/day_1
+cd /home/courses/student21/Day01
 
 # Ahora ejecutamos nano y crearemos el script que llamaremos test.sh
 nano test.sh
@@ -50,6 +50,7 @@ bash test.sh
 
 **Permisos de ejecución:** si el script no corre, usualmente se debe a que necesita permiso de ejecución. Esto usualmente sucede cuando se intenta correr un script desde otra carpeta usando la ruta completa (no es nuestro caso). Entonces, antes de intentar correr un script, nos debemos asegurar de que tu usuario tiene permiso para ejecutarlo. Si no lo tiene, se usa el comando `chmod`:
 ```bash
+# Solo si no corrió usen:
 chmod +x test.sh
 ```
 
@@ -207,12 +208,13 @@ En un clúster HPC no es posible “abrir un programa y ejecutarlo directamente�
 
 ### 6.1 Ejemplo de script SLURM
 
-Un script de SLURM es simplemente un archivo de texto con una lista de instrucciones que le indican al clúster qué ejecutar y con qué recursos hacerlo. Por convención, se guarda con extensión `.sbatch` y se envía ("lanzar el trabajo") con el comando:
+Un script de SLURM es simplemente un archivo de texto con una lista de instrucciones que le indican al clúster qué ejecutar y con qué recursos hacerlo. Por convención, se guarda con extensión `.sbatch`. Creemos un script `sbatch` usando `nano`:
+
 ```bash
-sbatch nombre_del_script.sbatch
+nano script_SLURM.sbatch
 ```
 
-A continuación, se muestra un ejemplo simple y comentado:
+En `nano` copien y peguen el siguiente texto:
 
 ```bash
 #!/usr/bin/env bash
@@ -261,11 +263,10 @@ El detalle de los comandos del script es el siguiente:
 | `echo`, `sleep`, `for`      | Comandos bash que se ejecutan dentro del nodo asignado.                                       |
 
 
-
-
-
-
-
+El script se envía a SLURM ("lanzar el trabajo") con el comando:
+```bash
+sbatch script_SLURM.sbatch
+```
 
 ### 6.2 Comandos básicos
 ```bash
@@ -284,55 +285,144 @@ sacct           # ver historial de jobs
 
 ---
 
-## 7. R y RStudio en el HPC
+## 7. Uso de R y RStudio en el HPC
 
-### 7.1 Por qué usamos R
-- Lenguaje principal para análisis estadístico, genómico y visualización.
-- Durante el curso se usará para PCA, FST, SFS y análisis poblacionales.
+En este curso, R será una de las herramientas principales de análisis, y lo usaremos directamente en el cluster (HPC). A diferencia del uso local, en HPC R se ejecuta en nodos de cómputo, lo que permite analizar datasets más grandes de forma reproducible y eficiente.
 
-### 7.2 Opciones de uso en el HPC
-1. **R en terminal:**
-   ```bash
-   module load R/4.3.1
-   R
-   ```
-2. **Ejecución de scripts:**
-   ```bash
-   Rscript analisis.R
-   ```
-3. **Ejemplo SLURM + R:**
-   ```bash
-   #!/usr/bin/env bash
-   #SBATCH -J r_test
-   #SBATCH -c 4
-   #SBATCH --mem=8G
-   #SBATCH -t 00:10:00
-   module load R/4.3.1
-   Rscript test_script.R
-   ```
-4. **RStudio Server o VSC:** si está disponible, permite editar y correr código R gráficamente.
+R es uno de los lenguajes más utilizados en genética y genómica de poblaciones, porque combina análisis estadístico, manejo de datos y visualización en un mismo entorno. 
 
-### 7.3 Ejemplo simple de script R
-```r
+Durante el curso, R se utilizará para:
+- Análisis de estructura genética (PCA)
+- Estimación de diferenciación poblacional (FST)
+- Espectros de frecuencias alélicas (SFS)
+- Análisis poblacionales y visualización de resultados
+- Procesamiento de salidas generadas por herramientas del HPC (ANGSD, PCAngsd, NGSadmix, etc.)
+
+Por esta razón, es importante aprender a ejecutar R directamente en el cluster, y no solo en un computador personal.
+
+---
+### 7.1 R interactivo en la terminal
+Esta opción es útil para:
+- Pruebas rápidas
+- Explorar datos pequeños
+- Verificar que R funciona correctamente
+
+En un clúster como el NLHPC, el software se gestiona mediante distintos mecanismos para permitir que muchas personas usen el sistema de forma ordenada y reproducible. Una de estas formas son los **módulos**, que corresponden a configuraciones predefinidas del sistema que activan programas específicos (por ejemplo R, Python o compiladores), junto con todas las librerías y variables de entorno necesarias para que funcionen correctamente. Los módulos permiten que distintas versiones de un mismo programa coexistan sin conflictos y suelen ser instalados y mantenidos por los administradores del clúster. Por esta razón, los módulos están disponibles para toda la comunidad de usuarios y normalmente corresponden a software de uso amplio y transversal, como R.
+
+Es importante indicar que los módulos no son la única forma de disponer de software en un clúster. También es posible instalar programas a nivel de usuario, por ejemplo **compilando binarios** propios en el directorio personal, o creando entornos aislados mediante herramientas como **conda, mamba o micromamba**, que veremos más adelante en el curso. En la práctica, el trabajo en HPC combina estas estrategias: los módulos proporcionan un entorno estable y común para software estándar, mientras que las instalaciones a nivel de usuario permiten mayor flexibilidad para necesidades específicas
+
+En el NLHPC podemos ver los módulos de R disponibles mediante:
+
+```bash
+module spider R
+```
+
+Como vemos, hay varias versiones de R disponibles, carguemos el módulo con la versión más reciente:
+
+```bash
+module load R/4.4.0
+R
+```
+
+Esto abre una sesión interactiva de R en la terminal. Para salir de R tenemos que indicar:
+
+```bash
+q()
+# También indicar que no queremos guardar el workspace.
+```
+
+Ahora veamos cómo correr un script de R en el clúster. Primero creemos un script usando `nano`:
+
+```bash
+nano test_script.R
+```
+
+Y peguen este contenido:
+
+```bash
 # test_script.R
+# Ejemplo simple de ejecución de R en HPC
+
 x <- 1:10
 y <- x^2
+
 pdf("plot.pdf")
-plot(x, y, type="b", col="blue", pch=19, main="Prueba en HPC")
+plot(x, y, type = "b", col = "blue", pch = 19,
+     main = "Prueba de R en HPC")
 dev.off()
 ```
 
----
-
-## 8. Ejercicios prácticos sugeridos
-1. Crear una carpeta de proyecto con subdirectorios: `RAW`, `CLEAN`, `MAP`, `SCRIPTS`, `LOGS`.
-2. Crear un script bash que copie archivos de un directorio a otro.
-3. Enviar un trabajo de prueba con SLURM y verificar la salida.
-4. Ejecutar un script de R en el clúster.
+Este script realiza un cálculo simple,luego genera una figura y finalmente guarda el resultado en un archivo PDF. Para ejecutar este script, hay varias opciones, primero lo haremos de ejecución directa (esto es **solo para pruebas rápidas**). Como ya tenemos el módulo de R cargado, basta con escribir
+```bash
+Rscript test_script.R
+```
 
 ---
+### 7.2 R mediante SLURM
 
-## 9. Recursos adicionales
+La segunda opción es ejecutar el script de R mediante SLURM, que es lo recomendado y que haremos durante el curso para análisis reales. Cuando un análisis tarda varios minutos u horas o usa mucha memoria, debe ejecutarse en nodos de cómputo y se debe lanzar mediante SLURM.
+
+Como ya vimos la solicitud de recursos a SLURM lo podemos hacer mediante un script de shell (`sbatch`) o, como lo haremos ahora, de forma "interactiva". Para esto, tenemos usar el comando `srun` y distintas opciones o argumentos (comúnmente llamados *flags*) con detalles de lo que solicitaremos.
+
+```bash
+srun --partition=labs --nodes=1 --cpus-per-task=2 --time=01:00:00 --mem=2G --pty bash
+```
+
+En la línea anterior, `srun` es el comando SLURM para ejecutar tareas en un trabajo (*job*) asignado (*allocated*). Además, mediante `--partition=labs` definimos que usaremos la partición `labs` que nos fue asignada por el NLHPC; de la misma forma, usando `--nodes` indicamos en cuántos nodos correremos nuestro trabajo; `--cpus-per-task` indica el número de CPUs requeridas para cada tarea; `--time` es el límite de tiempo para el trabajo (*walltime*); `--mem` es la memoria real solicitada por nodo; `--pty` corre la tarea cero en pseudo-terminal, es decir, asigna una pseudo-terminal al trabajo con la que podremos interactuar. Por último, el comando `bash` (o `/bin/bash`) le indica a SLURM qué programa correr usando los recursos asignados, en este caso le indicamos a SLURM ejecutar el programa Bash (*Bourne Again SHell*). En nuestro ejemplo, hemos solicitado 1 nodo, 2 CPUs por tarea y 2 GB de memoria. Una vez asignados estos recursos, dispondremos de ellos por 1 hora.
+
+Una vez que corramos el comando `srun`, en la terminal aparecerá algo similar a lo siguiente:
+
+```bash
+[student21@leftraru2]~% srun --partition=labs --nodes=1 --cpus-per-task=2 --time=01:00:00 --mem=2G --pty bash
+[student21@cn005 ~]$
+```
+
+La primera línea es el comando `srun`, que se realizó desde la cuenta `student21` en el nodo `leftraru2`, este nodo es uno de los nodos login del clúster (donde **no** se deben ejecutar análisis).  La segunda línea indica que el usuario `student21` ahora se encuentra en el nodo `cn005`, que es uno de los nodos de cómputo que dispone el NLHPC en la partición `labs`.
+
+---
+**Comentario:** como el NLHPC nos reservó la partición `labs` que está destinada a cursos y actividades docentes, al usar `srun --partition=labs` automáticamente nos asigna a un nodo de cómputo. Si hubiesemos enviado el job sin indicar la partición `labs` nuestro trabajo hubiese sido enviado a la cola general del clúster. En ese caso en la pantalla aparecería:
+
+```bash
+# Esto es solo demostrativo
+[student21@leftraru2]~% srun --nodes=1 --cpus-per-task=2 --time=01:00:00 --mem=2G --pty bash
+srun: job XXXXX queued and waiting for resources
+srun: job XXXXX has been allocated resources
+[student21@mnt015 ~]$
+```
+
+La segunda línea indica que SLURM asignó nuestra solicitud a un **trabajo** con un código numérico (`job XXXXX` o **JOBID**) y está en espera de recursos. Si el sistema está descongestionado, rápidamente aparecerá la línea 3, donde se indica que a nuestro *job* ya le fueron asignados los recursos solicitados.
+Siempre es importante que registren el **JOBID** de su trabajo. En un clúster con múltiple usuarios como el NLHPC, es muy fácil olvidarse del ID ya que constantemente se están enviando trabajos. Pero si queremos supervisar el avance de nuestro análisis o cancelarlo porque cometimos un error, necesitaremos el JOBID.
+
+---
+Al ejecutar `srun` hemos solicitado recursos a través de SLURM al clúster y ahora podremos disponer de esos recursos para ejecutar los análisis. Podemos ver la información de los trabajos que están corriendo (incluyendo el nuestro) mediante el comando `squeue`. Como estamos usando la partición `labs`, no veremos nuestro trabajo.
+
+```bash
+squeue
+```
+
+Ahora nuevamente podemos correr nuestro script de R (no es necesario cargar el módulo de nuevo), pero esta vez se realizará en uno de los nodos de cómputo:
+
+```bash
+Rscript test_script.R
+```
+
+Como ya terminamos de correr nuestro trabajo, lo correcto es terminar el *job* indicándole a SLURM que cancele nuestro trabajo, lo que permitirá liberar los recursos que nos fueron asignados. Para esto tenemos que usar `scancel` y el número del **JOBID**.
+
+```bash
+scancel XXXXX
+```
+
+**En nuestro caso, como estamos usando la partición `labs` que nos asignó el NLHPC, no disponemos de un JOBID. Así que para salir del nodo de cómputo, basta con escribir `exit`.**
+
+Por último, antes de salir de nuestra sesión, es recomendable cerrar los módulos que cargamos. Esto también es recomendable si se realizarán otros análisis que con módulos que podrían entrar en conflicto. Para cerrar todos los módulos activados se utiliza:
+
+```bash
+module purge
+```
+
+
+---
+## 8. Recursos adicionales
 - Wiki NLHPC: [https://wiki.nlhpc.cl/P%C3%A1gina_principal](https://wiki.nlhpc.cl/P%C3%A1gina_principal)
 - Tutorial de acceso SSH: [https://wiki.nlhpc.cl/Tutorial_de_acceso_a_Leftraru_via_SSH](https://wiki.nlhpc.cl/Tutorial_de_acceso_a_Leftraru_via_SSH)
 - Guía rápida de SLURM: [https://slurm.schedmd.com/quickstart.html](https://slurm.schedmd.com/quickstart.html)

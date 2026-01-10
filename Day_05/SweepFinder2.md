@@ -9,7 +9,7 @@ A diferencia de RAiSD, SF2 no lee archivos VCF directamente; requiere un formato
 
 Transformaremos el VCF (santiago.vcf) al formato de conteo de frecuencias.
 
-    ⚠️ Nota: Aunque este método es eficiente, en un genoma completo puede tardar. Lo iniciaremos para ver cómo funciona y luego usaremos el archivo de respaldo para ahorrar tiempo.
+  ⚠️ Nota: Aunque este método es eficiente, en un genoma completo puede tardar. Lo iniciaremos para ver cómo funciona y luego usaremos el archivo de respaldo para ahorrar tiempo.
 
 ```bash
 
@@ -21,11 +21,11 @@ vcf2sf2.sh santiago.vcf mi_input_lento.sf2
 ```
 🛑 ¡STOP! (Simulación) Verás un contador de progreso en la pantalla (Leyendo variante n°...).
 
-    1. Observa cómo avanza el contador. ¡Son millones de sitios!
+  1. Observa cómo avanza el contador. ¡Son millones de sitios!
 
-    2. Una vez que compruebes que avanza, presiona Ctrl + C para cancelar el proceso y ahorrar tiempo.
+  2. Una vez que compruebes que avanza, presiona Ctrl + C para cancelar el proceso y ahorrar tiempo.
 
-    3. Copia el archivo que ya tenemos pre-calculado para la clase:
+  3. Copia el archivo que ya tenemos pre-calculado para la clase:
 
 ```bash
 

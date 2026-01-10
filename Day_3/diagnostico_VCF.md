@@ -61,6 +61,13 @@ srun -p labs --pty --mem=2G -n 1 -c 1 --time=03:00:00 /bin/bash
 
 ```
 
+A continuación, activamos el ambiente recién creado:
+
+```bash
+
+conda activate filt_vcf
+
+```
 
 # 2. Crear tu espacio de trabajo y traer los datos
 

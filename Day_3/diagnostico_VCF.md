@@ -5,6 +5,60 @@ El objetivo es **entender la calidad y estructura de los datos antes de aplicar 
 
 ---
 
+# Guía de Instalación: Ambiente de Análisis Genómico
+Para asegurar que las herramientas funcionen correctamente en la partición de cómputo, crearemos un ambiente aislado utilizando Conda. Esto evitará conflictos de versiones y errores de arquitectura.
+
+## 1. Preparación del entorno
+Primero, limpiaremos cualquier módulo previo y cargaremos el gestor de paquetes Miniconda.
+
+```bash
+
+# Limpiar módulos anteriores
+module purge
+
+# Cargar el módulo de Miniconda
+module load miniconda3/24.7.1-zen4-5
+
+```
+
+
+## 2. Creación y activación del ambiente
+Crearemos un ambiente específico llamado filt_vcf. Si el sistema te pide confirmar la instalación, presiona y.
+
+```Bash
+
+# Crear el ambiente vacío
+conda create -n filt_vcf -y
+
+# Activar el ambiente
+conda activate filt_vcf
+
+```
+
+Nota: Si es la primera vez que usas conda y recibes un mensaje indicando que debes inicializarlo, ejecuta conda init, cierra tu sesión y vuelve a entrar. Si ya lo has usado, puedes recargar tu configuración con: source ~/.bashrc y activar de nuevo: conda activate filt_vcf.
+
+3. Instalación de herramientas (BCFtools y VCFtools)
+Instalaremos las versiones más recientes desde los canales oficiales de Bioinformática.
+
+```Bash
+
+# Instalar las herramientas necesarias
+conda install -c conda-forge -c bioconda bcftools
+
+conda install -c conda-forge -c bioconda vcftools
+
+```
+
+4. Verificación del análisis
+Ahora que estamos dentro del ambiente filt_vcf, los comandos de conteo deberían funcionar perfectamente, incluso con archivos comprimidos.
+
+```Bash
+
+# Contar el número de SNPs crudos (sin encabezado)
+bcftools view -H Orestias_final_variants.vcf.gz | wc -l
+
+```
+
 ## Inicio de Sesión
 
 Antes de cargar cualquier herramienta, debemos pedir recursos al clúster para no trabajar en el nodo de acceso.
@@ -79,11 +133,6 @@ Para ello se puede utilizar una de las herramientas de BCFtools
 
 ```bash
 
-# Cargar las dependencias y luego BCFtools
-module load icc/2019.2.187-GCC-8.2.0-2.31.1
-module load impi/2019.2.187
-module load BCFtools/1.10.2
-
 bcftools view -H Orestias_final_variants.vcf.gz | wc -l
 
 ```
@@ -98,24 +147,6 @@ Este número incluye:
 
 ---
 
-```bash
-
-# 1. Limpiar módulos para evitar conflictos de arquitectura
-module purge
-
-# 2. Cargar el compilador compatible con la partición 'labs'
-module load gcc/11.5.0-skylake-ukazxjg
-
-# 3. DEFINIR RUTAS (Usando la carpeta del curso)
-export VCFTOOLS_DIR="/home/courses/student22/projects/vcftools/vcftools-0.1.16"
-export PATH="$VCFTOOLS_DIR/bin:$PATH"
-export PERL5LIB="$VCFTOOLS_DIR/src/perl:$PERL5LIB"
-
-echo "VCFtools cargado correctamente desde: $VCFTOOLS_DIR"
-
-vcftools
-
-```
 
 ```bash
 

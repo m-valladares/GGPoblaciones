@@ -379,19 +379,33 @@ srun: job XXXXX has been allocated resources
 [student21@mn015 ~]$
 ```
 
-La primera línea es el comando `srun`, que se realizó desde la cuenta `student21` en el nodo `leftraru2`, este nodo es uno de los nodos login del clúster (donde **no** se deben ejecutar análisis). La segunda línea indica que SLURM asignó nuestra solicitud a un **trabajo** con un código numérico (`job XXXXX`) y está en espera de recursos. Si el sistema está descongestionado, rápidamente aparecerá la línea 3, donde se indica que a nuestro *job* ya le fueron asignados los recursos solicitados. La cuarta línea indica que el usuario `student21` ahora se encuentra en el nodo `mn015`, que es uno de los nodos de cómputo que dispone el HPC.
+La primera línea es el comando `srun`, que se realizó desde la cuenta `student21` en el nodo `leftraru2`, este nodo es uno de los nodos login del clúster (donde **no** se deben ejecutar análisis). La segunda línea indica que SLURM asignó nuestra solicitud a un **trabajo** con un código numérico (`job XXXXX` o **JOBID**) y está en espera de recursos. Si el sistema está descongestionado, rápidamente aparecerá la línea 3, donde se indica que a nuestro *job* ya le fueron asignados los recursos solicitados. La cuarta línea indica que el usuario `student21` ahora se encuentra en el nodo `mn015`, que es uno de los nodos de cómputo que dispone el HPC. 
 
-Al ejecutar `srun` hemos solicitado recursos a través de SLURM al clúster y ahora podremos disponer de esos recursos para ejecutar los análisis. Podemos ver la información de los trabajos que están corriendo (incluyendo el nuestro) mediante el comando `squeue`. Esto tenemos que hacerlo en otra ventana de la terminal.
+Siempre es importante que registren el **JOBID** de su trabajo. En un clúster con múltiple usuarios como el NLHPC, es muy fácil olvidarse del ID ya que constantemente se están enviando trabajos. Pero si queremos supervisar el avance de nuestro análisis o cancelarlo porque cometimos un error, necesitaremos el JOBID.
+
+Al ejecutar `srun` hemos solicitado recursos a través de SLURM al clúster y ahora podremos disponer de esos recursos para ejecutar los análisis. Podemos ver la información de los trabajos que están corriendo (incluyendo el nuestro) mediante el comando `squeue`.
 
 ```bash
 squeue
 ```
 
-Ahora nuevamente podemos ejecutar R y el script, pero esta vez se realizará en uno de los nodos de cómputo:
+Ahora nuevamente podemos correr nuestro script de R (no es necesario cargar el módulo de nuevo), pero esta vez se realizará en uno de los nodos de cómputo:
 
 ```bash
 module load R/4.3.1
 Rscript test_script.R
+```
+
+Como ya terminamos de correr nuestro trabajo, lo correcto es terminar el *job* indicándole a SLURM que cancele nuestro trabajo, lo que permitirá liberar los recursos que nos fueron asignados. Para esto tenemos que usar `scancel` y el número del **JOBID**.
+
+```bash
+scancel XXXXX
+```
+
+Por último, antes de salir de nuestra sesión, es recomendable cerrar los módulos que cargamos. Esto también es recomendable si realizaré otros análisis que usarán módulos que podrían entrar en conflicto entre ellos. Para cerrar todos los módulos activados se utiliza:
+
+```bash
+module purge
 ```
 
 

@@ -80,8 +80,7 @@ Tras estas instrucciones se pueden activar los ambientes nuevamente.
 Antes de mapear, el genoma de referencia debe ser indexado. El indexado genera estructuras auxiliares que permiten a BWA buscar coincidencias de manera mucho más rápida y eficiente. Este paso se realiza una sola vez por referencia.
 
 ```bash
-# No olviden cambiar studentXX por el nombre real de su cuenta.
-cd /home/courses/studentXX/Day02/REF
+cd /home/courses/$USER/Day02/REF
 
 bwa-mem2 index Dsuzukii.chrNC_092080.1.fa
 ```
@@ -93,8 +92,7 @@ Tras este comando se crean varios archivos adicionales asociados al FASTA origin
 Ahora podemos mapear o alinear nuestros reads a la referencia, lo que después nos permitirá buscar variantes. Este paso es bastante demandante computacionalmente y es recomendable correrlo usarlo un script `sbatch`. En el directorio `Day02`→`scripts` está el documento `bwa-droso.sbatch` que contiene las instrucciones para el mapeo. Primero, para ganar tiempo, lo lanzaremos como trabajo al clúster y después explicaremos su contenido.
 
 ```bash
-# No olviden cambiar studentXX por el nombre real de su cuenta.
-cd /home/courses/studentXX/Day02/scripts
+cd /home/courses/$USER/Day02/scripts
 
 # Veamos el contenido del directorio
 ls

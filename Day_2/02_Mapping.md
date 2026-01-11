@@ -98,7 +98,7 @@ cd /home/courses/$USER/Day02/scripts
 ls
 
 # Lancemos el trabajo
-sbatch bwa-droso.sbatch
+sbatch bwa_droso.sbatch
 ```
 
 Ahora analicemos el detalle del script, la primera sección es la **cabecera y configuración del entorno**. Esta parte le indica al sistema operativo y al gestor de tareas (SLURM) cómo debe ejecutarse el script y qué recursos necesita.

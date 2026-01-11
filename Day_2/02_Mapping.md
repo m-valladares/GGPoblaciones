@@ -72,7 +72,7 @@ conda activate droso_map
 
 ### 3.1 Preparación del genoma de referencia
 
-Antes de mapear, el genoma de referencia debe ser indexado. El indexado genera estructuras auxiliares que permiten a BWA buscar coincidencias de manera eficiente. Este paso se realiza una sola vez por referencia.
+Antes de mapear, el genoma de referencia debe ser indexado. El indexado genera estructuras auxiliares que permiten a BWA buscar coincidencias de manera mucho más rápida y eficiente. Este paso se realiza una sola vez por referencia.
 
 ```bash
 # No olviden cambiar studentXX por el nombre real de su cuenta.

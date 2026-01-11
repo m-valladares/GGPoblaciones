@@ -5,9 +5,9 @@ El objetivo de esta sesión es verificar la calidad de las secuencias y aprender
 Antes de comenzar necesitamos copiar algunos de los datos que usaremos y el árbol de directorios desde la cuenta `student21`:
 
 ```bash
-mkdir -p ~/Day02/{RAW,REF,scripts,CLEAN,LOG,VARIANT,MAP/{bam,stats}}
+mkdir -p ~/Day02/{RAW,REF,scripts,CLEAN,LOG,VARIANT,QC_pre/{fastqc,multiqc},MAP/{bam,stats}}
 cp -r \
-  /home/courses/student21/Day02/{RAW,REF,scripts} \
+  /home/courses/student21/Day02/{RAW,REF,scripts,QC_pre} \
   /home/courses/${USER}/Day02/
 ```
 
@@ -106,7 +106,7 @@ fastqc -t 8 -o "${OUT_QC}" *.fq.gz
 ```
 
 ---
-Previamente corrimos FastQC y los resultados están en `/home/courses/studentXX/Day02/QC_pre/fastqc`. Para ver los resultados debemos descargar la carpeta `fastqc` desde Visual Studio Code a nuestro computador. Luego, podemos abrir los archivos `html` usando nuestro explorador preferido.
+Previamente corrimos FastQC y los resultados están en `/home/courses/$USER/Day02/QC_pre/fastqc`. Para ver los resultados debemos descargar la carpeta `fastqc` desde Visual Studio Code a nuestro computador. Luego, podemos abrir los archivos `html` usando nuestro explorador preferido.
 
 FastQC ([Andrews, 2010](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)) es una herramienta de control de calidad que evalúa distintos aspectos de las lecturas de secuenciación (FASTQ) antes de los análisis posteriores. Sus resultados se presentan como una serie de gráficos y estadísticas, cada uno acompañado de un estado (pass, warning o fail).
 
@@ -264,9 +264,8 @@ fastp -h
 Ahora podemos correr fastp, pero primero definimos los directorios donde se guardarán los resultados del trimming y los reportes generados por fastp. Estos directorios se crearán solo si no existen.
 
 ```bash
-# No olviden cambiar studentXX por el nombre real de su cuenta.
-CLEAN="/home/courses/student21/Day02/CLEAN"
-REP="/home/courses/student21/Day02/fastp_reports"
+CLEAN="/home/courses/$USER/Day02/CLEAN"
+REP="/home/courses/$USER/Day02/fastp_reports"
 
 mkdir -p "${CLEAN}" "${REP}"
 ```

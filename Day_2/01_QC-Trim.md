@@ -222,8 +222,16 @@ conda activate fastp_trim
 **Solo en caso que solicite iniciar conda**, indicaremos `conda init`. Y luego, para poder activar ambientes conda en la sesión actual, recargamos la configuración del shell:
 
 ```bash
+# Primero corremos
+conda init
+
+# Luego, usamos el comando
 source ~/.bashrc
 ```
+
+En el comando anterior `conda init` no activa ningún environment. Lo que hace es modificar archivos de configuración del shell para que en el futuro puedas usar conda activate sin problemas. Lo que hace es detectar qué shell se está usando (bash o zsh). Y edita archivos como ~/.bashrc o ~/.zshrc agregando un bloque que prepara el shell para que `conda activate` funcione.
+
+Sin embargo, `conda init` solo tiene efecto cuando se abre un nuevo shell. Para que funcione usamos `source ~/.bashrc` recarga el archivo de configuración del shell actual. Esto porque `~/.bashrc` es un archivo que Bash lee cada vez que se abre un shell interactivo y contiene aliases, variables de entorno, módulos, inicialización de conda (si hiciste conda init), etc.
 
 ---
 A continuación, activamos el ambiente recién creado:

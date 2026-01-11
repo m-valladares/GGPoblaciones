@@ -56,19 +56,24 @@ A continuación, activamos el ambiente recién creado:
 conda activate droso_map
 ```
 
----
-**Solo en caso que solicite iniciar conda**, indicaremos `conda init`. Y luego, para poder activar ambientes conda en la sesión actual, recargamos la configuración del shell:
+**Pregunta:** ¿Qué es un archivo BAM?
+
+<details>
+<summary><strong>Si no pudieron activar el ambiente</strong></summary>
+
+*Solo en caso que solicite iniciar conda**, indicaremos `conda init`. Y luego, para poder activar ambientes conda en la sesión actual, recargamos la configuración del shell:
 
 ```bash
+# Primero corremos
+conda init
+
+# Luego, usamos el comando
 source ~/.bashrc
 ```
 
----
-A continuación, activamos el ambiente recién creado:
+Tras estas instrucciones se pueden activar los ambientes nuevamente.
+</details>
 
-```bash
-conda activate droso_map
-```
 
 ### 3.1 Preparación del genoma de referencia
 
@@ -82,3 +87,7 @@ bwa-mem2 index Dsuzukii.chrNC_092080.1.fa
 ```
 
 Tras este comando se crean varios archivos adicionales asociados al FASTA original, que BWA-MEM2 utilizará durante el mapeo.
+
+### 3.1 Preparación del genoma de referencia
+
+Ahora podemos mapear o alinear nuestros reads a la referencia, lo que después nos permitirá buscar variantes. Este paso es bastante demandante computacionalmente y es recomendable correrlo usarlo un script `sbatch`. En el directorio `Day02`→`scripts` está el documento `bwa-droso.sbatch` que contiene las instrucciones para el mapeo.

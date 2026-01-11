@@ -56,8 +56,6 @@ A continuación, activamos el ambiente recién creado:
 conda activate droso_map
 ```
 
-**Pregunta:** ¿Qué es un archivo BAM?
-
 <details>
 <summary><strong>Si no pudieron activar el ambiente</strong></summary>
 

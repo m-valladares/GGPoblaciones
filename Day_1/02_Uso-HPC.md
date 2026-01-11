@@ -418,13 +418,7 @@ La segunda línea indica que SLURM asignó nuestra solicitud a un **trabajo** co
 Siempre es importante que registren el **JOBID** de su trabajo. En un clúster con múltiple usuarios como el NLHPC, es muy fácil olvidarse del ID ya que constantemente se están enviando trabajos. Pero si queremos supervisar el avance de nuestro análisis o cancelarlo porque cometimos un error, necesitaremos el JOBID.
 
 ---
-Al ejecutar `srun` hemos solicitado recursos a través de SLURM al clúster y ahora podremos disponer de esos recursos para ejecutar los análisis. Podemos ver la información de los trabajos que están corriendo (incluyendo el nuestro) mediante el comando `squeue`. Como estamos usando la partición `labs`, no veremos nuestro trabajo.
-
-```bash
-squeue
-```
-
-Ahora nuevamente podemos correr nuestro script de R (no es necesario cargar el módulo de nuevo), pero esta vez se realizará en uno de los nodos de cómputo:
+Al ejecutar `srun` hemos solicitado recursos a través de SLURM al clúster y ahora podremos disponer de esos recursos para ejecutar los análisis. Ahora nuevamente podemos correr nuestro script de R (no es necesario cargar el módulo de nuevo), pero esta vez se realizará en uno de los nodos de cómputo:
 
 ```bash
 Rscript test_script.R

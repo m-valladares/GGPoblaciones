@@ -217,6 +217,45 @@ El detalle de este proceso de mapeo y filtrado es el siguiente:
 
 Al finalizar esta etapa, habremos pasado de gigabytes de secuencias desordenadas a un único archivo binario (BAM) que contiene solo las lecturas de alta calidad perfectamente ubicadas en el cromosoma de *Drosophila suzukii* que estamos usando.
 
+Sección **marcado de duplicados de PCR**. En esta fase del procesamiento, identificamos y marcamos las lecturas que son duplicados técnicos. Los duplicados suelen ocurrir durante la preparación de la librería genómica (específicamente en la amplificación por PCR) y pueden sesgar los resultados si se interpretan erróneamente como múltiples fragmentos de ADN independientes, cuando en realidad son copias de uno solo.
 
+```bash
+picard -Xmx${MEM_JAVA} -Djava.io.tmpdir="${TMP}" MarkDuplicates \
+  I="${BAM_SORTED}" \
+  O="${BAM_FINAL}" \
+  M="${OUT_BAM}/${ID}.dup_metrics.txt" \
+  CREATE_INDEX=true \
+  VALIDATION_STRINGENCY=SILENT
+```
+
+El detalle de este proceso de remoción de duplicados es el siguiente:
+- `picard MarkDuplicates`: Es la herramienta utilizada para este propósito. Analiza las coordenadas de mapeo de cada par de lecturas para determinar si provienen del mismo fragmento original de ADN. Es un paso esencial para la limpieza de datos genómicos antes de buscar variantes (SNPs).
+- `-Xmx${MEM_JAVA}`: Le indica a la máquina virtual de Java cuánta memoria RAM puede utilizar (6GB según nuestra configuración previa). Picard es una herramienta que consume mucha memoria, por lo que este límite evita que el proceso sea cancelado por el clúster al intentar sobrepasar los recursos asignados.
+- `-Djava.io.tmpdir`: Define una ruta específica para archivos temporales. Picard escribe muchos datos intermedios en el disco; al dirigirlos a nuestra propia carpeta TMP, evitamos usar el directorio temporal por defecto del sistema, que suele ser pequeño y compartido por muchos usuarios en el clúster.
+- `I` (Input) y `O` (Output): Establecen el archivo de entrada (el BAM que acabamos de ordenar) y el archivo de salida final. El resultado es un archivo BAM donde los duplicados han sido marcados para que las herramientas posteriores de análisis los ignoren.
+- `M` (Metrics): Crea un informe de métricas en formato de texto. Este archivo nos dice qué porcentaje de la librería son duplicados. Es un indicador de calidad clave: un porcentaje muy alto de duplicación suele ser una señal de alerta sobre la calidad de la preparación de la muestra en el laboratorio.
+- `CREATE_INDEX=true`: Ordena a Picard generar automáticamente el índice del archivo resultante (.bai). El índice funciona como el índice de un libro; permite que los programas accedan a cualquier parte del genoma sin tener que leer todo el archivo BAM desde el principio.
+- `VALIDATION_STRINGENCY=SILENT`: Configura al programa para que sea menos estricto con errores menores de formato o advertencias en los encabezados. Esto asegura que el script sea más robusto y no se detenga por problemas técnicos irrelevantes que no afectan la calidad biológica del mapeo.
+
+Sección **control de calidad y limpieza final**. Una vez que el archivo BAM está listo, es fundamental verificar la calidad del alineamiento antes de dar por terminado el proceso. Finalmente, realizamos una limpieza de los archivos intermedios para optimizar el espacio en disco.
+
+```bash
+# 5) Estadísticas rápidas (QC de mapeo)
+samtools flagstat -@ "${SORT_T}" "${BAM_FINAL}" > "${OUT_STATS}/${ID}.flagstat.txt"
+samtools idxstats "${BAM_FINAL}" > "${OUT_STATS}/${ID}.idxstats.txt"
+
+# 6) Limpieza
+rm -f "${BAM_SORTED}"
+rm -rf "${TMP}"
+
+echo "[OK] Script ejecutado exitosamente."
+```
+
+El detalle de estos pasos finales es el siguiente:
+- `samtools flagstat`: Genera un informe resumido con las estadísticas generales de alineamiento. Este comando nos permite ver rápidamente el porcentaje de lecturas que mapearon exitosamente y cuántas de ellas están "propiamente pareadas" (*properly paired*). Es el primer control de calidad para saber si nuestro experimento de secuenciación y el mapeo funcionaron correctamente.
+- `samtools idxstats`: Proporciona un reporte detallado de cuántas lecturas se alinearon a cada secuencia de referencia (cromosoma o scaffold). En nuestro caso, como estamos trabajando con el cromosoma NC_092080.1 de *Drosophila suzukii*, este archivo nos confirmará cuántos datos logramos recuperar específicamente para esa región del genoma.
+- `rm -f "${BAM_SORTED}"`: Elimina el archivo BAM ordenado inicial. Como ya generamos una versión final que tiene los duplicados marcados e indexados (BAM_FINAL), el archivo intermedio ya no es necesario. Borrarlo nos permite ahorrar varios GB de espacio.
+- `rm -rf "${TMP}"`: Elimina la carpeta temporal de este trabajo. Durante el ordenamiento y el marcado de duplicados, los programas crean cientos de archivos pequeños. Si no los borramos, estos archivos pueden acumularse rápidamente.
+- `echo "[OK] Script ejecutado exitosamente"`: Imprime un mensaje de confirmación en el archivo de salida estándar (.out). Si vemos este mensaje al final de nuestro log, tenemos la certeza de que el script completó todas sus etapas sin interrupciones.
 
 

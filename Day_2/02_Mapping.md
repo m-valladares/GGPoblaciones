@@ -90,4 +90,133 @@ Tras este comando se crean varios archivos adicionales asociados al FASTA origin
 
 ### 3.1 Preparación del genoma de referencia
 
-Ahora podemos mapear o alinear nuestros reads a la referencia, lo que después nos permitirá buscar variantes. Este paso es bastante demandante computacionalmente y es recomendable correrlo usarlo un script `sbatch`. En el directorio `Day02`→`scripts` está el documento `bwa-droso.sbatch` que contiene las instrucciones para el mapeo.
+Ahora podemos mapear o alinear nuestros reads a la referencia, lo que después nos permitirá buscar variantes. Este paso es bastante demandante computacionalmente y es recomendable correrlo usarlo un script `sbatch`. En el directorio `Day02`→`scripts` está el documento `bwa-droso.sbatch` que contiene las instrucciones para el mapeo. Primero, para ganar tiempo, lo lanzaremos como trabajo al clúster y después explicaremos su contenido.
+
+```bash
+# No olviden cambiar studentXX por el nombre real de su cuenta.
+cd /home/courses/studentXX/Day02/scripts
+
+# Veamos el contenido del directorio
+ls
+
+# Lancemos el trabajo
+sbatch bwa-droso.sbatch
+```
+
+Ahora analicemos el detalle del script, la primera sección es la **cabecera y configuración del entorno**. Esta parte le indica al sistema operativo y al gestor de tareas (SLURM) cómo debe ejecutarse el script y qué recursos necesita.
+
+```bash
+#!/usr/bin/env bash
+#SBATCH -J Ds_map
+#SBATCH -p labs
+#SBATCH -c 8
+#SBATCH --mem=16G
+#SBATCH -t 01:00:00
+#SBATCH -o /home/courses/%u/Day02/LOGS/Ds_map_%j.out
+#SBATCH -e /home/courses/%u/Day02/LOGS/Ds_map_%j.err
+
+set -euo pipefail
+```
+
+El detalle de las instrucciones a SLURM es el siguiente:
+- `#SBATCH -J Ds_map`: Asigna un nombre al trabajo (Job Name).
+- `#SBATCH -p labs`: Indica la partición. En Leftraru, para el curso nos asignaron a la partición `labs`.
+- `#SBATCH -c 8`: Solicita 8 núcleos de CPU (cores). Como el mapeo es una tarea computacionalmente pesada, usamos paralelismo para acelerar el proceso.
+- `#SBATCH --mem=16G`: Reserva 16 G de memoria RAM. Este valor debe ser mayor a lo que consumen las herramientas para evitar el *error Out Of Memory* (**OOM**).
+- `#SBATCH -t 01:00:00`: Define el tiempo máximo de ejecución (1 hora).
+- `#SBATCH -o .../Ds_map_%j.out`: Define la ruta del archivo donde se guardará la salida estándar (lo que se vería en pantalla si corriesen el análisis sin SLURM). El símbolo %j se reemplaza automáticamente por el ID único del trabajo.
+- `#SBATCH -e .../Ds_map_%j.err`: Define la ruta para el archivo de errores.
+- `set -euo pipefail`: Esta línea es útil en bioinformática para evitar resultados silenciosamente erróneos (aunque no es obligatorio incluirla). Lo que detalla es lo siguiente:
+	- `-e` (errexit): El script se detiene inmediatamente si cualquier comando falla (devuelve un error). Evita que el script siga corriendo si, por ejemplo, no encuentra los archivos del genoma de referencia.
+	- `-u` (nounset): El script falla si se intenta usar una variable que no ha sido definida. Muy útil para detectar errores de tilde u ortográficos.
+	- `-o pipefail`: Normalmente, en una cadena de comandos (instrucción1 | instrucción2), solo importa si el último comando falla. Con esta opción, si cualquiera de los comandos en la cadena falla (por ejemplo, si `bwa-mem2` se cae pero `samtools` sigue esperando), el script se detiene por completo.
+
+Es importante notar que en las rutas de los archivos `.out` y `.err`, en vez de designar a un usuario (como `/student21/` u otro) se usó la variable `%u`, que es la notación estándar de SLURM para identificar al usuario. Es importante mencionar que esta notación es para SLURM, más adelante en el script usaremos la notación para Bash.
+
+Vamos con la segunda sección de **definición de rutas y organización**. En esta parte definimos las variables de entorno que el script utilizará. En bioinformática, usar variables en lugar de rutas fijas ("hardcoded") es una buena práctica fundamental porque permite que el script sea reproducible, fácil de leer y rápido de adaptar a otros proyectos.
+
+```bash
+ID="DSTEMU01"
+BASE="/home/courses/${USER}/Day02"
+R1="${BASE}/CLEAN/DSTEMU01_1.clean.fq.gz"
+R2="${BASE}/CLEAN/DSTEMU01_2.clean.fq.gz"
+REF="${BASE}/REF/Dsuzukii.chrNC_092080.1.fa"
+
+OUT_BAM="${BASE}/MAP/bam"
+OUT_STATS="${BASE}/MAP/stats"
+TMP="${BASE}/TMP"
+
+mkdir -p "${OUT_BAM}" "${OUT_STATS}" "${TMP}" "${BASE}/LOGS"
+```
+
+El detalle de esta organización es el siguiente:
+- `ID="DSTEMU01"`: Establece el identificador único de la muestra. Este nombre se usará para nombrar todos los archivos de salida, manteniendo la trazabilidad de los datos.
+- `BASE="/home/courses/${USER}/Day02"`: Aquí definimos la carpeta raíz del trabajo. Noten el uso de `${USER}`; esta es una variable de entorno de Bash que identifica automáticamente el nombre del usuario que está ejecutando el script. A diferencia del `%u` de SLURM, esta notación se usa dentro del cuerpo del script.
+- `R1` y `R2`: Son las rutas a los archivos de lecturas crudas (Forward y Reverse). Al construir la ruta usando la variable `${BASE}`, nos aseguramos de que el script sea consistente.
+- `REF`: Indica la ubicación exacta del genoma de referencia de *Drosophila suzukii*. Como vimos antes, este archivo ya debe estar indexado para que bwa-mem2 pueda trabajar. No olviden que estamos trabajando solo con un cromosoma.
+- `OUT_BAM`, `OUT_STATS` y `TMP`: Definimos dónde queremos guardar los resultados finales (BAM), algunas estadísticas de calidad del mapeo y dónde se guardarán los archivos temporales (TMP). Usar una carpeta temporal es clave para no llenar de archivos intermedios nuestro espacio de trabajo principal.
+- `mkdir -p ...`: Este comando crea las carpetas necesarias. El parámetro `-p` (parents) es muy útil porque:
+	- Crea carpetas anidadas si no existen.
+	- Si la carpeta ya existe, no arroja ningún error y continúa con el script.
+
+Al organizar el script de esta manera, si el día de mañana queremos procesar una muestra distinta, solo necesitamos cambiar el valor de la variable ID al principio del documento, y todo el resto del pipeline se actualizará automáticamente.
+
+Sección **carga de ambiente y gestión de software**. En esta sección preparamos el entorno de software. En un clúster de alto rendimiento, conviven cientos de programas y versiones distintas. Por ello, es recomendable limpiar el entorno y cargar exactamente las herramientas que necesitamos para asegurar que nuestro análisis sea reproducible.
+
+```bash
+module purge
+module load miniconda3/24.7.1-zen4-5
+source "${CONDA_PREFIX}/etc/profile.d/conda.sh"
+conda activate droso_map
+```
+
+El detalle de la carga de herramientas es el siguiente:
+- `module purge`: Limpia todos los módulos cargados previamente en la sesión. Esto garantiza que no existan conflictos entre diferentes softwares que el sistema pueda tener activos por defecto.
+- `module load miniconda3/24.7.1-zen4-5`: Carga el gestor de paquetes Miniconda en una versión optimizada para la arquitectura de los procesadores del clúster (Zen 4). Miniconda nos permite gestionar ambientes virtuales aislados.
+- `source "${CONDA_PREFIX}/etc/profile.d/conda.sh"`: Sirve para inicializar las funciones de Conda dentro del script de Bash. Sin esta instrucción, el comando "activate" podría no ser reconocido por el sistema cuando corre de forma automática en SLURM.
+- `conda activate droso_map`: Activa el ambiente virtual específico del curso. En este ambiente ya están pre-instaladas todas las herramientas necesarias (bwa-mem2, samtools, picard).
+
+Sección **configuración de hilos y memoria**, en esta etapa del script vinculamos los recursos que le pedimos a SLURM hacia las herramientas de software específicas. Es un paso crítico porque establecemos (y limitamos) la cantidad de recursos que efectivamente los programas usarán. Nosotros debemos indicarle a los programas la cantidad de recursos que nos asignó el clúster para evitar que intenten usar más de lo disponible y el sistema detenga el proceso.
+
+```bash
+THREADS=8
+MEM_SORT="1G" 
+MEM_JAVA="6g"
+```
+
+El detalle de la gestión de recursos es el siguiente:
+- `THREADS=8`: Establece el número de hilos de ejecución. Este valor coincide exactamente con los 8 núcleos solicitados en la cabecera del script (`#SBATCH -c 8`). Al definirlo como una variable, podemos pasar este número tanto a bwa-mem2 como a samtools, asegurando que el mapeo y el procesamiento de los archivos sean lo más rápidos posible.
+- `MEM_SORT="1G"`: Define la cantidad de memoria RAM que utilizará el comando samtools sort para ordenar las secuencias mapeadas. Es muy importante entender que samtools asigna esta memoria por cada hilo. Como definimos 8 hilos, el programa usará un máximo de 8GB (8 x 1G) durante el peak de ordenamiento. Si pusiéramos un valor muy alto aquí, multiplicaríamos el consumo y colapsaríamos la memoria del trabajo.
+- `MEM_JAVA="6g"`: Configura el espacio de memoria máximo (conocido como Heap) que tendrá disponible Java para ejecutar la herramienta Picard. Al asignar 6GB de los 16GB que pedimos originalmente, dejamos un margen de seguridad suficiente para que no colapsen bwa-mem2, el sistema operativo y el proceso de samtools sin exceder el límite de 16GB del nodo.
+
+Esta configuración equilibrada es lo que permite que el script corra de forma fluida. Una regla de oro en bioinformática es siempre dejar un margen de RAM libre (en este caso unos 2GB) para las tareas básicas del sistema, lo que previene los errores de tipo *Out Of Memory*.
+
+Sección de **mapeo y parámetros de BWA-MEM2**. Esta es la sección más importante del pipeline, aquí es donde transformamos las lecturas cortas de ADN (secuencias de letras A, C, T, G) en información posicional sobre un cromosoma. Para que el proceso sea eficiente, utilizamos una "tubería" (pipe) que conecta tres herramientas distintas sin necesidad de guardar archivos pesados entre medio.
+
+```bash
+RG="@RG\tID:${ID}\tSM:${ID}\tLB:${ID}\tPL:ILLUMINA\tPU:demo"
+BAM_SORTED="${OUT_BAM}/${ID}.sorted.bam"
+BAM_FINAL="${OUT_BAM}/${ID}.nodup.bam"
+
+echo "[INFO] Iniciando mapeo para ${ID} (16G RAM)..."
+
+set -x
+bwa-mem2 mem -t "${THREADS}" -R "${RG}" "${REF}" "${R1}" "${R2}" \
+  | samtools view -@ "${THREADS}" -b -F 4 -q 20 - \
+  | samtools sort -@ "${THREADS}" -m "${MEM_SORT}" -T "${TMP}/${ID}.sort" -O BAM -o "${BAM_SORTED}" -
+set +x
+```
+
+El detalle de este proceso de mapeo y filtrado es el siguiente:
+- `RG` (Read Group): Define la identidad de nuestras lecturas. El Read Group contiene información sobre la muestra (SM), la librería (LB) y la plataforma de secuenciación (PL). Muchas herramientas posteriores, como GATK, exigen que esta información esté incrustada en el archivo para poder procesar los datos correctamente.
+- `bwa-mem2 mem`: Es el algoritmo de alineamiento. Toma las lecturas R1 y R2 y busca su posición más probable en el genoma de referencia (REF). Al usar la versión 2 de BWA, aprovechamos instrucciones avanzadas de los procesadores modernos para que el cálculo sea significativamente más rápido.
+- El símbolo del pipe (`|`): Funciona como una cinta transportadora. En lugar de escribir un archivo gigante en el disco después de mapear, el pipe pasa los datos directamente en la memoria RAM a la siguiente herramienta. Esto ahorra mucho espacio y tiempo de escritura.
+- `samtools view -F 4 -q 20`: Actúa como un filtro de calidad. El parámetro `-F 4` indica que solo queremos conservar los reads que se mapearon con éxito (descarta los "unmapped"). El parámetro `-q 20` descarta alineamientos ambiguos o de baja calidad (MAPQ menor a 20). Esto asegura que los datos que usaremos después sean confiables.
+- `samtools sort`: Los alineadores entregan los resultados en el orden en que aparecen en el archivo FASTQ (desordenados respecto al genoma). Este comando organiza las lecturas según su posición en el cromosoma (coordenadas). Es un paso obligatorio porque casi todas las herramientas de visualización y análisis requieren que el archivo BAM esté ordenado.
+- `set -x` y `set +x`: Estos comandos rodean el bloque principal. Lo que hacen es imprimir en el archivo de error (.err) el comando exacto que se está ejecutando. Es sumamente útil para la transparencia y para detectar errores específicos durante el taller.
+
+Al finalizar esta etapa, habremos pasado de gigabytes de secuencias desordenadas a un único archivo binario (BAM) que contiene solo las lecturas de alta calidad perfectamente ubicadas en el cromosoma de *Drosophila suzukii* que estamos usando.
+
+
+
+

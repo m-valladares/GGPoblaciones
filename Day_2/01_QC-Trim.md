@@ -5,7 +5,7 @@ El objetivo de esta sesión es verificar la calidad de las secuencias y aprender
 Antes de comenzar necesitamos copiar algunos de los datos que usaremos y el árbol de directorios desde la cuenta `student21`:
 
 ```bash
-mkdir -p ~/Day02/{RAW,REF,scripts,CLEAN,LOG,VARIANT,QC_pre/{fastqc,multiqc},MAP/{bam,stats}}
+mkdir -p ~/Day02/{RAW,REF,scripts,CLEAN,LOGS,VARIANT,QC_pre/{fastqc,multiqc},MAP/{bam,stats}}
 cp -r \
   /home/courses/student21/Day02/{RAW,REF,scripts,QC_pre} \
   /home/courses/${USER}/Day02/

@@ -241,7 +241,7 @@ Sección **control de calidad y limpieza final**. Una vez que el archivo BAM est
 
 ```bash
 # 5) Estadísticas rápidas (QC de mapeo)
-samtools flagstat -@ "${SORT_T}" "${BAM_FINAL}" > "${OUT_STATS}/${ID}.flagstat.txt"
+samtools flagstat -@ "${THREADS}" "${BAM_FINAL}" > "${OUT_STATS}/${ID}.flagstat.txt"
 samtools idxstats "${BAM_FINAL}" > "${OUT_STATS}/${ID}.idxstats.txt"
 
 # 6) Limpieza

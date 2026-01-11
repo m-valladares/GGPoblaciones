@@ -326,10 +326,25 @@ En el NLHPC podemos ver los módulos de R disponibles mediante:
 module spider R
 ```
 
-Como vemos, hay varias versiones de R disponibles, carguemos el módulo con la versión más reciente:
+Como vemos, hay varias versiones de R disponibles. Intentaremos cargar el módulo con la versión más reciente, pero primero tenemos que revisar si es que tiene depedencias necesarias. Para esto nuevamente usamos `module spider`:
 
 ```bash
+module spider R/4.4.0
+```
+
+El resultado nos indica que sí necesitamos dependencias: "*You will need to load all module(s) on any one of the lines below before the "R/4.4.0" module is available to load.*" Esto nos indica que debemos cargar algunos módulos accesorios antes de poder cargar el módulo de R. Carguemos los que aparecen en la primera línea.
+
+```bash
+module load intel-compilers/2022.0.1 impi/2021.5.0
+```
+
+Ahora podremos cargar el módulo de R y abrir R en la terminal.
+
+```bash
+# Carguemos el módulo
 module load R/4.4.0
+
+# Abramos R
 R
 ```
 

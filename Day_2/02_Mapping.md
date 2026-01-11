@@ -61,7 +61,8 @@ conda activate droso_map
 <details>
 <summary><strong>Si no pudieron activar el ambiente</strong></summary>
 
-*Solo en caso que solicite iniciar conda**, indicaremos `conda init`. Y luego, para poder activar ambientes conda en la sesión actual, recargamos la configuración del shell:
+
+**Solo en caso que solicite iniciar conda**, indicaremos `conda init`. Y luego, para poder activar ambientes conda en la sesión actual, recargamos la configuración del shell:
 
 ```bash
 # Primero corremos
@@ -72,6 +73,7 @@ source ~/.bashrc
 ```
 
 Tras estas instrucciones se pueden activar los ambientes nuevamente.
+
 </details>
 
 

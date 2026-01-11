@@ -26,8 +26,7 @@ Características clave de un script Bash:
 Como se mencionó, los scripts son archivos de texto, por lo que debemos crearlo usando `nano` y guardarlo en algún directorio de nuestra cuenta. Primero revisemos si estamos en el directorio correcto y ejecutemos el editor `nano`.
 ```bash
 # Primero nos aseguramos de encontrarnos en el directorio Day01
-# Reemplacen student21 por su nombre de usuario
-cd /home/courses/student21/Day01
+cd /home/courses/$USER/Day01
 
 # Ahora ejecutamos nano y crearemos el script que llamaremos test.sh
 nano test.sh
@@ -48,11 +47,17 @@ Para correr el script usaremos el comando `bash`
 bash test.sh
 ```
 
+<details>
+<summary><strong>Si no pudieron activar el ambiente</strong></summary>
+
 **Permisos de ejecución:** si el script no corre, usualmente se debe a que necesita permiso de ejecución. Esto usualmente sucede cuando se intenta correr un script desde otra carpeta usando la ruta completa (no es nuestro caso). Entonces, antes de intentar correr un script, nos debemos asegurar de que tu usuario tiene permiso para ejecutarlo. Si no lo tiene, se usa el comando `chmod`:
 ```bash
 # Solo si no corrió usen:
 chmod +x test.sh
 ```
+
+</details>
+
 
 Un script un poco más complejo se puede construir usando bucles mediante el comando `for` (análogo a los *loops* en `R`). Antes de ver el script, recuerden crearlo usando `nano`, lo llamaremos `test2.sh`.
 ```bash
@@ -211,6 +216,10 @@ En un clúster HPC no es posible “abrir un programa y ejecutarlo directamente�
 Un script de SLURM es simplemente un archivo de texto con una lista de instrucciones que le indican al clúster qué ejecutar y con qué recursos hacerlo. Por convención, se guarda con extensión `.sbatch`. Creemos un script `sbatch` usando `nano`:
 
 ```bash
+# Primero veamos en qué directorio estamos
+ls
+
+# Ahora creemos nuestro script
 nano script_SLURM.sbatch
 ```
 

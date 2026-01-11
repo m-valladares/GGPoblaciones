@@ -2,13 +2,14 @@
 
 El objetivo de esta sesión es verificar la calidad de las secuencias y aprender algunos índices tradicionales para describir esta calidad. Para esto usaremos los programas `FastQC` y `MultiQC`. También realizaremos el trimeo de adaptadores y reads de mala calidad usando `fastp`. Con estos pasos dejaremos el set de datos preparado para realizar el mapeo de los reads y proceder con el llamado de variantes.
 
-Antes de comenzar necesitamos copiar los datos que usaremos y el árbol de directorios desde la cuenta `student21`:
+Antes de comenzar necesitamos copiar algunos de los datos que usaremos y el árbol de directorios desde la cuenta `student21`:
 
 ```bash
-# No olviden cambiar studentXX por el nombre real de su cuenta.
-cp -r /home/courses/student21/Day02 /home/courses/studentXX
+mkdir -p ~/Day02/{RAW,REF,scripts,CLEAN,LOG,VARIANT,MAP/{bam,stats}}
+cp -r \
+  /home/courses/student21/Day02/{RAW,REF,scripts} \
+  /home/courses/${USER}/Day02/
 ```
-
 
  ---
 
@@ -46,8 +47,7 @@ Cabe mencionar que en el comando anterior hemos indicado nuestras opciones usand
 Para simplificar y ayudarnos a no cometer errores en las rutas de las carpetas o archivos, las asignaremos a variables de entorno. Esto lo haremos definiendo una variable (e.g. `BASE`) a la cual se asignaremos un "valor" específico, en este caso el valor será la ruta `"/mnt/beegfs/home/mvalladares/Curso"`. Luego, podremos usar esa variable durante la sesión interactiva `srun` sin la necesidad de indicar la ruta cada vez. Esta asignación de variables de entorno se puede hacer con rutas (como nuestro caso), elementos, objetos, etc.
 
 ```bash
-# No olviden cambiar studentXX por el nombre real de su cuenta.
-BASE="/home/courses/studentXX/Day02"
+BASE="/home/courses/$USER/Day02"
 RAW="${BASE}/RAW"
 OUT_QC="${BASE}/QC_pre/fastqc"
 OUT_MQC="${BASE}/QC_pre/multiqc"

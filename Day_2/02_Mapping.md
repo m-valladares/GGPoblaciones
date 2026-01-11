@@ -259,3 +259,11 @@ El detalle de estos pasos finales es el siguiente:
 - `echo "[OK] Script ejecutado exitosamente"`: Imprime un mensaje de confirmación en el archivo de salida estándar (.out). Si vemos este mensaje al final de nuestro log, tenemos la certeza de que el script completó todas sus etapas sin interrupciones.
 
 
+MAP
+├── bam
+│   ├── DSTEMU01.nodup.bai
+│   ├── DSTEMU01.nodup.bam
+└── stats
+    ├── DSTEMU01.flagstat.txt
+    ├── DSTEMU01.idxstats.txt
+    └── DSTEMU01.markdup.metrics.txt

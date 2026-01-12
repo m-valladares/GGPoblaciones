@@ -153,13 +153,11 @@ El script hace esto automáticamente ("dinámicamente") contando cuántas línea
 
 Para cruzar datos genómicos, usamos el estándar universal BED. Es un archivo de texto simple con 3 columnas obligatorias:
 
-    Cromosoma (ej. NC_0123.1)
+ - Cromosoma (ej. NC_0123.1)
+ - Inicio (Start)
+ - Fin (End)
 
-    Inicio (Start)
-
-    Fin (End)
-
-    ⚠️ Ojo con las coordenadas: El formato BED es "0-based" (cuenta desde 0), mientras que los VCF suelen ser "1-based" (cuentan desde 1). Por eso en el código verán una resta (int($2)-1) para ajustar la posición.
+⚠️ Ojo con las coordenadas: El formato BED es "0-based" (cuenta desde 0), mientras que los VCF suelen ser "1-based" (cuentan desde 1). Por eso en el código verán una resta (int($2)-1) para ajustar la posición.
 
 ### 1.3: Anotación Funcional (cruce con genes)
 
@@ -212,6 +210,5 @@ Es muy probable que en su lista de candidatos encuentren nombres como LOC1083481
 
 ¿Qué hago si me sale uno?
 
-    - No se frustren si no aparece nada en Google.
-
-    - Tip: Busquen el ID del gen en la base de datos de NCBI Gene. A menudo, en la descripción dirá "ortholog of..." refiriéndose a un gen de ratón (Mus musculus) o humano. La función de ese ortólogo es su mejor pista sobre qué está haciendo ese gen en su especie.
+ - No se frustren si no aparece nada en Google.
+ - Tip: Busquen el ID del gen en la base de datos de NCBI Gene. A menudo, en la descripción dirá "ortholog of..." refiriéndose a un gen de ratón (Mus musculus) o humano. La función de ese ortólogo es su mejor pista sobre qué está haciendo ese gen en su especie.

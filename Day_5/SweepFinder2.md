@@ -108,7 +108,7 @@ UMBRAL=$(( TOTAL_PUNTOS / 20 ))
 echo "Puntos evaluados: $TOTAL_PUNTOS. Seleccionando Top 5% ($UMBRAL puntos)..."
 
 ```
-# B. Escenario 1: Búsqueda Estricta (±2 kb)
+### B. Escenario 1: Búsqueda Estricta (±2 kb)
 
 Asumimos que la señal está muy cerca del gen.
 
@@ -128,7 +128,7 @@ cut -f 8 hits_strict.txt | sort | uniq | wc -l
 
 * (Probablemente obtengas pocos genes, ~8).*
 
-# C. Escenario 2: Búsqueda Amplia (±10 kb) - DEFINITIVO
+### C. Escenario 2: Búsqueda Amplia (±10 kb) - DEFINITIVO
 
 En genética de poblaciones real, la señal de selección deace a medida que nos alejamos del sitio causal debido a la recombinación. Dado que nuestra grilla no es tan densa, debemos ampliar la búsqueda para no perder el gen candidato.
 

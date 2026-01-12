@@ -87,7 +87,7 @@ bwa-mem2 index Dsuzukii.chrNC_092080.1.fa
 
 Tras este comando se crean varios archivos adicionales asociados al FASTA original, que BWA-MEM2 utilizará durante el mapeo.
 
-### 3.1 Preparación del genoma de referencia
+### 3.2 Script de BWA-MEM2
 
 Ahora podemos mapear o alinear nuestros reads a la referencia, lo que después nos permitirá buscar variantes. Este paso es bastante demandante computacionalmente y es recomendable correrlo usarlo un script `sbatch`. En el directorio `Day02`→`scripts` está el documento `bwa-droso.sbatch` que contiene las instrucciones para el mapeo. Primero, para ganar tiempo, lo lanzaremos como trabajo al clúster y después explicaremos su contenido.
 
@@ -164,14 +164,14 @@ Sección **carga de ambiente y gestión de software**. En esta sección preparam
 ```bash
 module purge
 module load miniconda3/24.7.1-zen4-5
-source "${CONDA_PREFIX}/etc/profile.d/conda.sh"
+source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate droso_map
 ```
 
 El detalle de la carga de herramientas es el siguiente:
 - `module purge`: Limpia todos los módulos cargados previamente en la sesión. Esto garantiza que no existan conflictos entre diferentes softwares que el sistema pueda tener activos por defecto.
 - `module load miniconda3/24.7.1-zen4-5`: Carga el gestor de paquetes Miniconda en una versión optimizada para la arquitectura de los procesadores del clúster (Zen 4). Miniconda nos permite gestionar ambientes virtuales aislados.
-- `source "${CONDA_PREFIX}/etc/profile.d/conda.sh"`: Sirve para inicializar las funciones de Conda dentro del script de Bash. Sin esta instrucción, el comando "activate" podría no ser reconocido por el sistema cuando corre de forma automática en SLURM.
+- `source "$(conda info --base)/etc/profile.d/conda.sh"`: Sirve para inicializar las funciones de Conda dentro del script de Bash. Sin esta instrucción, el comando "activate" podría no ser reconocido por el sistema cuando corre de forma automática en SLURM.
 - `conda activate droso_map`: Activa el ambiente virtual específico del curso. En este ambiente ya están pre-instaladas todas las herramientas necesarias (bwa-mem2, samtools, picard).
 
 Sección **configuración de hilos y memoria**, en esta etapa del script vinculamos los recursos que le pedimos a SLURM hacia las herramientas de software específicas. Es un paso crítico porque establecemos (y limitamos) la cantidad de recursos que efectivamente los programas usarán. Nosotros debemos indicarle a los programas la cantidad de recursos que nos asignó el clúster para evitar que intenten usar más de lo disponible y el sistema detenga el proceso.
@@ -257,11 +257,59 @@ El detalle de estos pasos finales es el siguiente:
 - `echo "[OK] Script ejecutado exitosamente"`: Imprime un mensaje de confirmación en el archivo de salida estándar (.out). Si vemos este mensaje al final de nuestro log, tenemos la certeza de que el script completó todas sus etapas sin interrupciones.
 
 
-MAP
-├── bam
-│   ├── DSTEMU01.nodup.bai
-│   ├── DSTEMU01.nodup.bam
-└── stats
-    ├── DSTEMU01.flagstat.txt
-    ├── DSTEMU01.idxstats.txt
-    └── DSTEMU01.markdup.metrics.txt
+---
+### 3.3 Resultados del mapeo
+
+El script de la sección anterior debería tardar unos **25 minutos** (en el clúster del NLHPC). Podemos ver el avance que lleva en la carpeta `LOGS`.
+
+```bash
+cd home/courses/student21/Day02/LOGS
+
+ls
+```
+
+En ese directorio están dos documentos que son la salida estándar (terminación `.out`) y el registro de errores (terminación `.err`). El nombre de los documentos se refiere al nombre que le pusimos al trabajo en el encabezado del script, para este caso fue: `#SBATCH -J Ds_map`, seguido de un número que es el que fue asignado al trabajo por SLURM.
+
+Si queremos ver el estado del análisis revisaremos el archivo `.err`. Si todo está bien, debería mostrar las instrucciones que indicamos en nuestro script.
+
+```bash
++ bwa-mem2 mem -t 8 -R '@RG\tID:DSTEMU01\tSM:DSTEMU01\tLB:DSTEMU01\tPL:ILLUMINA\tPU:demo' [...]
++ samtools view -@ 8 -b -F 4 -q 20 -
++ samtools sort -@ 8 -m 1G -T /home/courses/student21/Day02/TMP/DSTEMU01.sort -O BAM -o [...]
+Looking to launch executable "/home/courses/student21/.conda/envs/droso_map/bin/bwa-mem2.avx", simd = .avx
+Launching executable "/home/courses/student21/.conda/envs/droso_map/bin/bwa-mem2.avx"
+[...]
+```
+
+Si aún no ha terminado, cancelaremos el trabajo usando el comando `scancel` y el número de trabajo asignado por SLURM. Recuerden que el número del trabajo es el que aparace en el nombre de los archivos `.err` y `.out`.
+
+```bash
+scancel XXXXX
+```
+
+Previamente corrimos BWA-MEM2 y ahora copiaremos los resultados a cada una de sus cuentas. Para que no hayan problemas primero **tienen que cancelar el trabajo** que estaban corriendo.
+
+```bash
+cp -r \
+  /home/courses/student21/Day02_Backup/MAP \
+  /home/courses/${USER}/Day02/MAP
+```
+
+Ahora, en sus directorios `MAP` deberían tener dos carpetas `bam` y `stats`. En la primera, cada muestra debe tener dos archivos resultados del mapeo:
+
+1. `DSTEMU01.nodup.bam` Es el archivo principal. Es un formato binario comprimido (BAM = *Binary Alignment Map*) que contiene todas las lecturas que mapearon contra el cromosoma de referencia. Al decir `nodup`, significa que ya pasó por Picard y los duplicados de PCR han sido marcados (o eliminados), lo que lo hace listo para el análisis de variantes (SNPs).
+
+2. `DSTEMU01.nodup.bai` Es el **índice** del archivo BAM. Es análogo al índice de un libro. Los programas que leerán el archivo BAM no tendrán que abrir todo el archivo (que puede ser muy pesado), sino que consultan el .bai para saber exactamente en qué posición del archivo están las lecturas de una región específica. Sin el .bai, no se puede visualizar el BAM rápidamente.
+
+Por otro lado, en la carpeta `stats` tenemos:
+
+3. `DSTEMU01.flagstat.txt` Es un resumen estadístico rápido. Indica cuántos reads mapearon en total, cuántos pasaron los filtros de calidad y cuántos están correctamente pareados (*properly paired*). Es el primer lugar donde miramos para saber si el experimento funcionó: si el "% de mapeo" es muy bajo, algo salió mal en la secuenciación o en la preparación de la muestra.
+
+4. `DSTEMU01.idxstats.txt` Este archivo es una tabla que desglosa el mapeo por cada secuencia de la referencia. En nuestro caso, como solo usamos un cromosoma, veremos una línea con el nombre de ese cromosoma, su longitud, cuántos reads mapearon ahí y cuántos reads no mapearon. Es ideal para confirmar que los datos se concentraron donde esperábamos.
+
+5. `DSTEMU01.markdup.metrics.txt` Es el reporte generado por Picard. El dato más importante aquí es el *Percent Duplication*.
+
+    - Si es bajo (ej. < 5-10%), la librería es de alta complejidad.
+
+    - Si es muy alto (ej. > 30%), significa que perdiste mucha información en la PCR y estás leyendo muchas veces las mismas moléculas, lo cual no es ideal.
+

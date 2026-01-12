@@ -292,7 +292,7 @@ Previamente corrimos BWA-MEM2 y ahora copiaremos los resultados a cada una de su
 ```bash
 cp -r \
   /home/courses/student21/Day02_Backup/MAP \
-  /home/courses/${USER}/Day02/MAP
+  /home/courses/${USER}/Day02/
 ```
 
 Ahora, en sus directorios `MAP` deberían tener dos carpetas `bam` y `stats`. En la primera, cada muestra debe tener dos archivos resultados del mapeo:
@@ -316,7 +316,6 @@ Por otro lado, en la carpeta `stats` tenemos:
 
 <details>
 <summary><strong>Opcional: inspección del BAM</strong></summary>
-<br>
 
 Primero navegamos hacia el directorio donde están los archivos:
 

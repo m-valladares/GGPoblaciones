@@ -46,7 +46,7 @@ Para correr el script usaremos el comando `bash`
 ```bash
 bash test.sh
 ```
-
+---
 <details>
 <summary><strong>Si no pudieron correr el script</strong></summary>
 
@@ -58,7 +58,7 @@ chmod +x test.sh
 
 </details>
 
-
+---
 Un script un poco más complejo se puede construir usando bucles mediante el comando `for` (análogo a los *loops* en `R`). Antes de ver el script, recuerden crearlo usando `nano`, lo llamaremos `test2.sh`.
 ```bash
 #!/bin/bash

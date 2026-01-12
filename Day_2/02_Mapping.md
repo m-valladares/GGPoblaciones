@@ -29,6 +29,9 @@ En este taller usaremos el actual genoma de referencia de la especie ([RefSeq de
 Para evitar conflictos instalaremos los software para el mapeo dentro de un ambiente conda específico. En este caso, utilizaremos Miniconda provista como módulo por el cluster. Primero, cargamos el módulo de Miniconda:
 
 ```bash
+# Nos aseguramos de desactivar el ambiente de fastp
+conda deactivate
+
 # No olviden purgar los módulos anteriores
 module purge
 

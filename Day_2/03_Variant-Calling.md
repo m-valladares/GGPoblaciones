@@ -35,7 +35,7 @@ Esta distinción es fundamental y explica por qué no todos los datasets deben a
 Seguiremos la misma lógica de orden que en las secciones anteriores. Dentro de Day02 trabajaremos con la siguiente estructura:
 
 ```bash
-Day03/
+Day02/
 ├── BAM/          # BAMs finales (nodup + indexados)
 ├── REF/          # Genoma de referencia
 ├── VARIANT/
@@ -52,6 +52,7 @@ Para este ejercicio, usaremos nuevamente *Drosophila suzukii* con alta cobertura
 Usaremos un ambiente dedicado para evitar conflictos con el ambiente de mapeo.
 
 ```bash
+conda deactivate
 module purge
 module load miniconda3/24.7.1-zen4-5
 

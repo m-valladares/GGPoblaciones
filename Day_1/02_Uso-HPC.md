@@ -48,7 +48,7 @@ bash test.sh
 ```
 
 <details>
-<summary><strong>Si no pudieron activar el ambiente</strong></summary>
+<summary><strong>Si no pudieron correr el script</strong></summary>
 
 **Permisos de ejecución:** si el script no corre, usualmente se debe a que necesita permiso de ejecución. Esto usualmente sucede cuando se intenta correr un script desde otra carpeta usando la ruta completa (no es nuestro caso). Entonces, antes de intentar correr un script, nos debemos asegurar de que tu usuario tiene permiso para ejecutarlo. Si no lo tiene, se usa el comando `chmod`:
 ```bash

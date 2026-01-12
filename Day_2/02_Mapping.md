@@ -316,8 +316,9 @@ Por otro lado, en la carpeta `stats` tenemos:
 
 <details>
 <summary><strong>Opcional: inspección del BAM</strong></summary>
+<br>
 
-<p>Primero navegamos hacia el directorio donde están los archivos:</p>
+Primero navegamos hacia el directorio donde están los archivos:
 
 ```bash
 cd /home/courses/${USER}/Day02/MAP/bam

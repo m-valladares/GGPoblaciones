@@ -118,6 +118,12 @@ Otros comandos de uso común pueden encontrarse en internet si buscan **referenc
 A continuación se muestran algunos comandos clásicos para renombrar o copiar elementos. Para usarlos es necesario tener un elemento, objeto o documento de interés. En la carpeta `Day01` ahora cuentan con un archivo de prueba llamado `documento.txt` para probar estos comandos.
 
 ```bash
+cp -r \
+  /home/courses/student21/Day01/documento.txt \
+  /home/courses/${USER}/Day01/
+```
+
+```bash
 head documento.txt      # muestra las primeras 10 líneas del archivo
 tail documento.txt      # muestra las últimas 10 líneas del archivo
 cat documento.txt       # muestra el contenido completo del archivo

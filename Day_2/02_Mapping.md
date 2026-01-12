@@ -313,3 +313,57 @@ Por otro lado, en la carpeta `stats` tenemos:
 
     - Si es muy alto (ej. > 30%), significa que perdiste mucha información en la PCR y estás leyendo muchas veces las mismas moléculas, lo cual no es ideal.
 
+
+<details>
+<summary><strong>Opcional: inspección del BAM</strong></summary>
+
+<p>Primero navegamos hacia el directorio donde están los archivos:</p>
+
+```bash
+cd /home/courses/${USER}/Day02/MAP/bam
+ls
+```
+
+Los archivos BAM son archivos binarios, por lo que no pueden leerse directamente con comandos como `cat`, `less` o `head`. Para inspeccionar su contenido necesitamos usar herramientas especializadas, en este caso **samtools**. Antes de usar samtools, es importante asegurarse de tener activado el ambiente conda correcto (`droso_map`), ya que ahí se encuentran instalados los programas que utilizaremos.
+
+Entre los comando básicos, uno muy útil es contar cuántos reads contiene un BAM. Este comando convierte internamente el BAM (binario) a formato SAM y cuenta cuántas alineaciones contiene, sin imprimirlas en pantalla. Luego, entrega un único número que corresponde al total de reads almacenados en el BAM.
+
+```bash
+samtools view -c DSTEMU01.nodup.bam
+```
+
+En nuestro ejemplo, el resultado indica que el archivo DSTEMU01.nodup.bam contiene 2.281.357 reads, es decir, los reads que sobrevivieron al mapeo y a los filtros aplicados previamente.
+
+También podemos ver el header del BAM:
+
+```bash
+samtools view -H DSTEMU01.nodup.bam
+```
+
+Este comando muestra únicamente el encabezado del archivo BAM, que contiene información descriptiva y técnica del alineamiento. Entre lo que se muestra, podemos identificar:
+- Versión del formato BAM y tipo de ordenamiento (@HD)
+- Secuencias de referencia usadas en el mapeo, por ejemplo cromosomas y sus longitudes (@SQ)
+- Read groups, que indican a qué muestra pertenece cada read (@RG)
+- Programas utilizados durante el pipeline, con versiones y comandos exactos (@PG)
+
+El header permite reconstruir cómo se generó el BAM, lo que es clave para reproducibilidad y control de calidad.
+
+Ver los primeros reads del BAM:
+
+```bash
+samtools view DSTEMU01.nodup.bam | head
+```
+
+Este comando convierte el BAM a texto (formato SAM) y muestra las primeras líneas correspondientes a los primeros reads del archivo. Nos muestra:
+- Identificador del read
+- Flags que codifican información sobre el alineamiento
+- Cromosoma y posición donde mapea
+- Calidad de mapeo (MAPQ)
+- CIGAR string, que describe cómo alinea el read
+- Secuencia nucleotídica
+- Calidades de base
+- Tags adicionales generados durante el procesamiento (por ejemplo duplicados, mismatches, etc.)
+
+Esto permite inspeccionar manualmente cómo luce un alineamiento real y verificar que el mapeo se haya realizado correctamente.
+
+</details>

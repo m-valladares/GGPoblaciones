@@ -2,13 +2,14 @@
 
 El objetivo de esta sesión es verificar la calidad de las secuencias y aprender algunos índices tradicionales para describir esta calidad. Para esto usaremos los programas `FastQC` y `MultiQC`. También realizaremos el trimeo de adaptadores y reads de mala calidad usando `fastp`. Con estos pasos dejaremos el set de datos preparado para realizar el mapeo de los reads y proceder con el llamado de variantes.
 
-Antes de comenzar necesitamos copiar los datos que usaremos y el árbol de directorios desde la cuenta `student21`:
+Antes de comenzar necesitamos copiar algunos de los datos que usaremos y el árbol de directorios desde la cuenta `student21`:
 
 ```bash
-# No olviden cambiar studentXX por el nombre real de su cuenta.
-cp -r /home/courses/student21/Day02 /home/courses/studentXX
+mkdir -p ~/Day02/{RAW,REF,scripts,CLEAN,LOGS,VARIANT,QC_pre/{fastqc,multiqc},MAP/{bam,stats}}
+cp -r \
+  /home/courses/student21/Day02/{RAW,REF,scripts,QC_pre} \
+  /home/courses/${USER}/Day02/
 ```
-
 
  ---
 
@@ -46,8 +47,7 @@ Cabe mencionar que en el comando anterior hemos indicado nuestras opciones usand
 Para simplificar y ayudarnos a no cometer errores en las rutas de las carpetas o archivos, las asignaremos a variables de entorno. Esto lo haremos definiendo una variable (e.g. `BASE`) a la cual se asignaremos un "valor" específico, en este caso el valor será la ruta `"/mnt/beegfs/home/mvalladares/Curso"`. Luego, podremos usar esa variable durante la sesión interactiva `srun` sin la necesidad de indicar la ruta cada vez. Esta asignación de variables de entorno se puede hacer con rutas (como nuestro caso), elementos, objetos, etc.
 
 ```bash
-# No olviden cambiar studentXX por el nombre real de su cuenta.
-BASE="/home/courses/studentXX/Day02"
+BASE="/home/courses/$USER/Day02"
 RAW="${BASE}/RAW"
 OUT_QC="${BASE}/QC_pre/fastqc"
 OUT_MQC="${BASE}/QC_pre/multiqc"
@@ -106,7 +106,7 @@ fastqc -t 8 -o "${OUT_QC}" *.fq.gz
 ```
 
 ---
-Previamente corrimos FastQC y los resultados están en `/home/courses/studentXX/Day02/QC_pre/fastqc`. Para ver los resultados debemos descargar la carpeta `fastqc` desde Visual Studio Code a nuestro computador. Luego, podemos abrir los archivos `html` usando nuestro explorador preferido.
+Previamente corrimos FastQC y los resultados están en `/home/courses/$USER/Day02/QC_pre/fastqc`. Para ver los resultados debemos descargar la carpeta `fastqc` desde Visual Studio Code a nuestro computador. Luego, podemos abrir los archivos `html` usando nuestro explorador preferido.
 
 FastQC ([Andrews, 2010](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)) es una herramienta de control de calidad que evalúa distintos aspectos de las lecturas de secuenciación (FASTQ) antes de los análisis posteriores. Sus resultados se presentan como una serie de gráficos y estadísticas, cada uno acompañado de un estado (pass, warning o fail).
 
@@ -222,8 +222,16 @@ conda activate fastp_trim
 **Solo en caso que solicite iniciar conda**, indicaremos `conda init`. Y luego, para poder activar ambientes conda en la sesión actual, recargamos la configuración del shell:
 
 ```bash
+# Primero corremos
+conda init
+
+# Luego, usamos el comando
 source ~/.bashrc
 ```
+
+En el comando anterior `conda init` no activa ningún environment. Lo que hace es modificar archivos de configuración del shell para que en el futuro puedas usar conda activate sin problemas. Lo que hace es detectar qué shell se está usando (bash o zsh). Y edita archivos como ~/.bashrc o ~/.zshrc agregando un bloque que prepara el shell para que `conda activate` funcione.
+
+Sin embargo, `conda init` solo tiene efecto cuando se abre un nuevo shell. Para que funcione usamos `source ~/.bashrc` recarga el archivo de configuración del shell actual. Esto porque `~/.bashrc` es un archivo que Bash lee cada vez que se abre un shell interactivo y contiene aliases, variables de entorno, módulos, inicialización de conda (eg. si corrimos `conda init`), etc.
 
 ---
 A continuación, activamos el ambiente recién creado:
@@ -256,9 +264,8 @@ fastp -h
 Ahora podemos correr fastp, pero primero definimos los directorios donde se guardarán los resultados del trimming y los reportes generados por fastp. Estos directorios se crearán solo si no existen.
 
 ```bash
-# No olviden cambiar studentXX por el nombre real de su cuenta.
-CLEAN="/home/courses/student21/Day02/CLEAN"
-REP="/home/courses/student21/Day02/fastp_reports"
+CLEAN="/home/courses/$USER/Day02/CLEAN"
+REP="/home/courses/$USER/Day02/fastp_reports"
 
 mkdir -p "${CLEAN}" "${REP}"
 ```

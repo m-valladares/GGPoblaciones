@@ -366,3 +366,34 @@ nano creando_archivos.txt
 ```
 
 ---
+
+## Utilidad de `echo` y variables en el curso
+
+Como vimos, cuando tenemos una variable podemos usar `echo` para ver su contenido, esto es muy útil porque en Bash la variable `$USER` siempre se referirá a la cuenta del usuario logeado. Veamos lo que aparece cuando la usamos en nuestra consola como lo hicimos previamente
+
+```bash
+echo $USER
+echo $HOME
+```
+
+- `$USER` muestra el nombre de la cuenta activa.
+- `$HOME` muestra el directorio personal de ese usuario.
+
+El resultado de estos comandos es distinto para cada persona, ya que depende de la cuenta con la que se haya iniciado sesión en el servidor. Esta característica nos permite escribir comandos y scripts genéricos, que funcionen correctamente para todos los participantes del curso sin necesidad de modificar rutas o nombres de usuario manualmente.
+
+Por ejemplo, en lugar de escribir rutas fijas como:
+
+```bash
+/home/courses/student21/Day02
+```
+
+Podemos usar variables de entorno:
+
+```bash
+/home/courses/$USER/Day02
+```
+
+De esta forma, el mismo comando o script funciona para cualquier usuario, reduce errores y evita modificaciones innecesarias entre cuentas. El uso de variables de entorno es una buena práctica en bioinformática y computación científica, ya que:
+- mejora la portabilidad de los scripts,
+- facilita el trabajo colaborativo,
+- y contribuye a la reproducibilidad de los análisis.

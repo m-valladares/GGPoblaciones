@@ -16,3 +16,4 @@ Esta información se almacena en archivos SAM/BAM, que serán la base de todos l
 
 ---
 ## Genoma de referencia
+

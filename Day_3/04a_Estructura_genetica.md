@@ -2,17 +2,25 @@
 
 ## $F_{ST}$ por pares de especies (Ascotan versus Carcote y Lauca versus Chungará):
 
+El $F_{ST}$ mide qué tanta de la variación genética total se debe a las diferencias entre poblaciones. Un valor de 0 indica que son una sola población panmíctica; un valor de 1 indica que están fijadas para alelos distintos.
+
 ```bash
+# Cálculo para la divergencia antigua (Salares)
+
 vcftools --vcf Orestias_only_SNPs.recode.vcf \
 --weir-fst-pop Ascotan.txt \
 --weir-fst-pop Carcote.txt \
 --out FST_Antigua_Ascotan_Carcote
-```
-```bash
+
+# Cálculo para la divergencia antigua (Salares)
 vcftools --vcf Orestias_only_SNPs.recode.vcf \
 --weir-fst-pop Lauca.txt \
 --weir-fst-pop Chungara.txt \
 --out FST_Reciente_Lauca_Chungara
+
+# EXPLICACIÓN DE LOS PARÁMETROS:
+# --weir-fst-pop: Archivo .txt con la lista de individuos de la población A y B.
+# --out: Genera un archivo .weir.fst con el valor por sitio y un resumen en el log.
 ```
 
 ### Comparación: Ascotán vs. Carcote (Divergencia Antigua)
@@ -39,13 +47,17 @@ Siempre reporten el Weighted $F_{ST}$.
 ---
 
 ## Correr el PCA en el Clúster
-Fíjate que ahora correremos en el archivo que construimos con PLINK cuando filtramos aquellos sitios ligados
+Utilizaremos el archivo VCF que ya pasó por el filtro de LD Pruning (poda por desequilibrio de ligamiento) para evitar que regiones altamente ligadas sesguen los componentes principales.
 
 ```bash
 plink2 --vcf Orestias_FINAL_PCA.vcf \
 --double-id --allow-extra-chr \
 --pca 10 \
 --out orestias_pca_results
+
+# --double-id: Copia el nombre de la muestra como ID de familia y de individuo.
+# --allow-extra-chr: Permite procesar scaffolds (necesario en organismos no modelo).
+# --pca 10: Calcula los primeros 10 componentes principales.
 ```
 
 Al terminar, verás dos archivos clave en tu carpeta:
@@ -58,11 +70,11 @@ Al terminar, verás dos archivos clave en tu carpeta:
 
 # ADMIXTURE
 
-Antes de correr ADMIXTURE, necesitamos transformar los archivos VCF (que son texto) al formato binario de PLINK (`.bed`, `.bim`, `.fam`), que es lo que ADMIXTURE sabe leer.
+1. Antes de correr ADMIXTURE, necesitamos transformar los archivos VCF al formato binario de PLINK (`.bed`, `.bim`, `.fam`), que es lo que ADMIXTURE sabe leer.
 
 ```bash
-
 ml PLINK/2.00-linux-avx2
+
 plink2 --vcf Orestias_FINAL_PCA.vcf \
       --max-alleles 2 \
       --make-bed \
@@ -87,12 +99,8 @@ plink2 --vcf Orestias_FINAL_PCA.vcf \
 
 - `--allow-extra-chr`: Es vital para organismos no modelo. PLINK por defecto espera cromosomas humanos (1-22, X, Y). Como el genoma de referencia está en scaffolds con nombres como "Scaffold_123", este parámetro le dice al programa: "Acepta nombres de cromosomas que no sean los estándar".
 
-Ahora puedes correr ADMIXTURE
-
-```bash
-# 1. Cargar el módulo
-ml ADMIXTURE/1.3.0-x86_64
-```
+2. Hack para los nombres de Scaffolds
+Como ADMIXTURE no acepta nombres de cromosomas con texto (solo números), renombraremos todos los scaffolds a "0" de forma temporal.
 
 A diferencia de PLINK2, ADMIXTURE es muy rígido con los nombres de los cromosomas. Aunque le pusimos `--allow-extra-chr` en PLINK, ADMIXTURE solo acepta números enteros (1, 2, 3...). Al ver nombres como `"Scaffold_1"`, se bloquea y lanza el mensaje: `Invalid chromosome code! Use integers`.
 
@@ -109,6 +117,15 @@ awk '{$1=0;print $0}' orestias_admix.bim.bak > orestias_admix.bim
 
 # Nota: No te preocupes por ponerles "0" a todos; ADMIXTURE usará las posiciones de los SNPs para diferenciarlos. Como ya hicimos el pruning, esto no afectará el resultado de la ancestría.
 ```
+
+3. Ejecución del análisis (Bucle de K=2 a K=5).
+Correremos múltiples valores de $K$ para encontrar el modelo que mejor explique la estructura de las Orestias.
+
+```bash
+# 1. Cargar el módulo
+ml ADMIXTURE/1.3.0-x86_64
+```
+
 ```bash
 # 2. Bucle para procesar de K=2 a K=5
 for K in 2 3 4 5; do 
@@ -116,7 +133,9 @@ for K in 2 3 4 5; do
 done
 ```
 
+4. Interpretación de Resultados: ¿Cuál es el K óptimo?
 El siguiente paso es fundamental: **verificar cuál es el K con menor error**.
+La siguiente línea nos permite comparar los errores:
 
 ```bash
 grep "CV" log*.out
@@ -135,13 +154,13 @@ Para determinar el número óptimo de poblaciones ancestrales ($K$), utilizamos 
 
 **Interpretación de los resultados (CV Error)**
 
-- El Cross-Validation (CV) error nos indica qué valor de $K$ (número de poblaciones ancestrales) explica mejor los datos genómicos.
+- El **Cross-Validation (CV) error** nos indica qué valor de $K$ (número de poblaciones ancestrales) explica mejor los datos genómicos.
 
-- K=2 (0.431) y K=3 (0.400): Tienen errores altos. Seguramente aquí solo vemos la separación más gruesa (Salares vs. Altiplano).
+- **K=2 (0.431)** y **K=3 (0.400)**: Tienen errores altos. Seguramente aquí solo vemos la separación más gruesa (Salares vs. Altiplano).
 
-- K=4 (0.290): ¡Es el ganador! Aquí el error cae drásticamente. Esto significa que el modelo de 4 poblaciones es el que mejor representa la realidad biológica de tus Orestias.
+- **K=4 (0.290)**: ¡Es el ganador! Aquí el error cae drásticamente. Esto significa que el modelo de 4 poblaciones es el que mejor representa la realidad biológica de tus Orestias.
 
-- K=5 (0.303): El error vuelve a subir. Esto indica que intentar forzar una quinta población empieza a introducir "ruido" o sobreajuste (overfitting).
+- **K=5 (0.303)**: El error vuelve a subir. Esto indica que intentar forzar una quinta población empieza a introducir "ruido" o sobreajuste (overfitting).
 
 **¿Por qué no usamos el Delta K de Evanno en ADMIXTURE?**
 El método de Evanno ($\Delta K$) se basa en la segunda derivada de la función de verosimilitud ($\ln P(D)$). STRUCTURE calcula esta verosimilitud mediante un método llamado MCMC (Cadenas de Markov Monte Carlo), que es muy lento pero genera los datos necesarios para esa estadística.
@@ -160,20 +179,10 @@ Con K=4, es muy probable que los datos estén mostrando estas cuatro unidades ge
 - Chungará
 
 
+# Organización de Datos en computador local: Estructura Genética
 
+Crea una nueva carpeta específica para esta fase del análisis y descarga los siguientes archivos específicos del Clúster:
 
-# Organización de Datos: Estructura Genética
-# Crea una nueva carpeta específica para esta fase del análisis. 
-# 1. Crear la nueva carpeta
-mkdir -p /mnt/c/Users/pamel/Dropbox/CursoEnero2026/DataOrestias/CursoEnero2026_Orestias/estructura_gen_orestias
-
-# Entrar a la carpeta
-cd /mnt/c/Users/pamel/Dropbox/CursoEnero2026/DataOrestias/CursoEnero2026_Orestias/estructura_gen_orestias
-
-# 2. Descargar archivos específicos del Clúster
-Deben descargar los siguientes archivos a esta nueva ubicación (estructura_gen_orestias):
-
-## Resultados de Diferenciación
 - ($F_{ST}$): `FST_Antigua_Ascotan_Carcote.weir.fst` y `FST_Reciente_Lauca_Chungara.weir.fst`
 
 - Resultados de PCA (PLINK): `orestias_pca_results.eigenvec`, `orestias_pca_results.eigenval`
@@ -182,8 +191,9 @@ Deben descargar los siguientes archivos a esta nueva ubicación (estructura_gen_
 
 - Metadatos: Copiar el archivo `metadatos_orestias.csv` a esta carpeta también.
 
-- Scripts R: `PCA_Orestias.R`, `FST_Orestias.R` y `Admixture_Orestias.R`
+Ahora puedes correr los scripts R: `PCA_Orestias.R`, `FST_Orestias.R` y `Admixture_Orestias.R`
 
+---
 
 # RESULTADOS
 
@@ -204,3 +214,18 @@ Deben descargar los siguientes archivos a esta nueva ubicación (estructura_gen_
 
 - Interpretación: Los puntos que tocan el $F_{ST}=1$ en este sistema son candidatos a selección natural. Representan genes que están cambiando rápido para adaptarse, por ejemplo, al ambiente de río (Lauca) vs. ambiente de lago (Chungará).
 
+# DISCUSIÓN INTEGRADA DE RESULTADOS
+
+Al combinar los tres análisis, podemos inferir parte de la historia evolutiva de estas poblaciones:
+
+1. Coherencia entre PCA y ADMIXTURE
+En el PCA, las muestras de Ascotán y Carcote están separadas por una distancia enorme en el PC1. Esto se refleja perfectamente en el ADMIXTURE (K=4), donde cada una de estas poblaciones aparece como un bloque de color sólido y puro (sin barras de mezcla). No hay flujo génico actual entre estos salares.
+
+2. La relación Lauca-Chungará
+Mientras que en los salares el $F_{ST}$ es altísimo (0.67), en el Altiplano (Lauca vs Chungará) es mucho menor (0.23). Esto explica por qué en el PCA estas poblaciones están más cerca y por qué, si corriéramos un ADMIXTURE con K=3, probablemente estas dos aparecerían bajo el mismo color. Solo al llegar a K=4 el programa logra identificar las variantes sutiles que las separan.
+
+3. Paisaje Genómico
+El FST por sitio muestra una "nube" alta en los salares, pero en el Altiplano (Lauca-Chungará), la base es baja con muy pocos SNPS que llegan a $F_{ST}=1$.
+Integración: Esos peaks de $F_{ST}$ podrían ser candidatos a ser genes de adaptación local (río vs lago).
+
+---

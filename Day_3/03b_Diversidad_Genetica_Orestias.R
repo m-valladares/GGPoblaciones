@@ -73,7 +73,8 @@ ggplot(pi_total, aes(x=PI, fill=Pob)) +
   theme_minimal()
 
 # Nota: El valor de pi depende de cuánta variación real hay.
-# Si el gráfico se ve 'cortado' con 0.05, es porque nuestras Orestias tienen sitios con mucha más divergencia de la que esperábamos inicialmente.
+# Si el gráfico se ve 'cortado' con 0.05, es porque nuestras Orestias tienen sitios 
+# con mucha más divergencia de la que esperábamos inicialmente.
 
 # ==============================================================================
 # 4. RESUMEN ESTADÍSTICO PARA DISCUSIÓN

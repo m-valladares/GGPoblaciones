@@ -346,3 +346,19 @@ bcftools view -r chrNC_092080.1:1000000-1050000 Dsuzukii_chr1_final.vcf.gz | bcf
 bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%INFO/DP\n' Dsuzukii_chr1_final.vcf.gz | head -n 20
 ```
 
+6. Extraer información específica (Query): incluyendo más información:
+
+```bash
+bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%INFO/DP[\t%GT\t%DP\t%AD\t%RO\t%QR\t%AO\t%QA\t%GL]\n' Dsuzukii_chr1_final.vcf.gz | head -n 1
+```
+
+| Etiqueta | Nombre completo | Descripción |
+| :------: | :-------------: | :---------: |
+| GT | Genotype | El genotipo asignado. `0/0` (Ref),  `0/1` (Hete),  `1/1` (Hom Alt) |
+| DP | Read Depth | Cobertura total de reads en esta posición para la muestra |
+| AD | Allele Depth | Profundidad por alelo. Se reporta como: `n_reads_Ref`, `n_reads_Alt` |
+| RO | Reference Observation | Número de reads que apoyan al alelo de la Referencia |
+| AO | Alternate Observation | Número de reads que apoyan al alelo Alternativo |
+| QR | Quality Reference | Suma de las calidades de base (Phred) de los reads de referencia |
+| QA | Quality Alternate | Suma de las calidades de base de los reads alternativos |
+| GL | Genotype Likelihood | Probabilidades de los genotipos (RR, RA, AA) en escala log10​ |

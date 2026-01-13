@@ -27,27 +27,8 @@ ANGSD, en cambio:
 
 Esta distinción es fundamental y explica por qué no todos los datasets deben analizarse con el mismo pipeline, aun cuando el objetivo biológico sea similar.
 
----
-### 4.2 Parte A — Variant Calling con FreeBayes (alta cobertura)
 
-#### Organización de carpetas
-
-Seguiremos la misma lógica de orden que en las secciones anteriores. Dentro de Day02 trabajaremos con la siguiente estructura:
-
-```bash
-Day02/
-├── BAM/          # BAMs finales (nodup + indexados)
-├── REF/          # Genoma de referencia
-├── VARIANT/
-│   ├── raw_vcf/  # VCFs sin filtrar
-│   └── filt_vcf/ # VCFs filtrados
-├── scripts/
-└── LOGS/
-```
-
-Para este ejercicio, usaremos nuevamente *Drosophila suzukii* con alta cobertura, y solo el primer autosoma del genoma.
-
-### 4.3 Ambiente conda para Variant Calling (FreeBayes)
+### 4.2 Ambiente conda para Variant Calling (FreeBayes)
 
 Usaremos un ambiente dedicado para evitar conflictos con el ambiente de mapeo.
 
@@ -88,7 +69,7 @@ Tras estas instrucciones se pueden activar los ambientes nuevamente.
 
 </details>
 
-### 4.4 ¿Qué hace FreeBayes?
+### 4.3 ¿Qué hace FreeBayes?
 
 FreeBayes es un variant caller haplotípico, lo que significa que:
 - evalúa múltiples posiciones simultáneamente
@@ -97,7 +78,7 @@ FreeBayes es un variant caller haplotípico, lo que significa que:
 
 A diferencia de enfoques más antiguos basados solo en pileup, FreeBayes modela explícitamente la variación genética esperada en poblaciones.
 
-### 4.5 Preparación de archivos y rutas
+### 4.4 Preparación de archivos y rutas
 
 Para realizar el llamado de variantes, utilizaremos un script de SLURM que procesará nuestras muestras de "alta cobertura". A diferencia del mapeo, donde procesamos muestra por muestra, en el llamado de variantes es común (y recomendado) realizar un llamado conjunto (joint calling), donde FreeBayes observa todas las muestras simultáneamente para aumentar la potencia estadística en sitios con baja cobertura en alguna muestra particular.
 
@@ -158,7 +139,7 @@ Aquí el desglose paso a paso de `awk`:
 
 </details>
 
-### 4.6 Ejecución de FreeBayes
+### 4.5 Ejecución de FreeBayes
 
 Luego de construir los archivos accesorios (`bamlist.txt` y `regions.txt`) podemos hacer el llamado de variantes. Este paso es bastante demandante computacionalmente y es recomendable correrlo usarlo un script `sbatch`. En el directorio `Day02`→`scripts` está el documento `fbayes_droso.sbatch` que contiene las instrucciones para el mapeo. Primero, para ganar tiempo, lo lanzaremos como trabajo al clúster y después explicaremos su contenido.
 
@@ -210,3 +191,158 @@ El detalle de estos parámetros es:
 En resumen: Mientras que en el taller priorizamos "ver resultados" para entender el flujo de trabajo, en una investigación real priorizamos la pureza de los datos para evitar falsos positivos que puedan arruinar las conclusiones biológicas.
 
 </details>
+
+---
+Sección **llamado de variantes por ventana**, en esta etapa ejecutamos el análisis propiamente tal. Debido a que el llamado de variantes es una tarea computacionalmente intensiva, no procesamos el cromosoma completo de una sola vez, sino que utilizamos GNU Parallel para fragmentar el trabajo.
+
+```bash
+parallel -j "${THREADS}" --joblog "${LOGS}/parallel_jobs.log" "
+    region_name=\$(echo {1} | sed 's/:/_/g; s/-/_/g')
+    
+    freebayes -f ${REF} -L ${BAMLIST} -r {1} ${FLAGS} | \
+    bgzip -c > ${OUT_VCF}/ventana_\${region_name}.vcf.gz
+    
+    tabix -p vcf ${OUT_VCF}/ventana_\${region_name}.vcf.gz
+" :::: "${REGIONS}"
+```
+
+El funcionamiento de este bloque tiene tres componentes clave:
+- Gestión de tareas con GNU Parallel:
+  - `-j "${THREADS}"`: Indica cuántas ventanas se procesan simultáneamente (en nuestro caso, 4).
+  - `--joblog`: Crea un registro detallado que nos permite monitorear qué ventanas terminaron exitosamente y cuánto tiempo tomó cada una. Es fundamental para el diagnóstico de errores.
+  - `:::: "${REGIONS}"`: Esta sintaxis le dice a parallel que lea el archivo regions.txt línea por línea. Cada línea (por ejemplo, chr1:1-150000) será enviada al comando como el argumento {1}.
+- Procesamiento de cada ventana:
+  - `region_name=...`: Transformamos el formato de la región (ej. de chr1:1-15000 a chr1_1_15000) para poder usarlo como un nombre de archivo válido y organizado.
+  - `freebayes ... | bgzip -c`: Utilizamos un "pipe" (`|`) para conectar la salida de FreeBayes directamente con bgzip. Esto es extremadamente eficiente porque el archivo VCF (que es texto plano muy pesado) se comprime en tiempo real mientras se genera, ahorrando una enorme cantidad de espacio en el disco duro.
+  - `> ...vcf.gz`: El resultado final de cada ventana es un archivo comprimido listo para ser indexado.
+- Indexación inmediata (tabix):
+  - Ejecutamos `tabix` justo después de crear cada archivo .vcf.gz. Esto genera un índice .tbi para cada ventana. Aunque parezca un paso extra, es necesario para que en el siguiente paso bcftools pueda unir los archivos de forma ultra rápida accediendo directamente a las coordenadas genómicas.
+
+
+Sección **concatenación de resultados**, una vez que todas las ventanas individuales han sido procesadas exitosamente, procedemos a unirlas en un único archivo que represente el cromosoma completo. Este paso es similar a armar un rompecabezas donde cada pieza es una de las ventanas de 150 kb que procesamos anteriormente.
+
+```bash
+BAM_FINAL="${OUT_VCF}/final_chr1_raw.vcf.gz"
+
+bcftools concat -a -Oz -o "${BAM_FINAL}" "${OUT_VCF}"/ventana_*.vcf.gz
+bcftools index -t "${BAM_FINAL}"
+```
+
+El detalle de esta operación es el siguiente:
+- `bcftools concat`: Es la herramienta estándar para unir archivos VCF. A diferencia de un comando `cat` normal, bcftools entiende la estructura del archivo (cabeceras y cuerpo) y asegura que el resultado sea un VCF válido.
+  - `-a` (naive concat): Esta opción es clave. Permite una concatenación ultra rápida siempre y cuando los archivos tengan las mismas muestras y estén en orden. Como usamos ventana_*.vcf.gz, el sistema operativo entrega los archivos en orden alfabético/numérico, lo que coincide con el orden genómico del cromosoma.
+  - `-Oz`: Indica que la salida debe ser comprimida en formato BGZF (Blocked GNU Zip Format). Este formato es esencial en bioinformática porque permite el acceso aleatorio al archivo sin tener que descomprimirlo entero.
+- Indexado final (`bcftools index -t`): Generamos el índice .tbi para nuestro archivo final. Este índice es el que permite que herramientas de visualización como IGV o programas de filtrado posteriores carguen solo las regiones necesarias del archivo, haciendo que el análisis sea fluido incluso con archivos de varios gigabytes.
+
+
+<details>
+<summary><strong>El Filtrado de Calidad (Post-procesamiento)</strong></summary>
+
+Tras obtener el archivo VCF concatenado, el siguiente paso en un flujo de trabajo real es el **Filtrado de Variantes**. El objetivo es eliminar falsos positivos causados por errores de secuenciación, mapeos ambiguos o sesgos en la preparación de las librerías. Aunque en este taller no ejecutaremos este paso para conservar los pocos SNPs detectados en nuestro subconjunto de datos, a continuación desglosamos la lógica de un filtrado profesional utilizando bcftools:
+
+```bash
+bcftools view --threads "${THREADS}" -m2 -M2 -v snps -Ou "${IN}" \
+bcftools filter --threads "${THREADS}" -Ou -i '
+    QUAL>20 &&
+    INFO/NS>=35 &&
+    INFO/DP>100 && INFO/DP<5000 &&
+    INFO/SAF[0]>0 && INFO/SAR[0]>0 &&
+    INFO/RPR[0]>1 && INFO/RPL[0]>1 &&
+    INFO/EPP[0]>0 &&
+    INFO/SRP>0 &&
+    ( (1.0*INFO/AO[0])/(INFO/AO[0]+INFO/RO) )>0.01 &&
+    ( (1.0*INFO/AO[0])/(INFO/AO[0]+INFO/RO) )<0.99
+'
+```
+
+Explicación de los criterios de filtrado:
+- Restricción de Alelos (`-m2 -M2 -v snps`):
+  - Nos aseguramos de quedarnos únicamente con sitios bialélicos (solo dos alelos posibles) y que sean estrictamente SNPs. Esto facilita los análisis poblacionales posteriores.
+- Calidad y Representatividad (`QUAL > 20 && INFO/NS >= 4`):
+  - `QUAL > 20`: Filtramos sitios con baja confianza estadística (Score Phred).
+  - `NS >= 4`: Exigimos que la variante esté presente en los 4 pools analizados. Si falta información en uno de ellos, descartamos el sitio para mantener la consistencia estadística.
+- Profundidad de Lectura (`DP`):
+  - Ponemos un piso (`DP > 20`) para evitar sitios con poco soporte y un techo (`DP < 500`) para evitar regiones repetitivas o duplicaciones colapsadas que suelen generar falsos SNPs.
+- Sesgo de Hebra y Posición (*Strand & Position Bias*):
+  - `SAF[0]>0 && SAR[0]>0`: Exigimos que el alelo alternativo haya sido leído tanto en la hebra Forward como en la Reverse. Si solo aparece en una hebra, es probable que sea un artefacto técnico.
+  - `RPR[0]>1 && RPL[0]>1`: Verificamos que el alelo alternativo no esté siempre al final o al inicio de los reads, lo cual es un indicador común de errores en los bordes de alineamiento.
+  - `EPP[0]>0`: (End Placement Probability). Es un score de probabilidad que penaliza variantes que ocurren exclusivamente en los extremos de las lecturas.
+  - `SRP>0`: (Strand Reference Probability). Evalúa el balance de hebras, pero aplicado al alelo de referencia. Se usa aquí para asegurar consistencia general en el sitio.
+- Frecuencia Alélica Mínima (MAF-like):
+  - `(1.0*INFO/AO[0])/(INFO/AO[0]+INFO/RO) > 0.01`: Calculamos la proporción de reads del alelo alternativo (AO) respecto al total (AO + RO). Esto actúa como un filtro de frecuencia alélica mínima (1%), eliminando variantes que aparecen tan poco que podrían ser simples errores de la polimerasa.
+
+Conclusión: Filtrar un VCF es un equilibrio constante entre Sensibilidad (no perder variantes reales) y Especificidad (no incluir errores). En el estudio real, estos filtros aseguran que los SNPs analizados representen la biología verdadera de Drosophila suzukii.
+
+</details>
+
+### 4.6 Exploración del VCF
+
+Dado que el análisis de variantes es un proceso computacionalmente demandante y el tiempo del taller es limitado, no esperaremos a que los trabajos terminen de procesarse en el clúster. Para avanzar a la etapa de exploración y filtrado, procederemos a cancelar nuestras tareas actuales y a utilizar un conjunto de datos pre-calculado que representa el análisis completo.
+
+1. Cancelar el trabajo actual: Identifica el JOBID de las tareas y las detendremos para liberar los recursos del nodo:
+
+```bash
+# Reemplaza <JOBID> con el número de tu trabajo
+scancel <JOBID>
+```
+
+2. Sincronizar datos desde el Backup: Utilizaremos los resultados finales generados previamente para asegurar que todos trabajemos sobre la misma base de datos. Cabe mencionar que este VCF fue generado con el script que usamos.
+
+```bash
+cp -r \
+  /home/courses/student21/Day02_Backup/VCF \
+  /home/courses/${USER}/Day02/
+```
+
+Ahora exploraremos el VCF con bcftools, para evitar sorpresas lo haremos en un nodo de cómputo, así que pediremos recursos a SLURM.
+
+```bash
+srun --partition=labs --nodes=1 --cpus-per-task=8 --time=04:00:00 --mem=8G --pty bash
+```
+
+Antes de usar los comando de bcftools, tenemos que activar el ambiente que contiene a la herramienta y navegar a la carpeta donde está el VCF.
+
+```bash
+conda activate droso_vc
+
+cd /home/courses/${USER}/Day02/VCF
+```
+
+Una vez dentro de tu sesión interactiva de srun y con el ambiente activado, utilizaremos bcftools para interrogar al archivo.
+1. Ver el encabezado (Header): El encabezado contiene los metadatos: los comandos usados, la referencia y, lo más importante, la definición de todas las etiquetas (como DP, QUAL, AO).
+
+```bash
+# -h muestra solo el encabezado
+bcftools view -h Dsuzukii_chr1_final.vcf.gz | less -S
+```
+
+2. Ver los registros de variantes: Para examinar los datos propiamente tales (los SNPs), usamos el comando sin el flag -h. Usamos less -S para poder desplazarnos horizontalmente sin que las líneas se corten.
+
+```bash
+# -H omite el encabezado para ir directo a los datos
+bcftools view -H Dsuzukii_chr1_final.vcf.gz | less -S
+```
+
+3. Resumen estadístico (Stats): Antes de mirar línea por línea, es mejor tener una visión global: ¿Cuántos SNPs hay? ¿Cuál es la calidad promedio? ¿Cuántas transiciones y transversiones?
+
+```bash
+# Generar un reporte estadístico rápido
+bcftools stats Dsuzukii_chr1_final.vcf.gz > stats.txt
+
+# Ver el resumen de tipos de variantes y recuentos
+grep ^SN stats.txt
+```
+
+4. Consultar regiones específicas: Si queremos ver qué está pasando en una coordenada exacta del cromosoma (por ejemplo, entre la base 1.000.000 y 1.050.000):
+
+```bash
+# El flag -r permite filtrar por región instantáneamente gracias al índice .tbi
+bcftools view -r chrNC_092080.1:1000000-1050000 Dsuzukii_chr1_final.vcf.gz | bcftools view -H | wc -l
+```
+
+5. Extraer información específica (Query): Este comando es útil para "limpiar" la vista. Si solo queremos ver la posición, el alelo de referencia, el alternativo y la profundidad total (DP):
+
+```bash
+bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%INFO/DP\n' Dsuzukii_chr1_final.vcf.gz | head -n 20
+```
+

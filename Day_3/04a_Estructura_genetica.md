@@ -70,7 +70,7 @@ Al terminar, verás dos archivos clave en tu carpeta:
 
 # 3. ADMIXTURE
 
-3.1. Antes de correr ADMIXTURE, necesitamos transformar los archivos VCF al formato binario de PLINK (`.bed`, `.bim`, `.fam`), que es lo que ADMIXTURE sabe leer.
+3. 1. Antes de correr ADMIXTURE, necesitamos transformar los archivos VCF al formato binario de PLINK (`.bed`, `.bim`, `.fam`), que es lo que ADMIXTURE sabe leer.
 
 ```bash
 ml PLINK/2.00-linux-avx2
@@ -99,7 +99,7 @@ plink2 --vcf Orestias_FINAL_PCA.vcf \
 
 - `--allow-extra-chr`: Es vital para organismos no modelo. PLINK por defecto espera cromosomas humanos (1-22, X, Y). Como el genoma de referencia está en scaffolds con nombres como "Scaffold_123", este parámetro le dice al programa: "Acepta nombres de cromosomas que no sean los estándar".
 
-3.2. Hack para los nombres de Scaffolds
+3. 2. Hack para los nombres de Scaffolds
 Como ADMIXTURE no acepta nombres de cromosomas con texto (solo números), renombraremos todos los scaffolds a "0" de forma temporal.
 
 A diferencia de PLINK2, ADMIXTURE es muy rígido con los nombres de los cromosomas. Aunque le pusimos `--allow-extra-chr` en PLINK, ADMIXTURE solo acepta números enteros (1, 2, 3...). Al ver nombres como `"Scaffold_1"`, se bloquea y lanza el mensaje: `Invalid chromosome code! Use integers`.
@@ -118,7 +118,7 @@ awk '{$1=0;print $0}' orestias_admix.bim.bak > orestias_admix.bim
 # Nota: No te preocupes por ponerles "0" a todos; ADMIXTURE usará las posiciones de los SNPs para diferenciarlos. Como ya hicimos el pruning, esto no afectará el resultado de la ancestría.
 ```
 
-3.3. Ejecución del análisis (Bucle de K=2 a K=5).
+3. 3. Ejecución del análisis (Bucle de K=2 a K=5).
 Correremos múltiples valores de $K$ para encontrar el modelo que mejor explique la estructura de las Orestias.
 
 ```bash
@@ -133,7 +133,7 @@ for K in 2 3 4 5; do
 done
 ```
 
-3.4. Interpretación de Resultados: ¿Cuál es el K óptimo?
+3. 4. Interpretación de Resultados: ¿Cuál es el K óptimo?
 El siguiente paso es fundamental: **verificar cuál es el K con menor error**.
 La siguiente línea nos permite comparar los errores:
 

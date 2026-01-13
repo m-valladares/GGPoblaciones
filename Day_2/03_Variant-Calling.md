@@ -300,7 +300,7 @@ Ahora exploraremos el VCF con bcftools, para evitar sorpresas lo haremos en un n
 srun --partition=labs --nodes=1 --cpus-per-task=8 --time=04:00:00 --mem=8G --pty bash
 ```
 
-Antes de usar los comando de bcftools, tenemos que activar el ambiente que contiene a la herramienta y navegar a la carpeta donde está el VCF.
+Antes de usar los comandos de bcftools, tenemos que activar el ambiente que contiene a la herramienta, y navegar a la carpeta donde está el VCF.
 
 ```bash
 conda activate droso_vc
@@ -308,7 +308,7 @@ conda activate droso_vc
 cd /home/courses/${USER}/Day02/VCF
 ```
 
-Una vez dentro de tu sesión interactiva de srun y con el ambiente activado, utilizaremos bcftools para interrogar al archivo.
+Una vez dentro de la sesión interactiva de srun y con el ambiente activado, utilizaremos bcftools para interrogar al archivo.
 1. Ver el encabezado (Header): El encabezado contiene los metadatos: los comandos usados, la referencia y, lo más importante, la definición de todas las etiquetas (como DP, QUAL, AO).
 
 ```bash

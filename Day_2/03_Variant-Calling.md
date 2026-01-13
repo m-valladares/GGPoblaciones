@@ -117,7 +117,7 @@ Antes de lanzar el llamado de variantes, necesitamos preparar dos archivos de co
 cd /home/courses/${USER}/Day02
 
 # Listamos todos los archivos .bam y guardamos sus rutas
-ls /home/courses/${USER}/Day02/MAP/bam/*.nodup.bam > bamlist.txt
+ls /home/courses/${USER}/Day02/MAP/bam/*.nodup.bam > /home/courses/${USER}/Day02/MAP/bam/bamlist.txt
 ```
 
 2. Definición de regiones genómicas: utilizaremos el índice del genoma de referencia (.fai) que creamos para el mapeo para segmentar el cromosoma en ventanas de 150,000 pares de bases (150 kb). Para esto, empleamos un comando de `awk` que calcula las coordenadas de inicio y fin para cada segmento.
@@ -130,7 +130,7 @@ awk -v size=150000 '{
         if(j>$2) j=$2; 
         printf "%s:%d-%d\n", $1, i+1, j 
     } 
-}' /home/courses/${USER}/Day02/REF/Dsuzukii.chrNC_092080.1.fa.fai > regions.txt
+}' /home/courses/${USER}/Day02/REF/Dsuzukii.chrNC_092080.1.fa.fai > /home/courses/${USER}/Day02/REF/regions.txt
 ```
 
 ¿Qué contiene regions.txt? Si revisamos este archivo con `head regions.txt`, veremos líneas con el formato Cromosoma:Inicio-Fin (por ejemplo, NC_092080.1:1-150000). Cada una de estas líneas es una de las ventanas definidas y será una tarea independiente para nuestro pipeline.
@@ -158,3 +158,55 @@ Aquí el desglose paso a paso de `awk`:
 
 </details>
 
+### 4.6 Ejecución de FreeBayes
+
+Luego de construir los archivos accesorios (`bamlist.txt` y `regions.txt`) podemos hacer el llamado de variantes. Este paso es bastante demandante computacionalmente y es recomendable correrlo usarlo un script `sbatch`. En el directorio `Day02`→`scripts` está el documento `fbayes_droso.sbatch` que contiene las instrucciones para el mapeo. Primero, para ganar tiempo, lo lanzaremos como trabajo al clúster y después explicaremos su contenido.
+
+```bash
+cd /home/courses/$USER/Day02/scripts
+
+# Veamos el contenido del directorio
+ls
+
+# Lancemos el trabajo
+sbatch fbayes_droso.sbatch
+```
+
+Ahora analicemos el detalle del script, como ya vimos en el script de BWA-MEM2, la primera sección es la **cabecera y configuración del entorno**. Esta parte le indica al sistema operativo y al gestor de tareas (SLURM) cómo debe ejecutarse el script y qué recursos necesita. La segunda sección de **definición de rutas y organización**. En esta parte definimos las variables de entorno que el script utilizará. Luego, tenemos la sección de **carga de ambiente y gestión de software**.
+
+Revisemos en detalle la **sección configuración de recursos**, en esta etapa vinculamos los recursos solicitados a SLURM con las herramientas de análisis en paralelo. A diferencia del mapeo, donde un solo proceso usa muchos hilos, aquí utilizaremos un enfoque de paralelismo masivo por tareas, donde dividimos el genoma en trozos pequeños (ventanas) y procesamos varios trozos simultáneamente.
+
+```bash
+THREADS=4
+FLAGS="-K -C 1 -F 0.01 --limit-coverage 500"
+```
+
+El detalle de la gestión de recursos y parámetros es el siguiente:
+- `THREADS=4`: Define el número de trabajos simultáneos que ejecutará GNU Parallel. Este valor es coherente con los 4 núcleos solicitados en `#SBATCH -c 4`. En este esquema, cada núcleo se encargará de procesar una ventana genómica independiente de forma completa. Al finalizar una ventana, el núcleo queda libre y parallel le asigna la siguiente automáticamente hasta agotar el archivo regions.txt.
+- `FLAGS`: Aquí agrupamos los parámetros que controlan la sensibilidad del llamado de variantes en FreeBayes:
+  - `-K`: Instruye al programa a reportar sitios monomórficos (posiciones donde no hay variación respecto a la referencia). Esto es útil si luego queremos calcular estadísticas que requieran conocer el total de sitios variantes y no variantes.
+  - `-C 1`: Establece que se requiere al menos 1 lectura (read) apoyando una variante para considerarla.
+  - `-F 0.01`: Define que la frecuencia mínima de la variante debe ser del 1% para ser reportada.
+  - `--limit-coverage 500`: Es una medida de seguridad. Si una región tiene una profundidad de lectura superior a 500x (lo cual suele ocurrir en regiones repetitivas o de baja complejidad), FreeBayes la saltará. Esto evita que el script se quede "atrapado" durante horas procesando una sola región problemática.
+
+<details>
+<summary><strong>Nota sobre los parámetros de calidad</strong></summary>
+
+Es importante notar que los parámetros definidos en la variable `FLAGS` han sido simplificados para fines pedagógicos. Debido a que en este taller trabajamos con un subconjunto reducido de datos (un solo cromosoma y datos filtrados), el uso de filtros extremadamente estrictos resultaría en la pérdida total de señales genómicas.
+
+En el estudio real, se utilizaría una configuración mucho más rigurosa para asegurar la máxima confiabilidad en los SNPs detectados. Esta configuración debería considerar por lo menos:
+
+```bash
+FLAGS="-K -C 1 -F 0.01 -G 5 -E -1 --limit-coverage 500 -n 4 -m 30 -q 20"
+```
+
+El detalle de estos parámetros es:
+- `-G 5` (Min sum of alt quals): Requiere que la suma de las calidades de las bases que soportan la variante sea al menos 5. Esto ayuda a descartar variantes que solo aparecen en bases de muy mala calidad.
+- `-E -1` (Complex events): Indica cómo tratar eventos complejos. El valor -1 permite a FreeBayes evaluar polimorfismos complejos de manera más flexible, integrando diferentes tipos de variantes (SNPs e Indels) si ocurren en la misma región.
+- `-n 4` (NHot alleles): Limita el número de alelos "calientes" (hot alleles) que se consideran en una posición. Esto evita que el programa consuma demasiada memoria intentando modelar demasiadas variantes raras en un solo sitio.
+- `-m 30` (Min mapping quality): Excluye del análisis cualquier lectura que tenga una calidad de mapeo inferior a 30. Esto asegura que solo usemos lecturas que se alinearon de forma única y confiable en el genoma.
+- `-q 20` (Min base quality): Solo considera bases con una calidad (Phred score) de al menos 20. Una base con Q20 tiene una probabilidad de error de 1 en 100.
+
+En resumen: Mientras que en el taller priorizamos "ver resultados" para entender el flujo de trabajo, en una investigación real priorizamos la pureza de los datos para evitar falsos positivos que puedan arruinar las conclusiones biológicas.
+
+</details>

@@ -159,5 +159,35 @@ Desglose de columnas del archivo .mafs
 - `nInd`: El número de individuos que tenían suficientes lecturas para ser incluidos en el cálculo de ese sitio específico. Recuerda que pusimos un filtro de `-minInd 25`, por eso todos los valores son iguales o superiores a 25.
 
 
+<details>
+<summary><strong>Detalles ANGSD</strong></summary>
 
+Debemos recordar que ANGSD no está seguro de qué base hay en cada lectura, solo tiene probabilidades.
+
+1. `knownEM`: La Frecuencia Alélica
+
+En un mundo ideal, si tenemos 10 individuos y cada uno tiene 2 alelos (20 alelos en total), y contamos 4 variantes, la frecuencia es 4/20=0.20. Pero en NGS de baja cobertura, esto falla porque a veces no ves el segundo alelo de un heterocigoto.
+
+El algoritmo EM (Expectation-Maximization) funciona así:
+- Expectation (E): Basándose en una frecuencia inicial "adivinada", calcula qué tan probable es que cada individuo sea homocigoto o heterocigoto.
+- Maximization (M): Suma esas probabilidades para actualizar la frecuencia global de la población.
+- Ciclo: Repite esto cientos de veces hasta que la frecuencia ya no cambia.
+
+¿Por qué es mejor? Porque si un individuo tiene solo 2 lecturas y ambas son "C", el algoritmo EM no asume automáticamente que es homocigoto CC. Considera la probabilidad de que sea un heterocigoto CG donde simplemente no tuvimos la suerte de leer la G. El valor 0.310517 es el resultado de este "consenso estadístico" de toda la población.
+
+2. `pK-EM`: La validación.
+
+Esta columna responde a la pregunta: **¿Este sitio es realmente variable o el programa está equivocado?**
+
+ANGSD realiza un Test de Razón de Verosimilitud (LRT). Compara dos escenarios:
+- Modelo A (H0): La frecuencia del alelo minoritario es cero (todos son iguales, cualquier diferencia es error de secuenciación).
+- Modelo B (H1): La frecuencia del alelo minoritario es mayor a cero (hay un SNP real).
+
+El `pK-EM` es el valor p de esa comparación.
+- Si el valor es grande (ej. 0.05), hay una alta probabilidad de que la "variante" sea solo ruido.
+- Si el valor es extremadamente pequeño (ej. 2.22×10−16 o 0.0000e+00), significa que el Modelo B es infinitamente más probable que el Modelo A.
+
+En el taller, cuando vemos 0.000000e+00 en casi todas las filas, no significa que el error sea cero absoluto, sino que es tan pequeño que el computador ya no tiene decimales para mostrarlo. Esto sucede porque aplicamos el filtro -SNP_pval 1e-6, lo que significa que ya descartaste de antemano todos los sitios donde el p-value era mayor a 0.000001.
+
+</details>
 

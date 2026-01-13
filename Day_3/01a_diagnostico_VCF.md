@@ -61,7 +61,8 @@ Antes de cargar cualquier herramienta, debemos pedir recursos al clúster para n
 
 ```bash
 
-srun -p labs --pty --mem=2G -n 1 -c 1 --time=03:00:00 /bin/bash
+# srun -p labs --pty --mem=2G -n 1 -c 1 --time=03:00:00 /bin/bash
+srun -p labs -n 1 -c 8 --mem-per-cpu=1000 --pty bash
 
 ```
 

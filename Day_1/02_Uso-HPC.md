@@ -26,8 +26,7 @@ Características clave de un script Bash:
 Como se mencionó, los scripts son archivos de texto, por lo que debemos crearlo usando `nano` y guardarlo en algún directorio de nuestra cuenta. Primero revisemos si estamos en el directorio correcto y ejecutemos el editor `nano`.
 ```bash
 # Primero nos aseguramos de encontrarnos en el directorio Day01
-# Reemplacen student21 por su nombre de usuario
-cd /home/courses/student21/Day01
+cd /home/courses/$USER/Day01
 
 # Ahora ejecutamos nano y crearemos el script que llamaremos test.sh
 nano test.sh
@@ -47,6 +46,9 @@ Para correr el script usaremos el comando `bash`
 ```bash
 bash test.sh
 ```
+---
+<details>
+<summary><strong>Si no pudieron correr el script</strong></summary>
 
 **Permisos de ejecución:** si el script no corre, usualmente se debe a que necesita permiso de ejecución. Esto usualmente sucede cuando se intenta correr un script desde otra carpeta usando la ruta completa (no es nuestro caso). Entonces, antes de intentar correr un script, nos debemos asegurar de que tu usuario tiene permiso para ejecutarlo. Si no lo tiene, se usa el comando `chmod`:
 ```bash
@@ -54,6 +56,9 @@ bash test.sh
 chmod +x test.sh
 ```
 
+</details>
+
+---
 Un script un poco más complejo se puede construir usando bucles mediante el comando `for` (análogo a los *loops* en `R`). Antes de ver el script, recuerden crearlo usando `nano`, lo llamaremos `test2.sh`.
 ```bash
 #!/bin/bash
@@ -211,6 +216,10 @@ En un clúster HPC no es posible “abrir un programa y ejecutarlo directamente�
 Un script de SLURM es simplemente un archivo de texto con una lista de instrucciones que le indican al clúster qué ejecutar y con qué recursos hacerlo. Por convención, se guarda con extensión `.sbatch`. Creemos un script `sbatch` usando `nano`:
 
 ```bash
+# Primero veamos en qué directorio estamos
+ls
+
+# Ahora creemos nuestro script
 nano script_SLURM.sbatch
 ```
 
@@ -317,10 +326,25 @@ En el NLHPC podemos ver los módulos de R disponibles mediante:
 module spider R
 ```
 
-Como vemos, hay varias versiones de R disponibles, carguemos el módulo con la versión más reciente:
+Como vemos, hay varias versiones de R disponibles. Intentaremos cargar el módulo con la versión más reciente, pero primero tenemos que revisar si es que tiene depedencias necesarias. Para esto nuevamente usamos `module spider`:
 
 ```bash
+module spider R/4.4.0
+```
+
+El resultado nos indica que sí necesitamos dependencias: "*You will need to load all module(s) on any one of the lines below before the "R/4.4.0" module is available to load.*" Esto nos indica que debemos cargar algunos módulos accesorios antes de poder cargar el módulo de R. Carguemos los que aparecen en la primera línea.
+
+```bash
+module load intel-compilers/2022.0.1 impi/2021.5.0
+```
+
+Ahora podremos cargar el módulo de R y abrir R en la terminal.
+
+```bash
+# Carguemos el módulo
 module load R/4.4.0
+
+# Abramos R
 R
 ```
 
@@ -394,13 +418,7 @@ La segunda línea indica que SLURM asignó nuestra solicitud a un **trabajo** co
 Siempre es importante que registren el **JOBID** de su trabajo. En un clúster con múltiple usuarios como el NLHPC, es muy fácil olvidarse del ID ya que constantemente se están enviando trabajos. Pero si queremos supervisar el avance de nuestro análisis o cancelarlo porque cometimos un error, necesitaremos el JOBID.
 
 ---
-Al ejecutar `srun` hemos solicitado recursos a través de SLURM al clúster y ahora podremos disponer de esos recursos para ejecutar los análisis. Podemos ver la información de los trabajos que están corriendo (incluyendo el nuestro) mediante el comando `squeue`. Como estamos usando la partición `labs`, no veremos nuestro trabajo.
-
-```bash
-squeue
-```
-
-Ahora nuevamente podemos correr nuestro script de R (no es necesario cargar el módulo de nuevo), pero esta vez se realizará en uno de los nodos de cómputo:
+Al ejecutar `srun` hemos solicitado recursos a través de SLURM al clúster y ahora podremos disponer de esos recursos para ejecutar los análisis. Ahora nuevamente podemos correr nuestro script de R (no es necesario cargar el módulo de nuevo), pero esta vez se realizará en uno de los nodos de cómputo:
 
 ```bash
 Rscript test_script.R

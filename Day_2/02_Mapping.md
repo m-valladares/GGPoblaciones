@@ -86,6 +86,7 @@ Antes de mapear, el genoma de referencia debe ser indexado. El indexado genera e
 cd /home/courses/$USER/Day02/REF
 
 bwa-mem2 index Dsuzukii.chrNC_092080.1.fa
+samtools faidx Dsuzukii.chrNC_092080.1.fa
 ```
 
 Tras este comando se crean varios archivos adicionales asociados al FASTA original, que BWA-MEM2 utilizará durante el mapeo.

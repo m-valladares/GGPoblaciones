@@ -7,7 +7,7 @@ Las variantes constituyen la base de prácticamente todos los análisis en genó
 
 En este curso abordaremos dos enfoques complementarios, que responden a distintos tipos de datos:
 - **FreeBayes** ([Garrison & Marth, 2012](https://doi.org/10.48550/arXiv.1207.3907)) → datos de alta cobertura (WGS > 30–50X), con llamado explícito de genotipos (*hard genotypes*)
-- **ANGSD** ([Korneliussen et al., 2014](https://doi.org/10.1186/s12859-014-0356-4)) → datos de baja cobertura (lcWGS), usando genotype likelihoods en lugar de genotipos fijos
+- **ANGSD** ([Korneliussen et al., 2014](https://doi.org/10.1186/s12859-014-0356-4)) → datos de baja cobertura (lcWGS), usando *genotype likelihoods* en lugar de genotipos fijos
 
 ---
 ## 4. Enfoques de llamado de variantes

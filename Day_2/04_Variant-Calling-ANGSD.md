@@ -109,7 +109,13 @@ El desglose de los módulos específicos de ANGSD es el siguiente:
 
 ### 5.4 Entendiendo los Resultados de ANGSD
 
+Previamente corrimos ANGSD y ahora copiaremos los resultados a cada una de sus cuentas.
 
+```bash
+cp -r \
+  /home/courses/student21/Day02_Backup/ANGSD \
+  /home/courses/${USER}/Day02/
+  ```
 
 
 Una vez que el script finaliza, encontraremos varios archivos con el prefijo definido en el script (hi_chr1_demo). Cada uno tiene una función específica para los análisis posteriores:
@@ -117,4 +123,41 @@ Una vez que el script finaliza, encontraremos varios archivos con el prefijo def
 - `.beagle.gz`: Este archivo contiene las probabilidades de los genotipos para cada individuo en cada sitio. Es un formato especializado que se utiliza como entrada para herramientas de estructura poblacional (como PCAngsd) o para estimar niveles de mezcla (admixture).
 - `.arg`: Es un archivo de texto plano que registra todos los parámetros y comandos exactos utilizados en la ejecución. Es la pieza clave para la reproducibilidad; si necesitas publicar tus resultados, este archivo te dice exactamente qué filtros aplicaste.
 - `.glf.gz`: Contiene las verosimilitudes de los genotipos en formato binario. Es el archivo más pesado y sirve como base para generar otros formatos o realizar cálculos de diversidad nucleotídica (theta, pi, D de Tajima).
+
+Exploración del archivo de frecuencias (.mafs.gz)
+
+Como no podemos abrir estos archivos directamente (están comprimidos), utilizaremos zcat y column para visualizar el contenido de forma ordenada.
+
+Usa este comando en tu terminal:
+
+```bash
+# Ver las primeras 10 líneas de forma tabulada
+zcat hi_chr1_demo.mafs.gz | head -n 10 | column -t
+```
+
+El resultado es:
+```bash
+chromo          position  major  minor  ref  knownEM   pK-EM         nInd
+chrNC_134397.1  49209     G      C      G    0.310517  0.000000e+00  26
+chrNC_134397.1  49258     T      A      T    0.396609  0.000000e+00  27
+chrNC_134397.1  49404     C      T      C    0.419747  0.000000e+00  28
+chrNC_134397.1  49594     T      C      T    0.402129  0.000000e+00  28
+chrNC_134397.1  49595     T      A      T    0.402129  0.000000e+00  28
+chrNC_134397.1  49655     T      A      T    0.338172  0.000000e+00  26
+chrNC_134397.1  49728     T      C      T    0.403223  0.000000e+00  26
+chrNC_134397.1  49759     T      C      T    0.406952  0.000000e+00  27
+chrNC_134397.1  49860     C      T      C    0.208673  2.220446e-16  27
+```
+
+Desglose de columnas del archivo .mafs
+- `chromo` y `position`: Identifican la ubicación exacta del SNP en el genoma.
+- `major`: El alelo más frecuente en el conjunto de datos analizado.
+- `minor`: El alelo menos frecuente (la variante).
+- `ref`: El nucleótido que aparece en el genoma de referencia que usaste. Nota que en la mayoría de los casos el ref coincide con el major, pero no siempre es así (si una mutación se ha vuelto mayoritaria en tu población).
+- `knownEM`: Es la Frecuencia del Alelo Minoritario (MAF) estimada mediante un algoritmo de Expectation-Maximization (EM). Por ejemplo, en la primera fila, el alelo C tiene una frecuencia estimada del 31.05% (0.310517).
+- `pK-EM`: Es el p-value que indica la probabilidad de que el sitio sea realmente un SNP. Nota que en casi todos dice 0.000000e+00, lo que significa que la probabilidad de que sea un error es prácticamente nula. Esto es gracias al filtro -SNP_pval 1e-6 que aplicamos.
+- `nInd`: El número de individuos que tenían suficientes lecturas para ser incluidos en el cálculo de ese sitio específico. Recuerda que pusimos un filtro de `-minInd 25`, por eso todos los valores son iguales o superiores a 25.
+
+
+
 

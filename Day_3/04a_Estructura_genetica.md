@@ -1,6 +1,6 @@
 # ESTRUCTURA GENETICA
 
-## $F_{ST}$ por pares de especies (Ascotan versus Carcote y Lauca versus Chungará):
+## 1. $F_{ST}$ por pares de especies (Ascotan versus Carcote y Lauca versus Chungará):
 
 El $F_{ST}$ mide qué tanta de la variación genética total se debe a las diferencias entre poblaciones. Un valor de 0 indica que son una sola población panmíctica; un valor de 1 indica que están fijadas para alelos distintos.
 
@@ -46,7 +46,7 @@ Siempre reporten el Weighted $F_{ST}$.
 
 ---
 
-## Correr el PCA en el Clúster
+## 2. Correr el PCA en el Clúster
 Utilizaremos el archivo VCF que ya pasó por el filtro de LD Pruning (poda por desequilibrio de ligamiento) para evitar que regiones altamente ligadas sesguen los componentes principales.
 
 ```bash
@@ -68,9 +68,9 @@ Al terminar, verás dos archivos clave en tu carpeta:
 
 ---
 
-# ADMIXTURE
+# 3. ADMIXTURE
 
-1. Antes de correr ADMIXTURE, necesitamos transformar los archivos VCF al formato binario de PLINK (`.bed`, `.bim`, `.fam`), que es lo que ADMIXTURE sabe leer.
+3.1. Antes de correr ADMIXTURE, necesitamos transformar los archivos VCF al formato binario de PLINK (`.bed`, `.bim`, `.fam`), que es lo que ADMIXTURE sabe leer.
 
 ```bash
 ml PLINK/2.00-linux-avx2
@@ -99,7 +99,7 @@ plink2 --vcf Orestias_FINAL_PCA.vcf \
 
 - `--allow-extra-chr`: Es vital para organismos no modelo. PLINK por defecto espera cromosomas humanos (1-22, X, Y). Como el genoma de referencia está en scaffolds con nombres como "Scaffold_123", este parámetro le dice al programa: "Acepta nombres de cromosomas que no sean los estándar".
 
-2. Hack para los nombres de Scaffolds
+3.2. Hack para los nombres de Scaffolds
 Como ADMIXTURE no acepta nombres de cromosomas con texto (solo números), renombraremos todos los scaffolds a "0" de forma temporal.
 
 A diferencia de PLINK2, ADMIXTURE es muy rígido con los nombres de los cromosomas. Aunque le pusimos `--allow-extra-chr` en PLINK, ADMIXTURE solo acepta números enteros (1, 2, 3...). Al ver nombres como `"Scaffold_1"`, se bloquea y lanza el mensaje: `Invalid chromosome code! Use integers`.
@@ -118,7 +118,7 @@ awk '{$1=0;print $0}' orestias_admix.bim.bak > orestias_admix.bim
 # Nota: No te preocupes por ponerles "0" a todos; ADMIXTURE usará las posiciones de los SNPs para diferenciarlos. Como ya hicimos el pruning, esto no afectará el resultado de la ancestría.
 ```
 
-3. Ejecución del análisis (Bucle de K=2 a K=5).
+3.3. Ejecución del análisis (Bucle de K=2 a K=5).
 Correremos múltiples valores de $K$ para encontrar el modelo que mejor explique la estructura de las Orestias.
 
 ```bash
@@ -133,7 +133,7 @@ for K in 2 3 4 5; do
 done
 ```
 
-4. Interpretación de Resultados: ¿Cuál es el K óptimo?
+3.4. Interpretación de Resultados: ¿Cuál es el K óptimo?
 El siguiente paso es fundamental: **verificar cuál es el K con menor error**.
 La siguiente línea nos permite comparar los errores:
 
@@ -166,7 +166,7 @@ Para determinar el número óptimo de poblaciones ancestrales ($K$), utilizamos 
 El método de Evanno ($\Delta K$) se basa en la segunda derivada de la función de verosimilitud ($\ln P(D)$). STRUCTURE calcula esta verosimilitud mediante un método llamado MCMC (Cadenas de Markov Monte Carlo), que es muy lento pero genera los datos necesarios para esa estadística.
 ADMIXTURE utiliza un método diferente (Máxima Verosimilitud por algoritmos de optimización rápida). Por diseño, ADMIXTURE no genera el valor de "lnP(D)" que Evanno requiere.
 
-**2. El sustituto: Cross-Validation (CV) Error**
+**El sustituto: Cross-Validation (CV) Error**
 En lugar del Delta K, ADMIXTURE utiliza la Validación Cruzada (CV). Es un método estadístico más robusto y moderno:
 El programa oculta una parte de los datos (genotipos) y trata de predecirlos usando el resto.
 El valor de $K$ que tenga el menor error es el que mejor predice los datos sin "sobre-ajustarlos".
@@ -178,6 +178,7 @@ Con K=4, es muy probable que los datos estén mostrando estas cuatro unidades ge
 - Lauca
 - Chungará
 
+---
 
 # Organización de Datos en computador local: Estructura Genética
 
@@ -194,25 +195,6 @@ Crea una nueva carpeta específica para esta fase del análisis y descarga los s
 Ahora puedes correr los scripts R: `PCA_Orestias.R`, `FST_Orestias.R` y `Admixture_Orestias.R`
 
 ---
-
-# RESULTADOS
-
-## PCA
-- Separación Drástica en el Eje PC1: El hecho de que las poblaciones de los Salares (Ascotán y Carcote) estén en extremos opuestos del eje principal indica que la mayor parte de la variación genética total se debe a la diferencia entre ellas. No hay individuos "en el medio".
-
-- Cercanía en el Eje PC2: Las poblaciones de Lauca y Chungará aparecen mucho más próximas entre sí. Esto refleja su historia geológica: eran un solo sistema hasta que el volcán Parinacota los separó hace apenas unos 8,000 años. Todavía conservan la "memoria genética" de su origen común.
-
-## Fst global
-- El Valor de 0.67 (Antiguo): Un $F_{ST}$ superior a 0.5 es altísimo para poblaciones de la misma especie (o complejo de especies). Indica que el flujo génico se detuvo hace mucho tiempo (estimado en cientos de miles de años). Cada salar es una "isla genética" independiente.
-
-- El Valor de 0.23 (Reciente): Es una diferenciación moderada-alta pero típica de poblaciones que se separaron recientemente. Hay mucha más ancestría compartida (alelos comunes) que en los salares.
-
-## Paisaje genómico (FST por sitio)
-- Divergencia Generalizada (Antigua): En el gráfico de los Salares, verán que la "nube" de puntos rojos es alta y constante a lo largo de casi todos los scaffolds. Esto ocurre porque el aislamiento es tan viejo que la deriva genética ha tenido tiempo de fijar diferencias en todo el genoma, no solo en unos pocos genes.
-
-- Divergencia Localizada (Reciente): En el gráfico del Altiplano (azul), la base es más baja, pero podrían aparecer "picos" que sobresalen.
-
-- Interpretación: Los puntos que tocan el $F_{ST}=1$ en este sistema son candidatos a selección natural. Representan genes que están cambiando rápido para adaptarse, por ejemplo, al ambiente de río (Lauca) vs. ambiente de lago (Chungará).
 
 # DISCUSIÓN INTEGRADA DE RESULTADOS
 

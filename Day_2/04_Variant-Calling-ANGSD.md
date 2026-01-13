@@ -124,9 +124,15 @@ Una vez que el script finaliza, encontraremos varios archivos con el prefijo def
 - `.arg`: Es un archivo de texto plano que registra todos los parámetros y comandos exactos utilizados en la ejecución. Es la pieza clave para la reproducibilidad; si necesitas publicar tus resultados, este archivo te dice exactamente qué filtros aplicaste.
 - `.glf.gz`: Contiene las verosimilitudes de los genotipos en formato binario. Es el archivo más pesado y sirve como base para generar otros formatos o realizar cálculos de diversidad nucleotídica (theta, pi, D de Tajima).
 
-Exploración del archivo de frecuencias (.mafs.gz)
+### 5.5 Exploración del archivo de frecuencias (.mafs.gz)
 
-Como no podemos abrir estos archivos directamente (están comprimidos), utilizaremos zcat y column para visualizar el contenido de forma ordenada.
+Primero veamos cuántas variantes contiene el archivo, como el archivo está comprimido usaremos `zcat`:
+
+```bash
+zcat hi_chr1_demo.mafs.gz | tail -n +2 | wc -l
+```
+
+Ahora veamos el contenido del archivi, nuevamente utilizaremos `zcat` para ver el archivo comprimido y `column` para visualizar el contenido de forma ordenada.
 
 Usa este comando en tu terminal:
 
@@ -158,6 +164,17 @@ Desglose de columnas del archivo .mafs
 - `pK-EM`: Es el p-value que indica la probabilidad de que el sitio sea realmente un SNP. Nota que en casi todos dice 0.000000e+00, lo que significa que la probabilidad de que sea un error es prácticamente nula. Esto es gracias al filtro -SNP_pval 1e-6 que aplicamos.
 - `nInd`: El número de individuos que tenían suficientes lecturas para ser incluidos en el cálculo de ese sitio específico. Recuerda que pusimos un filtro de `-minInd 25`, por eso todos los valores son iguales o superiores a 25.
 
+Es muy común que en los estudios de genética de poblaciones solo nos interesen los SNPs comunes (aquellos con una frecuencia mayor al 5%), ya que los SNPs muy raros pueden ser específicos de una sola familia o incluso errores residuales. Para verlos, vamos a filtrar SNPs por Frecuencia (MAF).
+
+Vamos a usar `zcat` y `awk` para contar cuántos de nuestros SNPs tienen una frecuencia mayor al 5% (knownEM > 0.05).
+
+```bash
+# Explicación del comando:
+# 1. zcat abre el archivo
+# 2. awk filtra si la columna 6 (knownEM) es mayor a 0.05
+# 3. wc -l cuenta las líneas resultantes
+zcat hi_chr1_demo.mafs.gz | awk '$6 > 0.05' | wc -l
+```
 
 <details>
 <summary><strong>Detalles ANGSD</strong></summary>
@@ -190,4 +207,20 @@ El `pK-EM` es el valor p de esa comparación.
 En el taller, cuando vemos 0.000000e+00 en casi todas las filas, no significa que el error sea cero absoluto, sino que es tan pequeño que el computador ya no tiene decimales para mostrarlo. Esto sucede porque aplicamos el filtro -SNP_pval 1e-6, lo que significa que ya descartaste de antemano todos los sitios donde el p-value era mayor a 0.000001.
 
 </details>
+
+### 5.6 Conclusión ANGSD
+
+A lo largo de esta sesión hemos visto que ANGSD es la herramienta de elección para datos de baja cobertura, ya que nos permite trabajar con la incertidumbre de los datos sin sesgar los resultados. Sin embargo, en bioinformática no existe una herramienta única para todo.
+
+1. Las limitaciones del enfoque probabilístico
+
+A pesar de su robustez, los *Genotype Likelihoods* no son universales. Muchos análisis clásicos y herramientas de amplio uso requieren genotipos duros (Hard Calls) para funcionar. Por ejemplo, programas como PLINK (análisis de asociación y estructura) o VCFtools están diseñados para leer genotipos definidos (0/0,0/1,1/1). La mayoría de los programas para detectar genes asociados a enfermedades o rasgos fenotípicos requieren datos imputados para aumentar el poder estadístico. ADMIXTURE, que es el programa estándar para ver qué porcentaje de ancestría tiene cada individuo, no lee likelihoods; requiere genotipos duros y, preferiblemente, sin datos faltantes (imputados), de lo contrario, los resultados de las proporciones de mezcla pueden ser erróneos.
+
+2. El puente Bayesiano: Probabilidades Posteriores
+
+Entonces, ¿qué hacemos si tenemos datos de baja cobertura pero necesitamos genotipos duros? La "gracia" de este flujo de trabajo es que no tenemos que elegir entre un extremo u otro.
+
+Podemos utilizar las Verosimilitudes (Likelihoods) calculadas y combinarlas con un Priori (una expectativa biológica, como el Modelo de Hardy-Weinberg o las frecuencias alélicas de la población). Mediante el Teorema de Bayes, esto nos permite obtener Probabilidades Posteriores.
+
+Estas probabilidades posteriores nos permiten hacer un llamado duro de variantes (Hard Calling) informado, donde el genotipo final asignado ha tenido en cuenta la incerteza de la secuenciación. Es, en esencia, la forma más honesta y estadísticamente rigurosa de obtener un archivo VCF cuando nuestros datos no son perfectos.
 

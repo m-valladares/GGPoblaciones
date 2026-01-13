@@ -1,7 +1,5 @@
 # Diversidad Genética
 
-## Los 3 Estadísticos Clave
-
 **- $\pi$ (Diversidad Nucleotídica):**
 El promedio de diferencias por sitio entre dos secuencias.
 

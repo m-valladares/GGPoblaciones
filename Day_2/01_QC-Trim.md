@@ -275,6 +275,12 @@ Luego, nos movemos al directorio donde se encuentran los datos brutos de secuenc
 cd "${RAW}"
 ```
 
+Antes de lanzar el trabajo, solicitamos recursos a SLURM mediante srun. Así, podemos acceder a un nodo cómputo.
+
+```bash
+srun --partition=labs --nodes=1 --cpus-per-task=8 --time=04:00:00 --mem=8G --pty bash
+```
+
 El comando para ejecutar fastp en **una** muestra (DSTEMU01) es:
 
 ```bash

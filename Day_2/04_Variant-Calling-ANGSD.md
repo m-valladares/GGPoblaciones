@@ -36,7 +36,7 @@ Este enfoque nos permite entender la "caja negra" del software sin las esperas d
 El script necesario para realizar este análisis se encuentra disponible en la carpeta de scripts del Día 2 en el servidor del curso:
 
 ```bash
-~/Day02/SCRIPTS/angsd_dsuz.sh
+/home/courses/$USER/Day02/scripts/angsd_haema.sbatch
 ```
 
 Ahora analicemos el detalle del script, como ya vimos en los scripts previos, la primera sección es la **cabecera y configuración del entorno**. Esta parte le indica al sistema operativo y al gestor de tareas (SLURM) cómo debe ejecutarse el script y qué recursos necesita. La segunda sección de **definición de rutas y organización**. En esta parte definimos las variables de entorno que el script utilizará. Luego, tenemos la sección de **carga de ambiente y gestión de software**.

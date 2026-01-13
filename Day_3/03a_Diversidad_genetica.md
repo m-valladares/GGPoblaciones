@@ -61,6 +61,7 @@ En términos simples: es el promedio de diferencias por sitio entre todas las po
 
 #### 2. ¿Cómo se interpreta?
 $\pi$ alto: Indica una población antigua, grande y estable. Ha tenido mucho tiempo para acumular mutaciones y mantenerlas.
+
 $\pi$ bajo: Indica una población que probablemente pasó por un Cuello de Botella (reducción drástica de tamaño) o que es el resultado de un evento de colonización reciente por parte de pocos individuos (efecto fundador).
 
 #### 3. ¿Por qué es clave para *Orestias*?

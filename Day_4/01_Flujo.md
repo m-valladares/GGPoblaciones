@@ -12,7 +12,7 @@ En las sesiones teóricas previas, discutimos modelos clásicos como el modelo d
 - Direccionalidad: No solo nos interesa saber cuánto flujo hay, sino hacia dónde va (fuentes y sumideros).
 - El paisaje como barrera: El flujo genético no ocurre en el vacío; está limitado por la geografía, el ambiente y la ecología de la especie.
 
-## 1.2 Una Aproximación Multi-Herramienta
+### 1.2 Una Aproximación Multi-Herramienta
 
 En bioinformática, no existe una herramienta que sea útil en todos los escenarios para inferir el flujo genético. Cada software utiliza diferentes algoritmos y "sustratos" de información (algunos usan frecuencias alélicas, otros genotipos individuales o matrices de disimilitud).
 

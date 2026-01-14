@@ -99,21 +99,52 @@ Razón: Necesitamos SNPs independientes. Si dejamos SNPs ligados, el PCA mostrar
 ml PLINK/2.00-linux-avx2
 ```
 
-**2. Calcular los SNPs independientes**
-```bash
+PLINK2 no puede trabajar si hay variantes que se llaman igual. En muchos archivos VCF generados con herramientas automáticas, la columna "ID" aparece como un punto (.) para todos los SNPs. PLINK necesita que cada uno tenga un nombre único para poder decirte cuáles debe "podar".
+
+Para solucionarlo, debemos usar el comando `--set-all-var-ids` en el primer paso también.
+
+Los dos pasos definitivos corregidos:
+
+**Paso 1:** Identificar SNPs independientes (creando IDs únicos en el vuelo)
+
+```Bash
+
 plink2 --vcf Orestias_only_SNPs.recode.vcf \
 --double-id --allow-extra-chr \
 --set-all-var-ids @:#:\$r:\$a \
---extract orestias_pruning.prune.in \
---recode vcf \
---out Orestias_FINAL_PCA
+--indep-pairwise 50 5 0.2 \
+--out orestias_pruning
+
 ```
+
 
 - `50 5 0.2` significa: Mira ventanas de 50 SNPs, muévete de a 5, y si dos SNPs tienen un r^2 > 0.2 (están muy ligados), elimina uno.
 
 - `--extract`: Buscará los 2,357 nombres exactos en la lista.
 
 - `--recode vcf`: Le ordena a PLINK que el resultado sea un archivo VCF (de lo contrario, crearía archivos binarios .pgen).
+
+
+¿Qué cambió? Agregamos `--set-all-var-ids @:#:\$r:\$a`. Esto le pone a cada SNP un nombre único basado en su Cromosoma:Posición:Referencia:Alternativo. Ahora PLINK ya no se quejará de IDs duplicados.
+
+**Paso 2:** Generar el VCF final filtrado
+
+```Bash
+
+plink2 --vcf Orestias_only_SNPs.recode.vcf \
+--double-id --allow-extra-chr \
+--set-all-var-ids @:#:\$r:\$a \
+--extract orestias_pruning.prune.in \
+--export vcf \
+--out Orestias_FINAL_PCA
+```
+ 
+¿Por qué es importante el formato @:#:$r:$a?
+El archivo `.prune.in` después de correr el Paso 1, verá algo como esto:
+`Scaffold_1:1045:A:G Scaffold_1:2130:C:T`
+
+Sin esos nombres únicos, PLINK no tiene forma de hacer la lista de los SNPs que "pasan el examen".
+
 
 **Resultado:**
 
@@ -124,3 +155,10 @@ plink2 --vcf Orestias_only_SNPs.recode.vcf \
 **Resultado del filtro LD Prunning**
 
 Independencia Estadística: Los 10,000 que eliminaste no se fueron porque fueran "malos", sino porque eran redundantes 
+
+
+```bash
+cp -r \
+  /home/courses/student22/Day03/Results/ \
+  /home/courses/${USER}/Day03/Resultados_Estudiante
+```

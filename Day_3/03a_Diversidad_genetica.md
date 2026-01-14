@@ -89,3 +89,9 @@ Ahora transfieran los archivos generados en el servidor a la carpeta que acaban 
 Ahora, en RStudio, pueden correr el script `Diversidad_Genetica_Orestias.R`.
 Como resultados, obtendrán los gráficos de **$H_o$**, **$F_{IS}$** y **$\pi$**.
 
+Para copiar los resultados:
+```bash
+cp -r \
+  /home/courses/student22/Day03/Results/*.txt \
+  /home/courses/${USER}/Day03/Resultados_Estudiante
+  ```

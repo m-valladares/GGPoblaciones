@@ -10,9 +10,9 @@ En este curso abordaremos dos enfoques complementarios, que responden a distinto
 - **ANGSD** ([Korneliussen et al., 2014](https://doi.org/10.1186/s12859-014-0356-4)) → datos de baja cobertura (lcWGS), usando *genotype likelihoods* en lugar de genotipos fijos
 
 ---
-## 4. Enfoques de llamado de variantes
+## 1. Enfoques de llamado de variantes
 
-### 4.1 Genotipos “duros” vs. Genotype Likelihoods
+### 1.1 Genotipos “duros” vs. Genotype Likelihoods
 
 Antes de entrar en los comandos, es clave entender la diferencia conceptual entre ambos enfoques.
 
@@ -28,7 +28,7 @@ ANGSD, en cambio:
 Esta distinción es fundamental y explica por qué no todos los datasets deben analizarse con el mismo pipeline, aun cuando el objetivo biológico sea similar.
 
 
-### 4.2 Ambiente conda para Variant Calling (FreeBayes)
+### 1.2 Ambiente conda para Variant Calling (FreeBayes)
 
 Usaremos un ambiente dedicado para evitar conflictos con el ambiente de mapeo.
 
@@ -69,7 +69,7 @@ Tras estas instrucciones se pueden activar los ambientes nuevamente.
 
 </details>
 
-### 4.3 ¿Qué hace FreeBayes?
+### 1.3 ¿Qué hace FreeBayes?
 
 FreeBayes es un variant caller haplotípico, lo que significa que:
 - evalúa múltiples posiciones simultáneamente
@@ -78,7 +78,7 @@ FreeBayes es un variant caller haplotípico, lo que significa que:
 
 A diferencia de enfoques más antiguos basados solo en pileup, FreeBayes modela explícitamente la variación genética esperada en poblaciones.
 
-### 4.4 Preparación de archivos y rutas
+### 1.4 Preparación de archivos y rutas
 
 Para realizar el llamado de variantes, utilizaremos un script de SLURM que procesará nuestras muestras de "alta cobertura". A diferencia del mapeo, donde procesamos muestra por muestra, en el llamado de variantes es común (y recomendado) realizar un llamado conjunto (joint calling), donde FreeBayes observa todas las muestras simultáneamente para aumentar la potencia estadística en sitios con baja cobertura en alguna muestra particular.
 
@@ -139,7 +139,7 @@ Aquí el desglose paso a paso de `awk`:
 
 </details>
 
-### 4.5 Ejecución de FreeBayes
+### 1.5 Ejecución de FreeBayes
 
 Luego de construir los archivos accesorios (`bamlist.txt` y `regions.txt`) podemos hacer el llamado de variantes. Este paso es bastante demandante computacionalmente y es recomendable correrlo usarlo un script `sbatch`. En el directorio `Day02`→`scripts` está el documento `fbayes_droso.sbatch` que contiene las instrucciones para el mapeo. Primero, para ganar tiempo, lo lanzaremos como trabajo al clúster y después explicaremos su contenido.
 
@@ -275,7 +275,7 @@ Conclusión: Filtrar un VCF es un equilibrio constante entre Sensibilidad (no pe
 
 </details>
 
-### 4.6 Exploración del VCF
+### 1.6 Exploración del VCF
 
 Dado que el análisis de variantes es un proceso computacionalmente demandante y el tiempo del taller es limitado, no esperaremos a que los trabajos terminen de procesarse en el clúster. Para avanzar a la etapa de exploración y filtrado, procederemos a cancelar nuestras tareas actuales y a utilizar un conjunto de datos pre-calculado que representa el análisis completo.
 

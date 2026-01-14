@@ -4,7 +4,7 @@ El objetivo de esta sesión es familiarizar a las y los participantes con el ent
 
 ---
 
-## 4. Scripts y automatización
+## 1. Scripts y automatización
 
 Ahora que ya aprendimos a correr comandos como `squeue`, `grep` o `nano`, podemos unirlos secuencialmente o que interactúen entre sí mediante un **script**. Un script es un archivo de texto que contiene una secuencia de comandos o instrucciones diseñadas para ser ejecutadas por otro programa (usualmente un intérprete, en nuestro caso **Bash**). Podemos pensar en un script como una receta o una lista de tareas que el computador seguirá paso a paso, de principio a fin, sin intervención nuestra una vez que se inicia (i.e. no es interactivo).
 
@@ -21,7 +21,7 @@ Características clave de un script Bash:
 - Comandos estándar: contienen los mismos comandos que se usan en la terminal y que ya vimos (`ls`, `grep`, `cp`, `mv`, `echo`, etc.), pero organizados en un archivo.
 - Variables y lógica: utilizan variables (`$USER`, `$PATH`) y estructuras de control (bucles `for`, condicionales `if/else`).
 
-### 4.1 Estructura básica de un script Bash
+### 1.1 Estructura básica de un script Bash
 
 Como se mencionó, los scripts son archivos de texto, por lo que debemos crearlo usando `nano` y guardarlo en algún directorio de nuestra cuenta. Primero revisemos si estamos en el directorio correcto y ejecutemos el editor `nano`.
 ```bash
@@ -81,7 +81,7 @@ En la siguiente tabla se muestra la explicación de cada línea del script anter
 
 ---
 
-## 5. Introducción a Visual Studio Code (VSC)
+## 2. Introducción a Visual Studio Code (VSC)
 
 El uso exclusivo de la terminal (*Command-Line Interface*, CLI) puede ser un obstáculo para los estudiantes que están iniciando análisis genómicos. Trabajar directamente con `bash` requiere memorización de comandos, manejo de permisos, y una curva de aprendizaje pronunciada para tareas básicas como la navegación de archivos (`cd`, `ls`) y la edición de texto (`nano`). Es una experiencia similar a usar el lenguaje de programación `R` puro frente a **RStudio**. RStudio proporciona una interfaz gráfica integrada (*Integrated Development Environment*, IDE) que facilita la gestión de proyectos, visualización de datos, autocompletado de código y depuración, haciendo que la entrada al análisis estadístico sea mucho más amigable. Mientras que el uso de `R` en línea de comandos es potente pero menos intuitivo para el aprendizaje inicial. 
 
@@ -95,7 +95,7 @@ Es por lo anterior que en curso usaremos **Visual Studio Code**, ya que proporci
 
 **Comentario 2:** un inconveniente de VSC es que crea múltiples directorios y archivos que utilizan recursos y memoria (**7 - 10 GB**) del usuario, lo que disminuye el almacenamiento disponible para datos.
 
-### 5.1 Opciones a Visual Studio Code
+### 2.1 Opciones a Visual Studio Code
 
 Como se indicó, VSC puede utilizar varios GB de almacenamiento en sus cuentas solo para funcionar. Así que recomendamos otras aplicaciones que funcionan de forma similar a VSC. Cabe mencionar que son aplicaciones más ligeras, lo que es favorable, sin embargo, no tienen todas las prestaciones que dispone VSC. De todos modos, para los objetivos del curso, las siguientes opciones funcionarían sin mayores problemas.
 
@@ -143,7 +143,7 @@ Como se indicó, VSC puede utilizar varios GB de almacenamiento en sus cuentas s
    - Interfaz muy básica (sin autocompletado ni gestión de archivos).
    - No incluye editor de texto ni herramientas integradas (como VSC o MobaXterm).
 
-### 5.2 Pasos básicos de configuración de VSC
+### 2.2 Pasos básicos de configuración de VSC
 
 1. Instalar [Visual Studio Code](https://code.visualstudio.com/) acorde al sistema operativo.
 
@@ -169,7 +169,7 @@ Como se indicó, VSC puede utilizar varios GB de almacenamiento en sus cuentas s
 
 ---
 
-## 6. Introducción a SLURM
+## 3. Introducción a SLURM
 
 SLURM (acrónimo de *Simple Linux Utility for Resource Management*) es un gestor de recursos y planificador de trabajos (*job scheduler*) utilizado en la mayoría de los sistemas HPC del mundo, incluyendo el clúster Leftraru del NLHPC en Chile. Su función principal es administrar los recursos de hardware disponibles (como CPUs, memoria y nodos de cómputo) y distribuirlos entre los usuarios que envían tareas o análisis. En un entorno donde decenas o cientos de personas utilizan el mismo servidor, SLURM garantiza que cada trabajo reciba los recursos solicitados, que no haya conflictos, y que las tareas se ejecuten de forma ordenada y reproducible.
 
@@ -211,7 +211,7 @@ En un clúster HPC no es posible “abrir un programa y ejecutarlo directamente�
 
 ---
 
-### 6.1 Ejemplo de script SLURM
+### 3.1 Ejemplo de script SLURM
 
 Un script de SLURM es simplemente un archivo de texto con una lista de instrucciones que le indican al clúster qué ejecutar y con qué recursos hacerlo. Por convención, se guarda con extensión `.sbatch`. Creemos un script `sbatch` usando `nano`:
 
@@ -277,7 +277,7 @@ El script se envía a SLURM ("lanzar el trabajo") con el comando:
 sbatch script_SLURM.sbatch
 ```
 
-### 6.2 Comandos básicos
+### 3.2 Comandos básicos
 ```bash
 squeue          # ver trabajos en cola
 sinfo           # ver particiones
@@ -288,13 +288,13 @@ sacct           # ver historial de jobs
 
 
 
-### 6.3 Mini-ejercicio
+### 3.3 Mini-ejercicio
 - Enviar el script anterior y revisar el estado con `squeue`.
 - Leer los archivos `test_XXXX.out` y `test_XXXX.err`.
 
 ---
 
-## 7. Uso de R y RStudio en el HPC
+## 4. Uso de R y RStudio en el HPC
 
 En este curso, R será una de las herramientas principales de análisis, y lo usaremos directamente en el cluster (HPC). A diferencia del uso local, en HPC R se ejecuta en nodos de cómputo, lo que permite analizar datasets más grandes de forma reproducible y eficiente.
 
@@ -310,7 +310,7 @@ Durante el curso, R se utilizará para:
 Por esta razón, es importante aprender a ejecutar R directamente en el cluster, y no solo en un computador personal.
 
 ---
-### 7.1 R interactivo en la terminal
+### 4.1 R interactivo en la terminal
 Esta opción es útil para:
 - Pruebas rápidas
 - Explorar datos pequeños
@@ -382,7 +382,7 @@ Rscript test_script.R
 ```
 
 ---
-### 7.2 R mediante SLURM
+### 4.2 R mediante SLURM
 
 La segunda opción es ejecutar el script de R mediante SLURM, que es lo recomendado y que haremos durante el curso para análisis reales. Cuando un análisis tarda varios minutos u horas o usa mucha memoria, debe ejecutarse en nodos de cómputo y se debe lanzar mediante SLURM.
 
@@ -440,7 +440,7 @@ module purge
 
 
 ---
-## 8. Recursos adicionales
+## 5. Recursos adicionales
 - Wiki NLHPC: [https://wiki.nlhpc.cl/P%C3%A1gina_principal](https://wiki.nlhpc.cl/P%C3%A1gina_principal)
 - Tutorial de acceso SSH: [https://wiki.nlhpc.cl/Tutorial_de_acceso_a_Leftraru_via_SSH](https://wiki.nlhpc.cl/Tutorial_de_acceso_a_Leftraru_via_SSH)
 - Guía rápida de SLURM: [https://slurm.schedmd.com/quickstart.html](https://slurm.schedmd.com/quickstart.html)

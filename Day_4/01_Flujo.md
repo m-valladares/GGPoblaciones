@@ -4,7 +4,7 @@ El flujo genético es la fuerza microevolutiva que mantiene la cohesión de las 
 
 En este taller, pasaremos de la teoría de los modelos a la práctica con datos genómicos reales, explorando cómo el movimiento de individuos (o gametos) moldea la arquitectura genética de las poblaciones de estudio.
 
-## 1.1 De la Teoría a los Datos Genómicos
+### 1.1 De la Teoría a los Datos Genómicos
 
 En las sesiones teóricas previas, discutimos modelos clásicos como el modelo de islas de Wright y el modelo de *stepping-stone*. Vimos que, bajo ciertas condiciones, podemos estimar el número de migrantes por generación (**N<sub>e</sub>​M**) a partir del estadístico <b>F<sub>ST</sub></b>​. Sin embargo, en la era de la genómica, tenemos la oportunidad de ir más allá de estas simplificaciones:
 

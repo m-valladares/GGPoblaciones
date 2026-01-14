@@ -24,11 +24,14 @@ En el caso de *Drosophila suzukii*, se trata de una especie intensamente estudia
 En este taller usaremos el actual genoma de referencia de la especie ([RefSeq de la especie](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_043229965.1/)) que corresponde al reportado por [Camus et al. (2025)](https://doi.org/10.1111/mec.70192). Sin embargo, para que los análisis sean computacionalmente manejables y adecuados al contexto docente, trabajaremos únicamente con el primer autosoma del genoma de referencia, lo que permitirá ilustrar todos los pasos del pipeline sin sacrificar claridad conceptual. 
 
 ---
-## 3. BWA-MEM2 (Burrows-Wheeler Aligner)
+## 1. BWA-MEM2 (Burrows-Wheeler Aligner)
 
 Para evitar conflictos instalaremos los software para el mapeo dentro de un ambiente conda específico. En este caso, utilizaremos Miniconda provista como módulo por el cluster. Primero, cargamos el módulo de Miniconda:
 
 ```bash
+# Nos aseguramos de desactivar el ambiente de fastp
+conda deactivate
+
 # No olviden purgar los módulos anteriores
 module purge
 
@@ -75,7 +78,7 @@ Tras estas instrucciones se pueden activar los ambientes nuevamente.
 </details>
 
 
-### 3.1 Preparación del genoma de referencia
+### 1.1 Preparación del genoma de referencia
 
 Antes de mapear, el genoma de referencia debe ser indexado. El indexado genera estructuras auxiliares que permiten a BWA buscar coincidencias de manera mucho más rápida y eficiente. Este paso se realiza una sola vez por referencia.
 
@@ -83,11 +86,12 @@ Antes de mapear, el genoma de referencia debe ser indexado. El indexado genera e
 cd /home/courses/$USER/Day02/REF
 
 bwa-mem2 index Dsuzukii.chrNC_092080.1.fa
+samtools faidx Dsuzukii.chrNC_092080.1.fa
 ```
 
 Tras este comando se crean varios archivos adicionales asociados al FASTA original, que BWA-MEM2 utilizará durante el mapeo.
 
-### 3.2 Script de BWA-MEM2
+### 1.2 Script de BWA-MEM2
 
 Ahora podemos mapear o alinear nuestros reads a la referencia, lo que después nos permitirá buscar variantes. Este paso es bastante demandante computacionalmente y es recomendable correrlo usarlo un script `sbatch`. En el directorio `Day02`→`scripts` está el documento `bwa-droso.sbatch` que contiene las instrucciones para el mapeo. Primero, para ganar tiempo, lo lanzaremos como trabajo al clúster y después explicaremos su contenido.
 
@@ -258,7 +262,7 @@ El detalle de estos pasos finales es el siguiente:
 
 
 ---
-### 3.3 Resultados del mapeo
+### 1.3 Resultados del mapeo
 
 El script de la sección anterior debería tardar unos **25 minutos** (en el clúster del NLHPC). Podemos ver el avance que lleva en la carpeta `LOGS`.
 

@@ -1,7 +1,5 @@
 # Diversidad Genética
 
-## Los 3 Estadísticos Clave
-
 **- $\pi$ (Diversidad Nucleotídica):**
 El promedio de diferencias por sitio entre dos secuencias.
 
@@ -21,6 +19,8 @@ Para ello tenemos los archivos: `Ascotan.txt`, `Carcote.txt`, `Chungara.txt` y `
 
 ## 1. Heterocigosidad y $F_{IS}$:
 
+Calcularemos estos índices para todos los individuos del archivo VCF de forma global.
+
 ```bash
 vcftools --vcf Orestias_only_SNPs.recode.vcf --het --out orestias_total
 ```
@@ -29,11 +29,26 @@ vcftools --vcf Orestias_only_SNPs.recode.vcf --het --out orestias_total
 
 ## 2. Calcular $\pi$ (Pi) para cada población
 
+Ejecutaremos el cálculo por separado para cada localidad, filtrando los individuos según las listas proporcionadas.
+
 ```bash
+
+# Calcular Pi para la población de Ascotan
 vcftools --vcf Orestias_only_SNPs.recode.vcf --keep Ascotan.txt --site-pi --out pi_Ascotan
+
+# Calcular Pi para la población de Carcote
 vcftools --vcf Orestias_only_SNPs.recode.vcf --keep Carcote.txt --site-pi --out pi_Carcote
+
+# Calcular Pi para la población de Chungara
 vcftools --vcf Orestias_only_SNPs.recode.vcf --keep Chungara.txt --site-pi --out pi_Chungara
+
+# Calcular Pi para la población de Lauca
 vcftools --vcf Orestias_only_SNPs.recode.vcf --keep Lauca.txt --site-pi --out pi_Lauca
+
+# EXPLICACIÓN DE LOS PARÁMETROS:
+# --keep: Filtra el VCF para incluir solo los individuos listados en el archivo .txt
+# --site-pi: Calcula la diversidad nucleotídica sitio por sitio (SNP a SNP)
+# --out: Genera un archivo con extensión .sites.pi
 ```
 
 ### $\pi$ (Pi), o Diversidad Nucleotídica
@@ -46,6 +61,7 @@ En términos simples: es el promedio de diferencias por sitio entre todas las po
 
 #### 2. ¿Cómo se interpreta?
 $\pi$ alto: Indica una población antigua, grande y estable. Ha tenido mucho tiempo para acumular mutaciones y mantenerlas.
+
 $\pi$ bajo: Indica una población que probablemente pasó por un Cuello de Botella (reducción drástica de tamaño) o que es el resultado de un evento de colonización reciente por parte de pocos individuos (efecto fundador).
 
 #### 3. ¿Por qué es clave para *Orestias*?
@@ -62,16 +78,6 @@ Antes de pasar a RStudio, debemos organizar el espacio de trabajo local y traer 
 
 Para mantener el orden, cada estudiante debe crear la carpeta donde residirán los datos.
 
-```bash
-mkdir -p /mnt/c/Users/pamel/Dropbox/CursoEnero2026/DataOrestias/CursoEnero2026_Orestias/div_gen_orestias
-```
-
-Entra a la carpeta:
-
-```bash
-cd /mnt/c/Users/pamel/Dropbox/CursoEnero2026/DataOrestias/CursoEnero2026_Orestias/div_gen_orestias
-```
-
 Ahora transfieran los archivos generados en el servidor a la carpeta que acaban de crear.  Los archivos necesarios son:
 
 **- Heterocigosidad:** `orestias_total.het`
@@ -83,3 +89,9 @@ Ahora transfieran los archivos generados en el servidor a la carpeta que acaban 
 Ahora, en RStudio, pueden correr el script `Diversidad_Genetica_Orestias.R`.
 Como resultados, obtendrán los gráficos de **$H_o$**, **$F_{IS}$** y **$\pi$**.
 
+Para copiar los resultados:
+```bash
+cp -r \
+  /home/courses/student22/Day03/Results/*.txt \
+  /home/courses/${USER}/Day03/Resultados_Estudiante
+  ```

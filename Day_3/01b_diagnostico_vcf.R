@@ -3,7 +3,7 @@
 # ==============================================================================
 
 # 1. SETEAR WORKING DIRECTORY PRINCIPAL
-setwd("C:/Users/pamel/Dropbox/CursoEnero2026/DataOrestias/CursoEnero2026_Orestias")
+setwd("PATH/TO/YOUR/WORKING/DIRECTORY/")
 
 # 2. DEFINIR RUTA A LA SUB-CARPETA DE DATOS
 data_path <- "resultados_vcf/"
@@ -74,9 +74,10 @@ print("Gráficos generados exitosamente en la carpeta 'figuras_diagnostico'")
 
 # -----------------------------------------------------------------
 
-# En tu caso, al ser 95 individuos, el mean_depth se calcula sumando la profundidad de todos y dividiéndola por 95. Si un sitio tiene un mean_depth de 500x, significa que o es una zona de ADN repetitivo (donde se pegan lecturas de muchas partes del genoma) o es un parálogo (un gen duplicado que se mapea erróneamente en el mismo lugar).
+# En nuestro caso, al ser 95 individuos, el mean_depth se calcula sumando la profundidad de todos y dividiéndola por 95.
+# Si un sitio tiene un mean_depth de 500x, significa que o es una zona de ADN repetitivo (donde se pegan lecturas de muchas partes del genoma) o es un parálogo (un gen duplicado que se mapea erróneamente en el mismo lugar).
 
-# Ejecuta esto en tu consola de R. Nos dirá si tu media es 20x como la de Joana o si es más baja (lo cual sospecho por ser RADseq):
+# Ejecuta esto en tu consola de R:
 summary(var_depth$mean_depth)
 
 # Ver los cuantiles (5% y 95%)

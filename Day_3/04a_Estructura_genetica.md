@@ -188,7 +188,7 @@ Crea una nueva carpeta específica para esta fase del análisis y descarga los s
 
 - Resultados de PCA (PLINK): `orestias_pca_results.eigenvec`, `orestias_pca_results.eigenval`
 
-- Resultados de Admixture: `for_admixture.4.Q` y `orestias_admix.fam`
+- Resultados de Admixture: `orestias_admix.4.Q` y `orestias_admix.fam`
 
 - Metadatos: Copiar el archivo `metadatos_orestias.csv` a esta carpeta también.
 

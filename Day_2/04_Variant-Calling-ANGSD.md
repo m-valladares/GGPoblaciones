@@ -2,7 +2,7 @@
 
 - **ANGSD** ([Korneliussen et al., 2014](https://doi.org/10.1186/s12859-014-0356-4)) → datos de baja cobertura (lcWGS), usando *genotype likelihoods* en lugar de genotipos fijos
 
-### 5.1 Comparación de aproximaciones
+### 1.1 Comparación de aproximaciones
 
 En este taller hemos explorado dos aproximaciones distintas para estudiar la variación genética a partir de datos de secuenciación masiva (NGS). Entender cuándo usar cada una es clave para cualquier estudio.
 
@@ -20,7 +20,7 @@ ANGSD (Analysis of Next Generation Sequencing Data) representa un cambio de para
 
 En resumen: Mientras que FreeBayes nos da un veredicto (VCF), ANGSD nos da una estimación estadística que preserva la incertidumbre de los datos crudos.
 
-### 5.2 Nota sobre la ejecución en el Taller
+### 1.2 Nota sobre la ejecución en el Taller
 
 El análisis con ANGSD es computacionalmente más intenso que los pasos anteriores, ya que realiza cálculos estadísticos complejos para cada sitio del genoma. Debido a que el tiempo de nuestra sesión es limitado y queremos priorizar la interpretación de los datos biológicos, no ejecutaremos este script en vivo.
 
@@ -31,7 +31,7 @@ En su lugar, realizaremos las siguientes actividades:
 
 Este enfoque nos permite entender la "caja negra" del software sin las esperas del procesamiento, asegurando que tengamos tiempo suficiente para discutir qué nos dicen estos datos sobre las poblaciones de *Haematobia irritans*.
 
-### 5.3 Script ANGSD
+### 1.3 Script ANGSD
 
 El script necesario para realizar este análisis se encuentra disponible en la carpeta de scripts del Día 2 en el servidor del curso:
 
@@ -107,7 +107,7 @@ El desglose de los módulos específicos de ANGSD es el siguiente:
   - `-doCounts 1`: Obliga al programa a realizar un conteo de bases por sitio, necesario para aplicar los filtros de profundidad (`-setMinDepth`).
 
 
-### 5.4 Entendiendo los Resultados de ANGSD
+### 1.4 Entendiendo los Resultados de ANGSD
 
 Previamente corrimos ANGSD y ahora copiaremos los resultados a cada una de sus cuentas.
 
@@ -124,7 +124,7 @@ Una vez que el script finaliza, encontraremos varios archivos con el prefijo def
 - `.arg`: Es un archivo de texto plano que registra todos los parámetros y comandos exactos utilizados en la ejecución. Es la pieza clave para la reproducibilidad; si necesitas publicar tus resultados, este archivo te dice exactamente qué filtros aplicaste.
 - `.glf.gz`: Contiene las verosimilitudes de los genotipos en formato binario. Es el archivo más pesado y sirve como base para generar otros formatos o realizar cálculos de diversidad nucleotídica (theta, pi, D de Tajima).
 
-### 5.5 Exploración del archivo de frecuencias (.mafs.gz)
+### 1.5 Exploración del archivo de frecuencias (.mafs.gz)
 
 Primero veamos cuántas variantes contiene el archivo, como el archivo está comprimido usaremos `zcat`:
 
@@ -208,7 +208,7 @@ En el taller, cuando vemos 0.000000e+00 en casi todas las filas, no significa qu
 
 </details>
 
-### 5.6 Conclusión ANGSD
+### 1.6 Conclusión ANGSD
 
 A lo largo de esta sesión hemos visto que ANGSD es la herramienta de elección para datos de baja cobertura, ya que nos permite trabajar con la incertidumbre de los datos sin sesgar los resultados. Sin embargo, en bioinformática no existe una herramienta única para todo.
 

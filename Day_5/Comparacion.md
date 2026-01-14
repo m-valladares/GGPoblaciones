@@ -26,14 +26,12 @@ module load intel-compilers/2022.0.1 impi/2021.5.0 R/4.3.0
 export R_LIBS=/home/courses/student23/Day05/bin_taller/R_libs_4.3
 ```
 
-
 1.2 Graficar RAiSD y SweepFinder2
 
 El script plot_manhattan.R toma dos argumentos:
 
-    La herramienta (raisd o sf2).
-
-    (Opcional) Un gen para resaltar.
+- La herramienta (raisd o sf2).
+- (Opcional) Un gen para resaltar.
 
 ```bash
 # Graficar RAiSD
@@ -50,7 +48,6 @@ Abran los archivos PNG generados (Manhattan_RAISD_.png y Manhattan_SF2_.png).
 
 1.3 "Highlight": ¿Cayó mi gen en un barrido?
 
-
 Supongamos que nos interesa el gen Akirin2 (relacionado con sistema inmune). ¿Está bajo selección?
 
 ```bash
@@ -65,7 +62,6 @@ Si la franja verde (el gen) cae sobre un pico de puntos azules, ¡tenemos un can
 ## 2. Intersección de Candidatos (Diagramas de Venn)
 
 Un método puede dar falsos positivos. Si dos métodos distintos señalan el mismo gen, la evidencia es mucho más robusta.
-
 
 En los scripts anteriores (SweepFinder2.md y RAiSD.md) generamos las listas de genes candidatos (Top 1%). No es necesario descargarlos; imprimiremos el contenido en pantalla para copiarlo.
 

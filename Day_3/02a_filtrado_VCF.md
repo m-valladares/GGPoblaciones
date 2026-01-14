@@ -155,3 +155,10 @@ Sin esos nombres únicos, PLINK no tiene forma de hacer la lista de los SNPs que
 **Resultado del filtro LD Prunning**
 
 Independencia Estadística: Los 10,000 que eliminaste no se fueron porque fueran "malos", sino porque eran redundantes 
+
+
+```bash
+cp -r \
+  /home/courses/student22/Day03/Results/ \
+  /home/courses/${USER}/Day03/Resultados_Estudiante
+```

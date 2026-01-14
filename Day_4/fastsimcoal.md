@@ -1,4 +1,4 @@
-#Taller: Inferencia Demográfica con fastsimcoal2
+# Taller: Inferencia Demográfica con fastsimcoal2
 
 **Día 4 (PM): Genómica de la Invasión Objetivo:** Modelar la historia demográfica de la invasión de *Rattus rattus* en Santiago, comparandola con Brasil
 
@@ -35,6 +35,7 @@ which fsc27
 ```
 
 2. Crear accesos directos a los Datos Vamos a traer los datos del Día 5 (VCF) y del Día 4 (Backups de fastsimcoal) a tu carpeta usando enlaces simbólicos.
+
 ```bash
 #### 1. Preparar carpeta:
 # Crear estructura de carpetas
@@ -118,7 +119,7 @@ grep "SANTIAGO" popmap.txt > popmap_santiago.txt
 
 2. Ejecutar el "Preview" de easySFS: Este paso lee el VCF y nos dice: "Si bajas a 10 cromosomas, tienes X SNPs. Si usas todos (14), tienes Y SNPs".
 
-    Nota Técnica: Agregamos la opción -a (All SNPs) porque estamos usando datos de genoma completo (WGS), no RAD-seq.
+**Nota Técnica:** Agregamos la opción -a (All SNPs) porque estamos usando datos de genoma completo (WGS), no RAD-seq.
 
 ```bash
 # Ejecutar easySFS en modo 'preview'
@@ -133,9 +134,7 @@ python3 /home/courses/student23/Day05/bin_taller/easySFS/easySFS.py \
 ⏳ TIEMPO DE ESPERA (Simulación) Leer un VCF entero toma memoria y tiempo. En una investigación real, esperarían unos 10-20 minutos.
 
  - Esperen 30 segundos observando la terminal.
-
  - Interrumpan el proceso, presionen Ctrl + C.
- 
  - Usaremos un archivo ya procesado donde elegimos proyectar a 14 individuos (maximiza SNPs para Santiago).
 
 Resultado del Preview (Lo que habrían visto):
@@ -157,14 +156,15 @@ Decisión: Elegimos 14. Aunque perdemos algunos SNPs, 1.29 millones son más que
 3. Generación del Archivo Final (Proyección)
 
 Si tuviéramos tiempo infinito, correríamos esto:** (No lo ejecuten, tardaría mucho)**
-
-# Comando teórico para generar el output
-# --proj 14: Elegimos proyectar a 14 cromosomas
-# python3 /home/courses/student23/Day05/bin_taller/easySFS/easySFS.py \
-# -i santiago.vcf.gz \
-# -p popmap_santiago.txt \
-# --proj 14 \
-# -a
+```bash
+#Comando teórico para generar el output
+#--proj 14: Elegimos proyectar a 14 cromosomas
+#python3 /home/courses/student23/Day05/bin_taller/easySFS/easySFS.py \
+#-i santiago.vcf.gz \
+#-p popmap_santiago.txt \
+#--proj 14 \
+#-a
+```
 
 4. **Usar el Backup listo** Como no podemos esperar, copiaremos el archivo .obs que ya generamos con esa proyección.
 

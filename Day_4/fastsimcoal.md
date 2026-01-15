@@ -75,11 +75,11 @@ Antes de generar el archivo, debemos entender qué le estamos preguntando a los 
 
 El SFS es un histograma que nos dice cuán frecuentes son las mutaciones en nuestra población. Pero hay dos formas de construirlo y esto define el nombre del archivo:
 
- - **Unfolded (Desplegado):** Sabemos cuál es el estado ancestral (usando un outgroup). Contamos alelos Derivados.
+- **Unfolded (Desplegado):** Sabemos cuál es el estado ancestral (usando un outgroup). Contamos alelos Derivados.
   - Nombre del archivo: _DAFpop0.obs (Derived Allele Frequency).
    - Ventaja: Es mucho más informativo para detectar selección o expansión.
 
- - **Folded (Plegado):** No sabemos cuál es el ancestral. Contamos el alelo Menor (el menos común).
+- **Folded (Plegado):** No sabemos cuál es el ancestral. Contamos el alelo Menor (el menos común).
   - Nombre del archivo: _MAFpop0.obs (Minor Allele Frequency).
    - Uso: Cuando no tenemos buena referencia. "Doblamos" el histograma porque no distinguimos p de q.
 

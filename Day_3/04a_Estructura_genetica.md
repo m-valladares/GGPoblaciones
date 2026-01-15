@@ -73,6 +73,7 @@ Al terminar, verás dos archivos clave en tu carpeta:
 3. 1. Antes de correr ADMIXTURE, necesitamos transformar los archivos VCF al formato binario de PLINK (`.bed`, `.bim`, `.fam`), que es lo que ADMIXTURE sabe leer.
 
 ```bash
+ml intel/2022.00
 ml PLINK/2.00-linux-avx2
 
 plink2 --vcf Orestias_FINAL_PCA.vcf \

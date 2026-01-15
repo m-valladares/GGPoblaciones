@@ -96,6 +96,7 @@ Razón: Necesitamos SNPs independientes. Si dejamos SNPs ligados, el PCA mostrar
 
 **1. Cargar PLINK 2**
 ```bash
+ml intel/2022.00
 ml PLINK/2.00-linux-avx2
 ```
 

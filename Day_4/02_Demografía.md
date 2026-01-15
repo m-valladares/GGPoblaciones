@@ -207,4 +207,14 @@ cp -r /home/courses/student21/Day04_Backup/GONE_OK/ \
   /home/courses/$USER/Day04/
 ```
 
+Para dar sentido a los miles de puntos de datos que genera GONE, realizaremos la visualización de forma local en RStudio.
 
+- Instrucciones para el análisis local:
+    - Descarga: Descarga la carpeta GONE_OK completa desde el clúster a tu ordenador.
+    - Script de R: Descarga el script Graph_GONE.R desde este repositorio y guárdalo dentro de la carpeta GONE_OK.
+    - Configuración: Abre el script en RStudio y utiliza la función setwd() (o el menú Session > Set Working Directory) para fijar la carpeta GONE_OK como tu directorio de trabajo.
+    - Ejecución: Una vez confirmada la instalación de las librerías necesarias, ejecuta el script. Verás una curva de Ne​ que muestra la dinámica de la población hasta la actualidad.
+
+- Análisis Multi-Población: El script está configurado por defecto para mostrar la Población A. Sin embargo, la ventaja de GONE es su capacidad de comparar historias locales.
+    - Explora la Población B: Dentro del script, localiza el argumento de lectura de archivo y cámbialo para apuntar a los resultados de la "Población B".
+    - Contrasta: ¿Ambas poblaciones muestran el mismo patrón de expansión? ¿O una de ellas presenta un declive reciente que la otra no tiene?

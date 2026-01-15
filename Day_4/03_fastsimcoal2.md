@@ -181,21 +181,16 @@ Aca dejo la lista de codigos necesario para que pueden replicar con sus datos:
 **NO CORRAN ESTO**
 
 ```bash
-#-bam: Lista de bams
-#-doSaf 1: Calcular Site Allele Frequency
-#-anc: Genoma Ancestral (*Rattus norvegicus*)
-#-GL 1: Modelo de Genotype Likelihood (SAMtools model es el estándar)
-#-P 8: Hilos (Threads)
-#-minMapQ 30: Filtrar lecturas de mala calidad de mapeo
-#-minQ 20: Filtrar bases de mala calidad
+# ------------ ANGSD SAF (UNFOLDED) ------------
+#angsd -P $NT \
+#      -bam  "$BAM" \
+#      -ref  "$REF" \
+#      -anc  "$ANC" \
+#      -uniqueOnly 1  -remove_bads 1 \
+#      -minMapQ 30    -minQ 20 \
+#      -doSaf 1       -GL 2 \
+#      -out  "$POP"
 
-#angsd -b bam.list \
-#-anc R_norvegicus_ref.fa \
-#-out Santiago_PRO_BAM \
-#-doSaf 1 \
-#-GL 1 \
-#-P 8 \
-#-minMapQ 30 -minQ 20
 ```
 Igual que antes, realSFS toma ese archivo intermedio (lo que hace esasySFS para un VCF) y optimiza el espectro.
 

@@ -185,7 +185,7 @@ Con K=4, es muy probable que los datos estén mostrando estas cuatro unidades ge
 
 Crea una nueva carpeta específica para esta fase del análisis y descarga los siguientes archivos específicos del Clúster:
 
-- ($F_{ST}$): `FST_Antigua_Ascotan_Carcote.weir.fst` y `FST_Reciente_Lauca_Chungara.weir.fst`
+- ($F_{ST}$): `FST_Antigua_Ascotan_Carcote.weir.fst`, `FST_Antigua_Ascotan_Carcote.weir.log`, `FST_Reciente_Lauca_Chungara.weir.fst` y `FST_Reciente_Lauca_Chungara.weir.log`
 
 - Resultados de PCA (PLINK): `orestias_pca_results.eigenvec`, `orestias_pca_results.eigenval`
 

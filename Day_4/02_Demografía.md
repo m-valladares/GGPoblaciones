@@ -200,5 +200,11 @@ Desglose del comando:
 
 ### 3.4 Revisión de Resultados
 
-Si el clúster presenta alta demanda o el análisis demora más de lo previsto, hemos preparado una corrida previa con éxito. Puedes copiar estos resultados a tu directorio personal para continuar con la práctica:
+Si el clúster presenta alta demanda o el análisis demora más de lo previsto, hemos preparado una corrida previa con éxito. Antes de copiar los resultados, no olviden detener el trabajo con `CTRL+C`. Luego, pueden copiar los resultados a sus directorio personal para continuar con el taller:
+
+```bash
+cp -r /home/courses/student21/Day04_Backup/GONE_OK/ \
+  /home/courses/$USER/Day04/
+```
+
 

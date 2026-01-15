@@ -161,8 +161,8 @@ Para EEMS utilizaremos nuestro set de datos de lcWGS (cobertura baja) de las 3 p
 - Archivo con los parámetros (`params.ini`): Se indican los parámetros para el análisis.
 
 ```bash
-datapath = /home/courses/$USER/Day04/EEMS/hi_chr1_EEMS
-mcmcpath = /home/courses/$USER/Day04/EEMS/hi_chr1_EEMS_output
+datapath = ./hi_chr1_EEMS
+mcmcpath = ./hi_chr1_EEMS_output
 nIndiv = 30
 nSites = 4000
 nDemes = 50
@@ -171,7 +171,6 @@ numMCMCIter = 10000000
 numBurnIter = 3000000
 numThinIter = 9999
 ```
-
 
 #### 3.3 Instalación y Configuración del Software
 
@@ -208,68 +207,35 @@ cd /home/courses/$USER/Day04/EEMS/
 /home/courses/student21/eems/runeems_snps/src/runeems_snps --params params.ini
 ```
 
+#### 3.5 Ejecución y Obtención de Resultados
 
+El análisis de EEMS es computacionalmente intensivo y puede tardar varias horas en completar los millones de iteraciones requeridos para una buena convergencia.
+1. Interrupción de la prueba: Si lograron iniciar la corrida y vieron que el contador de iteraciones comenzó a avanzar, es porque el software está bien configurado. Ahora, para optimizar el tiempo del taller, detengamos el proceso presionando: `Ctrl + C`.
+2. Copia de resultados finales (Pre-calculados): Para que todos puedan trabajar con una corrida que ya alcanzó la convergencia total (10 millones de iteraciones), copiaremos los resultados desde el backup del curso a tu directorio personal:
 
-1. El Diagnóstico: ¿Es confiable el modelo?
-Figura: pilogl01 (Trace plot)
+```bash
+cp -r /home/courses/student21/Day04_Backup/EEMS_OK/ \
+  /home/courses/$USER/Day04/
+```
 
-    Qué es: Muestra la evolución del log-posterior durante la corrida.
+#### 3.6 Visualización de Resultados en R
 
-    Interpretación: Aunque sigue saltando, ahora se mantiene en un rango más estable (entre 340 y 440) y tiene una densidad mucho mayor de puntos. Ya no parece una sierra solitaria, sino un bloque.
+La visualización se realizará de forma local en sus computadora para mayor comodidad y fluidez con los gráficos.
+1. Descarga de archivos: Descarguemos la carpeta `hi_chr1_EEMS_output` desde el clúster a nuestro computador.
+2. Descarguen desde este GitHub el script `Graph_EEMS.R` y colóquenlo en la misma carpeta donde descargaron los resultados.
+3. Instalación de librerías en RStudio: Como la librería principal `rEEMSplots` no se encuentra en el repositorio oficial de R (CRAN), debemos instalarla directamente desde el GitHub de su desarrolladora. Al comienzo del script se indican los comandos.
+4. Generación de gráficos: Una vez instaladas todas las dependencias indicadas al inicio del script, pueden ejecutarlo. El script generará automáticamente los mapas de:
+    - Migración (m): Identificación de barreras y corredores.
+    - Diversidad (q): Heterocigosidad a través del paisaje.
+    - Diagnósticos: Gráficos de convergencia y ajuste del modelo.
 
-    Veredicto: Es aceptable para un taller. Indica que el modelo exploró muchas soluciones y encontró una zona de alta probabilidad.
+#### 3.7 Detalle de los Resultados
 
-Figura: rdist03 (Aislamiento por Distancia)
-
-    Qué es: Grafica la disimilitud genética observada frente a la distancia geográfica real (en km).
-
-    Interpretación: ¡Esta es la clave! Ves una correlación positiva clara. A medida que aumenta la distancia física entre las muestras de Chile, aumenta la diferencia genética.
-
-    Veredicto: Esto confirma que tus datos tienen una señal de Aislamiento por Distancia (IBD) real y coherente.
-
-2. Los Mapas: ¿Qué nos dicen de la mosca?
-Figura: mrates01 (Superficie de Migración)
-
-Esta es la figura estrella del análisis.
-
-    El color Naranja (Centro-Sur): Indica una barrera al flujo genético. La migración en esa zona es menor a la media (log(m)<0). Hay algo que dificulta que las moscas del centro de Chile se mezclen libremente con las del sur.
-
-    El color Celeste (Norte y Extremo Sur): Indica corredores o alta conectividad. En estas zonas, la similitud genética es mayor de lo esperado para esa distancia.
-
-    Conclusión Biológica: Existe una discontinuidad genética real entre tus poblaciones del Maule/Valparaíso y la de Chiloé que va más allá de la simple distancia.
-
-Figura: qrates01 (Superficie de Diversidad)
-
-    Qué es: Muestra la diversidad genética local (log(q)).
-
-    Color Celeste: Áreas con alta diversidad. Las poblaciones del sur parecen tener una reserva de variación genética mayor.
-
-    Color Naranja: Áreas con baja diversidad o mayor endogamia relativa.
-
-    Conclusión Biológica: Esto podría sugerir que la población del sur es más antigua o más grande, mientras que las del centro podrían haber sufrido algún cuello de botella o presión selectiva diferente.
-
-
-
-1. Dissimilarities within sampled demes (α)
-
-Este gráfico analiza la diversidad interna de cada localidad.
-
-    Qué mide: Compara la disimilitud promedio entre individuos de la misma localidad (Observada) contra lo que el modelo estima basándose en el parámetro de diversidad local (q).
-
-    Para qué sirve: Si los puntos están cerca de la diagonal, significa que el modelo entendió bien cuánta variación hay "dentro" de cada uno de tus 3 grupos de Chile. Si un punto está muy lejos, indicaría que esa población es mucho más (o menos) diversa de lo que el paisaje sugiere.
-
-2. Dissimilarities between pairs of sampled demes (α,β)
-
-Este es el gráfico de Aislamiento por Distancia (IBD), pero enfocado en las diferencias entre grupos.
-
-    Qué mide: En el eje Y tienes la distancia genética neta entre la población A y la B. En el eje X, tienes la predicción del modelo basada en la geografía y las tasas de migración (m).
-
-    Para qué sirve: Es el que te confirma si la estructura que ves en el mapa tiene sustento. En tus resultados, al ver dos nubes de puntos separadas, estás viendo las comparaciones "Norte-Centro" y "Centro-Sur" (o Norte-Sur). La pendiente positiva indica que el modelo explica bien por qué las poblaciones distantes son genéticamente diferentes.
-
-3. Dissimilarities between pairs of sampled demes (vs Great circle distance)
-
-Este es el gráfico más intuitivo para una presentación.
-
-    Qué mide: Es puramente geográfico. Compara la disimilitud genética contra la distancia física real en kilómetros (Great circle distance).
-
-    Para qué sirve: Sirve para mostrar el decaimiento de la similitud con la distancia. En tus resultados, ver que a los 1200 km (distancia aproximada entre tus puntos extremos en Chile) la disimilitud es mayor que a los 200 km, valida que el sistema tiene una señal espacial coherente.
+1. Figura: `pilogl01` (Trace plot): Muestra la evolución del log-posterior durante la corrida.
+2. Figura: `rdist` (Aislamiento por Distancia):Grafica la disimilitud genética observada frente a la distancia geográfica real (en km).
+    - Dissimilarities within sampled demes (α): Este gráfico analiza la diversidad interna de cada localidad.Compara la disimilitud promedio entre individuos de la misma localidad (Observada) contra lo que el modelo estima basándose en el parámetro de diversidad local (q).
+        - Si los puntos están cerca de la diagonal, significa que el modelo entendió bien cuánta variación hay "dentro" de cada uno de los 3 grupos de Chile. Si un punto está muy lejos, indicaría que esa población es mucho más (o menos) diversa de lo que el paisaje sugiere.
+    - Dissimilarities between pairs of sampled demes (α,β): Este es el gráfico de Aislamiento por Distancia (IBD), pero enfocado en las diferencias entre grupos. En el eje Y tienes la distancia genética neta entre la población A y la B. En el eje X, tienes la predicción del modelo basada en la geografía y las tasas de migración (m). 
+    - Dissimilarities between pairs of sampled demes (vs Great circle distance): Compara la disimilitud genética contra la distancia física real en kilómetros (Great circle distance). Sirve para mostrar el decaimiento de la similitud con la distancia. En los resultados, ver que a los 1200 km (distancia aproximada entre los puntos extremos en Chile) la disimilitud es mayor que a los 200 km, valida que el sistema tiene una señal espacial coherente.
+3. Figura: `mrates01` (Superficie de Migración): El color Naranja (Centro-Sur) indica una barrera al flujo genético. La migración en esa zona es menor a la media (log(m)<0). Hay algo que dificulta que las moscas del centro de Chile se mezclen libremente con las del sur. El color Celeste (Norte y Extremo Sur) indica corredores o alta conectividad. En estas zonas, la similitud genética es mayor de lo esperado para esa distancia.
+4. Figura: `qrates01` (Superficie de Diversidad): Muestra la diversidad genética local (log(q)). Color Celeste, áreas con alta diversidad. Las poblaciones del sur parecen tener una reserva de variación genética mayor. Color Naranja, áreas con baja diversidad o mayor endogamia relativa.

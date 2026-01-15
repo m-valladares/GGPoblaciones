@@ -123,3 +123,19 @@ Al finalizar, BA3 nos entregará una tabla en `hi_chr1_BA3_test.txt` donde las f
 - La Diagonal: Representa la proporción de individuos que no migraron (auto-reclutamiento). Valores altos (cercanos a 1.0) indican poblaciones aisladas.
 - Valores fuera de la diagonal: Es la tasa de inmigración. Por ejemplo, si el valor en la celda [Pob A][Pob B] es 0.15, significa que el 15% de la Población B está compuesta por individuos que llegaron desde la Población A en las últimas generaciones.
 
+#### 1.3.5 2.5 Visualización de Resultados en R
+
+La salida estándar de BayesAss es una tabla de texto con medias y desviaciones estándar que puede resultar difícil de digerir a primera vista (sobre todo si se analizan múltiples poblaciones). Para transformar estos números en una historia biológica clara, utilizaremos un script de visualización que facilita la identificación de patrones de conectividad.
+
+En la carpeta de recursos del taller en GitHub, encontrarán el script Graph_BA3.R.
+1. Descarga el script: Pueden abrirlo directamente en RStudio.
+2. Librerías: El script utiliza paquetes para manejo de matrices y gráficos circulares (o de flechas). Si es la primera vez que los usan, asegúrense de instalarlos eliminando el comentario # en las primeras líneas del código.
+
+**Nota**: Para este taller, ya hemos pre-cargado los valores de la matriz de migración de *Haematobia irritans* dentro del script. Esto significa que pueden ejecutarlo de inmediato para ver los gráficos, aunque en un análisis real, ustedes cargarían su propio archivo de salida de BA3.
+
+**¿Qué podemos decir de los resultados?**
+
+- Simetría vs. Asimetría: ¿El flujo de individuos entre las poblaciones es bidireccional? Si vemos que una flecha es mucho más gruesa en un sentido que en el otro, estamos ante un potencial sistema de Fuente-Sumidero (*Source-Sink*).
+- Auto-reclutamiento: ¿Qué tan grandes son los valores de la diagonal (o los bucles sobre la misma población)? Si son muy altos (ej. > 0.90), la población está funcionando de forma virtualmente aislada.
+- Migración Significativa: BayesAss nos entrega un intervalo de confianza. Si el valor de migración es muy bajo (ej. 0.01) y su desviación estándar es grande, es probable que ese flujo sea ruido estadístico y no un evento biológico real.
+- Observen el gráfico resultante para las tres poblaciones de la mosca de los cuernos. ¿Existe alguna población que esté actuando como el principal emisor de migrantes hacia las demás?

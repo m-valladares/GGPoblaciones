@@ -12,6 +12,7 @@ Primero, solicitamos recursos interactivos en el clúster.
 ```bash
 srun -p labs --pty --mem=2G -n 1 -c 1 --time=02:00:00 /bin/bash
 ```
+
 ## 1. Configuración del Entorno y Datos
 
 Como estamos trabajando en un clúster compartido, primero debemos conectar nuestra sesión con las herramientas y datos del curso que están alojados en el usuario del instructor (`student23`).
@@ -19,9 +20,6 @@ Como estamos trabajando en un clúster compartido, primero debemos conectar nues
 **1. Definir la ubicación de las herramientas (Binarios)**
 Esto nos permitirá llamar a los programas sin escribir la ruta completa cada vez.
 
-
-
-**1. Definir la ubicación de las herramientas (Binarios)**
 Agregamos la carpeta de binarios al PATH para que el sistema encuentre el programa principal (`fsc27`).
 
 
@@ -51,7 +49,7 @@ ln -s /home/courses/student23/Day05/Data/popmap.txt .
 ls -l
 ```
 
-2. Configurar Python e Instalar Librerías:
+3. Configurar Python e Instalar Librerías:
 
 Cargaremos Miniconda e instalaremos las herramientas necesarias (pandas, numpy, scipy).
 
@@ -74,33 +72,27 @@ A diferencia de otros programas que leen todas las secuencias (archivos gigantes
 
 Antes de generar el archivo, debemos entender qué le estamos preguntando a los datos.
 
-### 1.1 Concepto: ¿Folded o Unfolded?
+### 2.1 Concepto: ¿Folded o Unfolded?
 
 El SFS es un histograma que nos dice cuán frecuentes son las mutaciones en nuestra población. Pero hay dos formas de construirlo y esto define el nombre del archivo:
 
- - Unfolded (Desplegado): Sabemos cuál es el estado ancestral (usando un outgroup). Contamos alelos Derivados.
-
+- **Unfolded (Desplegado):** Sabemos cuál es el estado ancestral (usando un outgroup). Contamos alelos Derivados.
   - Nombre del archivo: _DAFpop0.obs (Derived Allele Frequency).
-
    - Ventaja: Es mucho más informativo para detectar selección o expansión.
 
- - Folded (Plegado): No sabemos cuál es el ancestral. Contamos el alelo Menor (el menos común).
-
+- **Folded (Plegado):** No sabemos cuál es el ancestral. Contamos el alelo Menor (el menos común).
   - Nombre del archivo: _MAFpop0.obs (Minor Allele Frequency).
-
    - Uso: Cuando no tenemos buena referencia. "Doblamos" el histograma porque no distinguimos p de q.
 
-En este taller: Usaremos SFS Unfolded (DAF), asumiendo que el genoma de referencia indica el estado ancestral. El VCF se construyo utilizando a **Rattus norvergicus** como grupo externo.
+En este taller: Usaremos SFS Unfolded (DAF), asumiendo que el genoma de referencia indica el estado ancestral. El VCF se construyo utilizando a *Rattus norvergicus* como grupo externo.
 
 
 ### 2.2 Ejecución Práctica: easySFS
 
 Para generar este archivo desde un VCF, usaremos la herramienta easySFS. Esta herramienta resuelve un problema clásico: los Datos Faltantes.
 
- - El Problema de la Proyección: El SFS necesita que todos los sitios tengan el mismo número de muestras. Pero en la vida real, algunos individuos fallan en algunos sitios.
-
+- El Problema de la Proyección: El SFS necesita que todos los sitios tengan el mismo número de muestras. Pero en la vida real, algunos individuos fallan en algunos sitios.
   - Si pedimos 20 individuos, perdemos todos los sitios donde falló 1 solo.
-
   - easySFS hace una "Proyección a la baja" (Downsampling): Simula que tenemos menos individuos (ej. 15) para maximizar la cantidad de SNPs retenidos.
 
 
@@ -133,9 +125,9 @@ python3 /home/courses/student23/Day05/bin_taller/easySFS/easySFS.py \
 
 ⏳ TIEMPO DE ESPERA (Simulación) Leer un VCF entero toma memoria y tiempo. En una investigación real, esperarían unos 10-20 minutos.
 
- - Esperen 30 segundos observando la terminal.
- - Interrumpan el proceso, presionen Ctrl + C.
- - Usaremos un archivo ya procesado donde elegimos proyectar a 14 individuos (maximiza SNPs para Santiago).
+- Esperen 30 segundos observando la terminal.
+- Interrumpan el proceso, presionen Ctrl + C.
+- Usaremos un archivo ya procesado donde elegimos proyectar a 14 individuos (maximiza SNPs para Santiago).
 
 Resultado del Preview (Lo que habrían visto):
 
@@ -182,22 +174,50 @@ cp ~/Day04/Data_fsc/Santiago_DAFpop0.obs .
 ls -lh Santiago_DAFpop0.obs
 
 ```
+Este archivo se construyó usando ANGSD, ya que esta basado en mis datos de baja cobertura. ANGSD tiene su propia formar de generar SFS desde los archivos .bam no del VCF
+
+Aca dejo la lista de codigos necesario para que pueden replicar con sus datos:
+
+**NO CORRAN ESTO**
+
+```bash
+#-bam: Lista de bams
+#-doSaf 1: Calcular Site Allele Frequency
+#-anc: Genoma Ancestral (*Rattus norvegicus*)
+#-GL 1: Modelo de Genotype Likelihood (SAMtools model es el estándar)
+#-P 8: Hilos (Threads)
+#-minMapQ 30: Filtrar lecturas de mala calidad de mapeo
+#-minQ 20: Filtrar bases de mala calidad
+
+#angsd -b bam.list \
+#-anc R_norvegicus_ref.fa \
+#-out Santiago_PRO_BAM \
+#-doSaf 1 \
+#-GL 1 \
+#-P 8 \
+#-minMapQ 30 -minQ 20
+```
+Igual que antes, realSFS toma ese archivo intermedio (lo que hace esasySFS para un VCF) y optimiza el espectro.
+
+```bash
+#realSFS Santiago_PRO_BAM.saf.idx -P 8 > Santiago_BAM_DAFpop0.obs
+```
 
 ## 2. Definición de modelos demográficos.
 
 Ahora usaremos el archivo de respaldo. Pero antes, lean esto con atención. El 90% de los errores en fastsimcoal ocurren por no respetar estas 3 Reglas:
 
- - El Nombre: El archivo de entrada TIENE que terminar en _DAFpop0.obs (si es una población) o _jointDAFpop1_0.obs (si son dos). Si le cambias el nombre a midato.obs, el programa no lo encontrará.
- - Sin Espacios: Nunca uses espacios en los nombres de archivos o carpetas. Usa _ (guiones bajos).
- - Coherencia: El prefijo del archivo .obs debe ser IDÉNTICO al nombre del archivo de parámetros .tpl que crearemos después.
+- El Nombre: El archivo de entrada TIENE que terminar en _DAFpop0.obs (si es una población) o _jointDAFpop1_0.obs (si son dos). Si le cambias el nombre a midato.obs, el programa no lo encontrará.
+- Sin Espacios: Nunca uses espacios en los nombres de archivos o carpetas. Usa _ (guiones bajos).
+- Coherencia: El prefijo del archivo .obs debe ser IDÉNTICO al nombre del archivo de parámetros .tpl que crearemos después.
 
 Para comunicarse con fastsimcoal2, necesitamos dos archivos que trabajan en equipo. Piensen en esto como construir una casa:
 
- - El archivo .tpl (Template/Plantilla): Es el **PLANO DEL ARQUITECTO**. Define la estructura de la población, cuántos cromosomas tenemos y, lo más importante, qué eventos ocurrieron en el pasado (migraciones, colapsos, separaciones).
+- El archivo .tpl (Template/Plantilla): Es el **PLANO DEL ARQUITECTO**. Define la estructura de la población, cuántos cromosomas tenemos y, lo más importante, qué eventos ocurrieron en el pasado (migraciones, colapsos, separaciones).
 
- - El archivo .est (Estimation/Estimación): Son las **REGLAS DE BÚSQUEDA**. Aquí le decimos al programa: *"No sé exactamente cuántas ratas hay, pero busca un número entre 100 y 100,000"*.
+- El archivo .est (Estimation/Estimación): Son las **REGLAS DE BÚSQUEDA**. Aquí le decimos al programa: *"No sé exactamente cuántas ratas hay, pero busca un número entre 100 y 100,000"*.
 
-**A. El Archivo .tpl: Leyendo el Pasado**
+**A. El Archivo .tpl**
 
 El .tpl describe la historia desde el Presente (tiempo 0) hacia el Pasado. Fíjense en la sección crítica: historical event.
 
@@ -272,8 +292,8 @@ Santiago_DAFpop0.obs
 **¿Qué hay dentro del archivo?**
 
 Si miran el contenido (cat Santiago_CONST_DAFpop0.obs), verán una sola línea de números: 1 d0_0 d0_1 d0_2 ...
- - d0_0: Número de sitios donde el alelo derivado aparece 0 veces (Monormórficos ancestrales)
- - d0_1: Número de sitios donde el alelo derivado aparece 1 vez (Singletons).
+- d0_0: Número de sitios donde el alelo derivado aparece 0 veces (Monormórficos ancestrales)
+- d0_1: Número de sitios donde el alelo derivado aparece 1 vez (Singletons).
 
 Modelo A: Población Constante (Nulo)
 
@@ -305,6 +325,36 @@ FREQ 1 0 2.5e-8
 EOL
 
 ```
+
+**Population effective sizes (number of genes): NCUR**
+
+- Significado: Es el tamaño poblacional efectivo (Ne​).
+- Por qué dice "number of genes": Al igual que con el tamaño de muestra, el programa trabaja en unidades haploides. Si tu población real tiene 5,000 individuos diploides, el valor de NCUR que el programa estimará (o que tú debes ingresar) será 10,000.
+
+**Sample sizes: 14**
+
+- Significado: Es el número de linajes o copias haploides que muestreaste de esa población.
+- Si tus datos vienen de 7 individuos diploides, pones 14, esto tiene que coincidir en la proyección que usaste en realSFS. Es el número total de "versiones de alelos" que el coalescente rastreará hacia el pasado.
+
+**Number of independent loci [chromosome]: 1 0**
+
+Aquí es donde el término "chromosome" suele confundir más.
+
+- El primer número (1): Indica cuántos "cromosomas" (o bloques independientes) quieres simular.
+- El segundo número (0): Indica si estos cromosomas son estructuralmente iguales (0) o diferentes (1).
+ - Al poner 1 0, le estás diciendo: "Simula 1 tipo de estructura genómica". Si estuvieras simulando datos de todo el genoma (RADseq o WGS), normalmente tratas todo como un solo set de parámetros estadísticos.
+
+**Per chromosome: Number of contiguous linkage Block: 1**
+
+- Significado: Dentro de ese "cromosoma" que definiste arriba, ¿cuántos bloques hay que tengan diferentes tasas de recombinación o mutación?
+- Al poner 1, dices que todo tu segmento de ADN se comporta bajo las mismas reglas (una sola tasa de mutación y una sola tasa de recombinación).
+
+**per Block: data type, num loci, rec. rate and mut rate + optional parameters**
+
+- Data type	FREQ: Indica que estás usando frecuencias alélicas (SFS). Otros tipos son DNA o MSAT.
+- Num loci:	1	En el contexto de SFS, se pone 1 porque el SFS ya es un resumen estadístico de todos tus SNPs.
+- Rec. rat:	0	Tasa de recombinación. En SFS de SNPs independientes, se suele dejar en 0 porque se asume que no hay ligamiento entre los sitios.
+- Mut. rate:	2.5e-8	La probabilidad de que un alelo cambie por generación. Este valor es clave para escalar los resultados a años o individuos reales y varia según tu modelo de estudio.
 
 3. Crear archivo EST (Estimation - Las Reglas): Aquí definimos los rangos de búsqueda para los parámetros (ej. NCUR entre 100 y 100,000).
 
@@ -402,7 +452,48 @@ Correremos una simulación corta (100 iteraciones).
 
 ```
 
-3. Análisis Comparativo: Resultados (Santiago vs Brasil)
+**Inspección Rápida de Resultados**
+
+Antes de ver los resultados finales, miremos qué generó el programa en nuestra breve corrida de prueba. fastsimcoal2 crea una carpeta por cada ejecución.
+
+1. Revisar el Modelo Constante (Nulo)
+
+El archivo más importante es el .bestlhoods. Este contiene los mejores parámetros encontrados y qué tan bien se ajustan al modelo (Likelihood).
+
+```bash
+# Entrar a la carpeta o leer desde fuera
+cat Santiago_CONST/Santiago_CONST.bestlhoods
+```
+
+NCUR          MaxEstLhood      MaxObsLhood
+79851         -68855582.174    -37059578.986
+
+Interpretación:
+
+- NCUR: Estima que hay unas ~40,000 ratas (o el número que les haya dado dividido en 2 por ser diploides).
+
+- MaxEstLhood (-68.8 millones): Este es el puntaje del modelo. Mientras más cerca de Cero (o menos negativo), mejor.
+
+2. Revisar el Modelo Cuello de Botella (Invasión)
+
+Ahora miremos el modelo que incluye el evento de colonización.
+```bash
+cat Santiago_BOT1/Santiago_BOT1.bestlhoods
+```
+
+NANC    NCUR   NBOT   TBOT   LBOT ...  MaxEstLhood
+254241  9773   574    73     5    ...  -66409468.624
+
+Comparemos los valores de MaxEstLhood (Log-Likelihood):
+
+- Modelo Constante: -68,855,582
+- Modelo Botella: -66,409,468
+
+El valor del Modelo "Botella" es "menos negativo" (mayor) que el Constante. Incluso con una simulación corta
+
+*Nota sobre los parámetros: Fíjense en NBOT (aprox 500) vs NCUR (aprox 10,000). El modelo detecta que la población pasó de ser muy pequeña a crecer explosivamente.*
+
+## 3. Análisis Comparativo: Resultados (Santiago vs Brasil)
 
 Para este taller, accederemos a la carpeta de Resultados Consolidados generados en el clúster Rosalind, donde compararemos Santiago contra otra población con historia contrastante, Brasil.
 
@@ -424,11 +515,11 @@ head -n 3 Santiago_FOUNDER_EXP/Santiago_FOUNDER_EXP_DAFpop0.obs
 
 Verán números como 377476372.98.
 
-    easySFS (Taller): Usa Hard Calling (Si/No). Entrega números Enteros.
+- easySFS (Taller): Usa Hard Calling (Si/No). Entrega números Enteros.
 
-    ANGSD (Pro): Usa Probabilistic Calling. Suma la probabilidad de genotipo de cada individuo. Entrega números Decimales.
+- ANGSD (Pro): Usa Probabilistic Calling. Suma la probabilidad de genotipo de cada individuo. Entrega números Decimales.
 
-    Lección: Los decimales son más precisos para baja cobertura.
+Los decimales son más precisos para baja cobertura.
 
 
 3. Selección del Mejor Modelo Utilizando el criterio de AIC (que premia el ajuste y castiga la complejidad), los ganadores fueron:
@@ -484,9 +575,9 @@ Rscript --version
 
 Ahora lanzamos el script. Este leerá el CSV, buscará los archivos .bestlhoods dentro de FSC_Results_Comp y generará los gráficos.
 
- - Argumento 1: best_model_per_pop.csv (Nuestra tabla).
- - Argumento 2: 0.5 (Tiempo de generación: 2 generaciones por año).
- - Argumento 3: schematics_pub (Carpeta de salida).
+- Argumento 1: best_model_per_pop.csv (Nuestra tabla).
+- Argumento 2: 0.5 (Tiempo de generación: 2 generaciones por año).
+- Argumento 3: schematics_pub (Carpeta de salida).
 
 ```bash
 # Ejecutar script

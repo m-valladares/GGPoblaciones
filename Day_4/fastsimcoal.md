@@ -90,10 +90,8 @@ En este taller: Usaremos SFS Unfolded (DAF), asumiendo que el genoma de referenc
 
 Para generar este archivo desde un VCF, usaremos la herramienta easySFS. Esta herramienta resuelve un problema clásico: los Datos Faltantes.
 
- - El Problema de la Proyección: El SFS necesita que todos los sitios tengan el mismo número de muestras. Pero en la vida real, algunos individuos fallan en algunos sitios.
-
+- El Problema de la Proyección: El SFS necesita que todos los sitios tengan el mismo número de muestras. Pero en la vida real, algunos individuos fallan en algunos sitios.
   - Si pedimos 20 individuos, perdemos todos los sitios donde falló 1 solo.
-
   - easySFS hace una "Proyección a la baja" (Downsampling): Simula que tenemos menos individuos (ej. 15) para maximizar la cantidad de SNPs retenidos.
 
 
@@ -126,9 +124,9 @@ python3 /home/courses/student23/Day05/bin_taller/easySFS/easySFS.py \
 
 ⏳ TIEMPO DE ESPERA (Simulación) Leer un VCF entero toma memoria y tiempo. En una investigación real, esperarían unos 10-20 minutos.
 
- - Esperen 30 segundos observando la terminal.
- - Interrumpan el proceso, presionen Ctrl + C.
- - Usaremos un archivo ya procesado donde elegimos proyectar a 14 individuos (maximiza SNPs para Santiago).
+- Esperen 30 segundos observando la terminal.
+- Interrumpan el proceso, presionen Ctrl + C.
+- Usaremos un archivo ya procesado donde elegimos proyectar a 14 individuos (maximiza SNPs para Santiago).
 
 Resultado del Preview (Lo que habrían visto):
 
@@ -180,15 +178,15 @@ ls -lh Santiago_DAFpop0.obs
 
 Ahora usaremos el archivo de respaldo. Pero antes, lean esto con atención. El 90% de los errores en fastsimcoal ocurren por no respetar estas 3 Reglas:
 
- - El Nombre: El archivo de entrada TIENE que terminar en _DAFpop0.obs (si es una población) o _jointDAFpop1_0.obs (si son dos). Si le cambias el nombre a midato.obs, el programa no lo encontrará.
- - Sin Espacios: Nunca uses espacios en los nombres de archivos o carpetas. Usa _ (guiones bajos).
- - Coherencia: El prefijo del archivo .obs debe ser IDÉNTICO al nombre del archivo de parámetros .tpl que crearemos después.
+- El Nombre: El archivo de entrada TIENE que terminar en _DAFpop0.obs (si es una población) o _jointDAFpop1_0.obs (si son dos). Si le cambias el nombre a midato.obs, el programa no lo encontrará.
+- Sin Espacios: Nunca uses espacios en los nombres de archivos o carpetas. Usa _ (guiones bajos).
+- Coherencia: El prefijo del archivo .obs debe ser IDÉNTICO al nombre del archivo de parámetros .tpl que crearemos después.
 
 Para comunicarse con fastsimcoal2, necesitamos dos archivos que trabajan en equipo. Piensen en esto como construir una casa:
 
- - El archivo .tpl (Template/Plantilla): Es el **PLANO DEL ARQUITECTO**. Define la estructura de la población, cuántos cromosomas tenemos y, lo más importante, qué eventos ocurrieron en el pasado (migraciones, colapsos, separaciones).
+- El archivo .tpl (Template/Plantilla): Es el **PLANO DEL ARQUITECTO**. Define la estructura de la población, cuántos cromosomas tenemos y, lo más importante, qué eventos ocurrieron en el pasado (migraciones, colapsos, separaciones).
 
- - El archivo .est (Estimation/Estimación): Son las **REGLAS DE BÚSQUEDA**. Aquí le decimos al programa: *"No sé exactamente cuántas ratas hay, pero busca un número entre 100 y 100,000"*.
+- El archivo .est (Estimation/Estimación): Son las **REGLAS DE BÚSQUEDA**. Aquí le decimos al programa: *"No sé exactamente cuántas ratas hay, pero busca un número entre 100 y 100,000"*.
 
 **A. El Archivo .tpl**
 
@@ -265,8 +263,8 @@ Santiago_DAFpop0.obs
 **¿Qué hay dentro del archivo?**
 
 Si miran el contenido (cat Santiago_CONST_DAFpop0.obs), verán una sola línea de números: 1 d0_0 d0_1 d0_2 ...
- - d0_0: Número de sitios donde el alelo derivado aparece 0 veces (Monormórficos ancestrales)
- - d0_1: Número de sitios donde el alelo derivado aparece 1 vez (Singletons).
+- d0_0: Número de sitios donde el alelo derivado aparece 0 veces (Monormórficos ancestrales)
+- d0_1: Número de sitios donde el alelo derivado aparece 1 vez (Singletons).
 
 Modelo A: Población Constante (Nulo)
 
@@ -447,11 +445,11 @@ head -n 3 Santiago_FOUNDER_EXP/Santiago_FOUNDER_EXP_DAFpop0.obs
 
 Verán números como 377476372.98.
 
-    easySFS (Taller): Usa Hard Calling (Si/No). Entrega números Enteros.
+- easySFS (Taller): Usa Hard Calling (Si/No). Entrega números Enteros.
 
-    ANGSD (Pro): Usa Probabilistic Calling. Suma la probabilidad de genotipo de cada individuo. Entrega números Decimales.
+- ANGSD (Pro): Usa Probabilistic Calling. Suma la probabilidad de genotipo de cada individuo. Entrega números Decimales.
 
-    Los decimales son más precisos para baja cobertura.
+Los decimales son más precisos para baja cobertura.
 
 
 3. Selección del Mejor Modelo Utilizando el criterio de AIC (que premia el ajuste y castiga la complejidad), los ganadores fueron:
@@ -507,9 +505,9 @@ Rscript --version
 
 Ahora lanzamos el script. Este leerá el CSV, buscará los archivos .bestlhoods dentro de FSC_Results_Comp y generará los gráficos.
 
- - Argumento 1: best_model_per_pop.csv (Nuestra tabla).
- - Argumento 2: 0.5 (Tiempo de generación: 2 generaciones por año).
- - Argumento 3: schematics_pub (Carpeta de salida).
+- Argumento 1: best_model_per_pop.csv (Nuestra tabla).
+- Argumento 2: 0.5 (Tiempo de generación: 2 generaciones por año).
+- Argumento 3: schematics_pub (Carpeta de salida).
 
 ```bash
 # Ejecutar script

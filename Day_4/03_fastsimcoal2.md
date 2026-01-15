@@ -12,6 +12,7 @@ Primero, solicitamos recursos interactivos en el clúster.
 ```bash
 srun -p labs --pty --mem=2G -n 1 -c 1 --time=02:00:00 /bin/bash
 ```
+
 ## 1. Configuración del Entorno y Datos
 
 Como estamos trabajando en un clúster compartido, primero debemos conectar nuestra sesión con las herramientas y datos del curso que están alojados en el usuario del instructor (`student23`).

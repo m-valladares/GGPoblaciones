@@ -1,4 +1,4 @@
-# Flujo Genético y Conectividad Poblacional
+# Inferencia Demográfica
 
 El flujo genético es la fuerza microevolutiva que mantiene la cohesión de las especies. A diferencia de la deriva genética, que promueve la divergencia, el intercambio de alelos entre poblaciones tiende a homogeneizar las frecuencias alélicas y a aumentar la diversidad genética local.
 

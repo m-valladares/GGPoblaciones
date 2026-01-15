@@ -155,7 +155,7 @@ EEMS utiliza un modelo de "aislamiento por distancia" (IBD) pero lo hace más co
 #### 3.2 Preparación de los datos para lcWGS
 
 Para EEMS utilizaremos nuestro set de datos de lcWGS (cobertura baja) de las 3 poblaciones. Dado que EEMS se basa en distancias genéticas, los datos de baja cobertura pueden ser ruidosos si no se manejan bien.
-- Matriz de Distancia (`hi_chr1_EEMS.diff`): Utilizaremos las verosimilitudes de genotipos (GL) de ANGSD para generar una matriz de distancias genéticas. Esto es mucho más preciso que usar genotipos "duros" de baja calidad, ya que integra la incertidumbre del secuenciamiento.
+- Matriz de Distancia (`hi_chr1_EEMS.diff`): Utilizaremos las verosimilitudes de genotipos (GL) de ANGSD para generar una matriz de distancias genéticas. Esto es mucho más preciso que usar genotipos "duros" de baja calidad, ya que integra la incertidumbre del secuenciamiento. Para generar el set de datos, usando [**PCAngsd**](https://doi.org/10.1186/s12859-021-04375-2), se estimó una matriz de covarianza a partir de los genotypes likelihoods inferidos por ANGSD. Posteriormente, usando la información de matriz de covarianza, se construyó la matriz de distancia que usaremos en EEMS.
 - Coordenadas Geográficas (`hi_chr1_EEMS.coord`): EEMS requiere un archivo con la latitud y longitud de cada individuo. Cabe mencionar que agregamos difusión a las coordenadas reales.
 - El archivo de Mapa (`hi_chr1_EEMS.outer`): Definiremos un polígono que encierra el área de muestreo para decirle al programa dónde debe realizar las inferencias.
 - Archivo con los parámetros (`params.ini`): Se indican los parámetros para el análisis.

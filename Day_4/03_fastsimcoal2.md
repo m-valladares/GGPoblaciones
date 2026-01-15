@@ -173,6 +173,34 @@ cp ~/Day04/Data_fsc/Santiago_DAFpop0.obs .
 ls -lh Santiago_DAFpop0.obs
 
 ```
+Este archivo se construyó usando ANGSD, ya que esta basado en mis datos de baja cobertura. ANGSD tiene su propia formar de generar SFS desde los archivos .bam no del VCF
+
+Aca dejo la lista de codigos necesario para que pueden replicar con sus datos:
+
+**NO CORRAN ESTO**
+
+```bash
+#-bam: Lista de bams
+#-doSaf 1: Calcular Site Allele Frequency
+#-anc: Genoma Ancestral (*Rattus norvegicus*)
+#-GL 1: Modelo de Genotype Likelihood (SAMtools model es el estándar)
+#-P 8: Hilos (Threads)
+#-minMapQ 30: Filtrar lecturas de mala calidad de mapeo
+#-minQ 20: Filtrar bases de mala calidad
+
+#angsd -b bam.list \
+#-anc R_norvegicus_ref.fa \
+#-out Santiago_PRO_BAM \
+#-doSaf 1 \
+#-GL 1 \
+#-P 8 \
+#-minMapQ 30 -minQ 20
+```
+Igual que antes, realSFS toma ese archivo intermedio (lo que hace esasySFS para un VCF) y optimiza el espectro.
+
+```bash
+#realSFS Santiago_PRO_BAM.saf.idx -P 8 > Santiago_BAM_DAFpop0.obs
+```
 
 ## 2. Definición de modelos demográficos.
 
@@ -422,6 +450,47 @@ Correremos una simulación corta (100 iteraciones).
 /home/courses/student23/Day05/bin_taller/fsc27 -t Santiago_BOT1.tpl -e Santiago_BOT1.est -n 100 -M -L 40 -d -q -c 1
 
 ```
+
+**Inspección Rápida de Resultados**
+
+Antes de ver los resultados finales, miremos qué generó el programa en nuestra breve corrida de prueba. fastsimcoal2 crea una carpeta por cada ejecución.
+
+1. Revisar el Modelo Constante (Nulo)
+
+El archivo más importante es el .bestlhoods. Este contiene los mejores parámetros encontrados y qué tan bien se ajustan al modelo (Likelihood).
+
+```bash
+# Entrar a la carpeta o leer desde fuera
+cat Santiago_CONST/Santiago_CONST.bestlhoods
+```
+
+NCUR          MaxEstLhood      MaxObsLhood
+79851         -68855582.174    -37059578.986
+
+Interpretación:
+
+- NCUR: Estima que hay unas ~40,000 ratas (o el número que les haya dado dividido en 2 por ser diploides).
+
+- MaxEstLhood (-68.8 millones): Este es el puntaje del modelo. Mientras más cerca de Cero (o menos negativo), mejor.
+
+2. Revisar el Modelo Cuello de Botella (Invasión)
+
+Ahora miremos el modelo que incluye el evento de colonización.
+```bash
+cat Santiago_BOT1/Santiago_BOT1.bestlhoods
+```
+
+NANC    NCUR   NBOT   TBOT   LBOT ...  MaxEstLhood
+254241  9773   574    73     5    ...  -66409468.624
+
+Comparemos los valores de MaxEstLhood (Log-Likelihood):
+
+- Modelo Constante: -68,855,582
+- Modelo Botella: -66,409,468
+
+El valor del Modelo "Botella" es "menos negativo" (mayor) que el Constante. Incluso con una simulación corta
+
+*Nota sobre los parámetros: Fíjense en NBOT (aprox 500) vs NCUR (aprox 10,000). El modelo detecta que la población pasó de ser muy pequeña a crecer explosivamente.*
 
 ## 3. Análisis Comparativo: Resultados (Santiago vs Brasil)
 

@@ -19,9 +19,6 @@ Como estamos trabajando en un clúster compartido, primero debemos conectar nues
 **1. Definir la ubicación de las herramientas (Binarios)**
 Esto nos permitirá llamar a los programas sin escribir la ruta completa cada vez.
 
-
-
-**1. Definir la ubicación de las herramientas (Binarios)**
 Agregamos la carpeta de binarios al PATH para que el sistema encuentre el programa principal (`fsc27`).
 
 
@@ -51,7 +48,7 @@ ln -s /home/courses/student23/Day05/Data/popmap.txt .
 ls -l
 ```
 
-2. Configurar Python e Instalar Librerías:
+3. Configurar Python e Instalar Librerías:
 
 Cargaremos Miniconda e instalaremos las herramientas necesarias (pandas, numpy, scipy).
 
@@ -74,23 +71,23 @@ A diferencia de otros programas que leen todas las secuencias (archivos gigantes
 
 Antes de generar el archivo, debemos entender qué le estamos preguntando a los datos.
 
-### 1.1 Concepto: ¿Folded o Unfolded?
+### 2.1 Concepto: ¿Folded o Unfolded?
 
 El SFS es un histograma que nos dice cuán frecuentes son las mutaciones en nuestra población. Pero hay dos formas de construirlo y esto define el nombre del archivo:
 
- - Unfolded (Desplegado): Sabemos cuál es el estado ancestral (usando un outgroup). Contamos alelos Derivados.
+ - **Unfolded (Desplegado):** Sabemos cuál es el estado ancestral (usando un outgroup). Contamos alelos Derivados.
 
   - Nombre del archivo: _DAFpop0.obs (Derived Allele Frequency).
 
    - Ventaja: Es mucho más informativo para detectar selección o expansión.
 
- - Folded (Plegado): No sabemos cuál es el ancestral. Contamos el alelo Menor (el menos común).
+ - **Folded (Plegado):** No sabemos cuál es el ancestral. Contamos el alelo Menor (el menos común).
 
   - Nombre del archivo: _MAFpop0.obs (Minor Allele Frequency).
 
    - Uso: Cuando no tenemos buena referencia. "Doblamos" el histograma porque no distinguimos p de q.
 
-En este taller: Usaremos SFS Unfolded (DAF), asumiendo que el genoma de referencia indica el estado ancestral. El VCF se construyo utilizando a **Rattus norvergicus** como grupo externo.
+En este taller: Usaremos SFS Unfolded (DAF), asumiendo que el genoma de referencia indica el estado ancestral. El VCF se construyo utilizando a *Rattus norvergicus* como grupo externo.
 
 
 ### 2.2 Ejecución Práctica: easySFS
@@ -197,7 +194,7 @@ Para comunicarse con fastsimcoal2, necesitamos dos archivos que trabajan en equi
 
  - El archivo .est (Estimation/Estimación): Son las **REGLAS DE BÚSQUEDA**. Aquí le decimos al programa: *"No sé exactamente cuántas ratas hay, pero busca un número entre 100 y 100,000"*.
 
-**A. El Archivo .tpl: Leyendo el Pasado**
+**A. El Archivo .tpl**
 
 El .tpl describe la historia desde el Presente (tiempo 0) hacia el Pasado. Fíjense en la sección crítica: historical event.
 
@@ -306,6 +303,36 @@ EOL
 
 ```
 
+**Population effective sizes (number of genes): NCUR**
+
+- Significado: Es el tamaño poblacional efectivo (Ne​).
+- Por qué dice "number of genes": Al igual que con el tamaño de muestra, el programa trabaja en unidades haploides. Si tu población real tiene 5,000 individuos diploides, el valor de NCUR que el programa estimará (o que tú debes ingresar) será 10,000.
+
+**Sample sizes: 14**
+
+- Significado: Es el número de linajes o copias haploides que muestreaste de esa población.
+- Si tus datos vienen de 7 individuos diploides, pones 14, esto tiene que coincidir en la proyección que usaste en realSFS. Es el número total de "versiones de alelos" que el coalescente rastreará hacia el pasado.
+
+**Number of independent loci [chromosome]: 1 0**
+
+Aquí es donde el término "chromosome" suele confundir más.
+
+- El primer número (1): Indica cuántos "cromosomas" (o bloques independientes) quieres simular.
+- El segundo número (0): Indica si estos cromosomas son estructuralmente iguales (0) o diferentes (1).
+ - Al poner 1 0, le estás diciendo: "Simula 1 tipo de estructura genómica". Si estuvieras simulando datos de todo el genoma (RADseq o WGS), normalmente tratas todo como un solo set de parámetros estadísticos.
+
+**Per chromosome: Number of contiguous linkage Block: 1**
+
+- Significado: Dentro de ese "cromosoma" que definiste arriba, ¿cuántos bloques hay que tengan diferentes tasas de recombinación o mutación?
+- Al poner 1, dices que todo tu segmento de ADN se comporta bajo las mismas reglas (una sola tasa de mutación y una sola tasa de recombinación).
+
+**per Block: data type, num loci, rec. rate and mut rate + optional parameters**
+
+- Data type	FREQ: Indica que estás usando frecuencias alélicas (SFS). Otros tipos son DNA o MSAT.
+- Num loci:	1	En el contexto de SFS, se pone 1 porque el SFS ya es un resumen estadístico de todos tus SNPs.
+- Rec. rat:	0	Tasa de recombinación. En SFS de SNPs independientes, se suele dejar en 0 porque se asume que no hay ligamiento entre los sitios.
+- Mut. rate:	2.5e-8	La probabilidad de que un alelo cambie por generación. Este valor es clave para escalar los resultados a años o individuos reales y varia según tu modelo de estudio.
+
 3. Crear archivo EST (Estimation - Las Reglas): Aquí definimos los rangos de búsqueda para los parámetros (ej. NCUR entre 100 y 100,000).
 
 ```bash
@@ -402,7 +429,7 @@ Correremos una simulación corta (100 iteraciones).
 
 ```
 
-3. Análisis Comparativo: Resultados (Santiago vs Brasil)
+## 3. Análisis Comparativo: Resultados (Santiago vs Brasil)
 
 Para este taller, accederemos a la carpeta de Resultados Consolidados generados en el clúster Rosalind, donde compararemos Santiago contra otra población con historia contrastante, Brasil.
 
@@ -428,7 +455,7 @@ Verán números como 377476372.98.
 
     ANGSD (Pro): Usa Probabilistic Calling. Suma la probabilidad de genotipo de cada individuo. Entrega números Decimales.
 
-    Lección: Los decimales son más precisos para baja cobertura.
+    Los decimales son más precisos para baja cobertura.
 
 
 3. Selección del Mejor Modelo Utilizando el criterio de AIC (que premia el ajuste y castiga la complejidad), los ganadores fueron:

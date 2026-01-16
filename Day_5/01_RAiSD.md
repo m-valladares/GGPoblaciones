@@ -1,21 +1,19 @@
-
-## Taller Práctico: Detección de Señales de Selección en Especies Invasoras
-
+# Taller Práctico: Detección de Señales de Selección en Especies Invasoras
 
 Modelo de Estudio: *Rattus rattus* (Población Santiago) Objetivo: Identificar loci outliers y genes candidatos bajo selección utilizando dos aproximaciones (RAiSD y SweepFinder2).
 
  ---
 
-Trabajarán con datos de Rattus rattus (rata negra), una de las especies invasoras más exitosas del mundo. El genoma completo de este roedor es enorme (~2.8 Gb). Para que este práctico sea viable en tiempo real, nos centraremos en el Cromosoma 1, donde buscaremos "huellas" de adaptación reciente al ambiente urbano y periurbano de Santiago.
+Trabajarán con datos de *Rattus rattus* (rata negra), una de las especies invasoras más exitosas del mundo. El genoma completo de este roedor es enorme (~2.8 Gb). Para que este práctico sea viable en tiempo real, nos centraremos en el Cromosoma 1, donde buscaremos "huellas" de adaptación reciente al ambiente urbano y periurbano de Santiago.
 
 ## 📂 Estructura de Trabajo
 
 Para optimizar el tiempo, trabajaremos simulando un flujo real pero con "redes de seguridad".
 
 
-    ~/Day05/Data: Aquí se encuentran los archivos crudos y copias de seguridad (backups) de todos los resultados. Si un análisis tarda mucho o falla, podrás copiar el archivo desde aquí.
+~/Day05/Data: Aquí se encuentran los archivos crudos y copias de seguridad (backups) de todos los resultados. Si un análisis tarda mucho o falla, podrás copiar el archivo desde aquí.
 
-    ~/Day05/Resultados_Estudiante: Esta será tu carpeta de trabajo. Aquí ejecutarás los códigos y guardarás tus salidas.
+~/Day05/Resultados_Estudiante: Esta será tu carpeta de trabajo. Aquí ejecutarás los códigos y guardarás tus salidas.
 
 
 ## 0. Inicio de sesión y recursos
@@ -26,16 +24,16 @@ Antes de empezar, debemos salir del nodo de acceso (login) y pedir un nodo de c�
 
 ```bash
 
-srun -p labs --pty --mem=2G -n 1 -c 1 --time=03:00:00 /bin/bash
+srun -p labs --pty --mem=2G -n 1 -c 1 --time=01:00:00 /bin/bash
 
 ```
 
-1. Configuración del Entorno
+## 1. Configuración del Entorno
 
 Una vez dentro del nodo de cómputo, necesitamos cargar las dependencias básicas y conectar los programas específicos del taller.
 
 
-### 1. Cargar módulos necesarios
+### 1.1 Cargar módulos necesarios
 
 ```bash
 
@@ -49,7 +47,7 @@ export PATH=$PATH:/home/courses/student23/Day05/bin_taller
 
 ```
 
-### 2. Crear tu espacio de trabajo y traer los datos
+### 1.2 Crear tu espacio de trabajo y traer los datos
 
 Vamos a crear tu carpeta y traer solo los datos necesarios (el VCF del cromosoma 1 y el archivo de genes).
 
@@ -76,9 +74,7 @@ cp ../Data/CDS_genes_Rra.bed .
 A diferencia de otros métodos que buscan una sola señal, RAiSD calcula un estadístico compuesto (llamado μ) que busca la "tormenta perfecta" de una barrida selectiva (Selective Sweep):
 
  1. Reducción de variabilidad: ¿Todos los individuos se parecen mucho en esta zona?
-
  2. Desviación del SFS: ¿Hay un exceso de variantes raras (muchos singletons)?
-
  3. Desequilibrio de Ligamiento (LD): ¿Hay bloques de variantes que se heredan juntas más de lo esperado?
 
 ### 1.1 Preparación y Ejecución
@@ -115,9 +111,7 @@ RAiSD le asigna un puntaje (μ) a cada SNP. Mientras más alto el puntaje, más 
 Este bloque de código hace tres cosas:
 
  1. Limpia el reporte desordenado de RAiSD.
-
  2. Ordena los SNPs de mayor a menor puntaje.
-
  3. Calcula matemáticamente cuántos SNPs corresponden al 1% superior y los guarda en un archivo .bed.
 
 ```bash
@@ -143,9 +137,8 @@ head -n $UMBRAL raisd_ordenado.txt | awk -v OFS='\t' '{print $1, int($2)-1, int(
 
 En biología no existe un "número mágico" de SNPs bajo selección. En lugar de decir "tomaremos los 100 mejores", usamos un enfoque porcentual.
 
- - Si nuestro archivo tiene 1,000 SNPs, el Top 1% son 10.
-
- - Si tiene 1 millón de SNPs, el Top 1% son 10,000.
+- Si nuestro archivo tiene 1,000 SNPs, el Top 1% son 10.
+- Si tiene 1 millón de SNPs, el Top 1% son 10,000.
 
 El script hace esto automáticamente ("dinámicamente") contando cuántas líneas tiene tu resultado (wc -l) y dividiendo por 100. Así, el código funciona igual para *Rattus*, *Orestias* o *Nothofagus*, sin importar cuántos datos tengas.
 
@@ -170,9 +163,8 @@ Para saber "qué gen es qué", dependemos de que exista un Genoma de Referencia 
  1. En especies modelo (*Rattus*, humanos, *Arabidopsis*): Los científicos publican un archivo .GFF o .GFF3 (General Feature Format) que contiene las coordenadas de todos los genes, exones y CDS. Nosotros descargamos ese GFF de NCBI y lo convertimos a .bed para este taller.
  2. En especies NO modelo: Si trabajan con organismos que solo tienen genomas a nivel de Scaffold y sin anotación oficial:
 
-    - Tendrán que anotar su genoma usando herramientas como MAKER o Augustus.
-
-    - O bien, mapear sus lecturas contra el genoma de una especie cercana que sí esté anotada (ej. usar el genoma de *Rattus norvegicus* para estudiar ratones silvestres menos estudiados).
+- Tendrán que anotar su genoma usando herramientas como MAKER o Augustus.
+- O bien, mapear sus lecturas contra el genoma de una especie cercana que sí esté anotada (ej. usar el genoma de *Rattus norvegicus* para estudiar ratones silvestres menos estudiados).
 
 ```bash
 
@@ -210,5 +202,5 @@ Es muy probable que en su lista de candidatos encuentren nombres como LOC1083481
 
 ¿Qué hago si me sale uno?
 
- - No se frustren si no aparece nada en Google.
- - Tip: Busquen el ID del gen en la base de datos de NCBI Gene. A menudo, en la descripción dirá "ortholog of..." refiriéndose a un gen de ratón (Mus musculus) o humano. La función de ese ortólogo es su mejor pista sobre qué está haciendo ese gen en su especie.
+- No se frustren si no aparece nada en Google.
+- Tip: Busquen el ID del gen en la base de datos de NCBI Gene. A menudo, en la descripción dirá "ortholog of..." refiriéndose a un gen de ratón (Mus musculus) o humano. La función de ese ortólogo es su mejor pista sobre qué está haciendo ese gen en su especie.

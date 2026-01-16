@@ -80,6 +80,28 @@ SweepFinder2 -l 1000 input_santiago.sf2 Spectrum_Santiago.txt Output_SF2_Santiag
 cp ../Data/Output_SF2_Santiago.txt .
 
 ```
+**Nota técnica**
+
+En lugar de 1000 puntos, calculas cuántos puntos necesitas para tener una sonda cada 1 kb o 2 kb.
+
+Tamaño Chr1: ~177 Mb.
+
+Resolución deseada: 1 punto cada 2 kb.
+
+Puntos necesarios (-l): 177,000,000/2,000=88,500.
+```bash
+El comando cambiaría a:
+
+#SweepFinder2 -l 88500 input_santiago.sf2 Spectrum_Santiago.txt Output_SF2_HighRes.txt
+```
+
+Aumentar drásticamente los puntos de la grilla y reducir la ventana de búsqueda.
+
+**¿Por qué?** La "señal" de selección es arrastrada por el Desequilibrio de Ligamiento (LD). En *Rattus rattus* (y muchos mamíferos), el LD decae rápido. La señal fuerte de un barrido selectivo rara vez se extiende más allá de 5-10kb a cada lado del gen causal.
+
+Si usas una ventana de ±10kb con una grilla dispersa, estás asumiendo que el LD es eterno.
+
+Esto aumenta el nivel de resolución.
 
 ## 2.4 Procesamiento y Definición de Ventanas
 

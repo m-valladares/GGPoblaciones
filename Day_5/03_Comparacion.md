@@ -14,7 +14,7 @@ Al final de esta sesión tendremos:
 
 Usaremos un script de R personalizado para visualizar los barridos selectivos a lo largo del cromosoma y ver si coinciden con nuestros genes de interés.
 
-1.1 Preparar el Entorno R
+### 1.1 Preparar el Entorno R
 
 Primero, cargamos R y conectamos con las librerías del curso (ggplot2, tidyverse) que usamos el dia anterior (Day04).
 
@@ -26,7 +26,7 @@ module load intel-compilers/2022.0.1 impi/2021.5.0 R/4.3.0
 export R_LIBS=/home/courses/student23/Day05/bin_taller/R_libs_4.3
 ```
 
-1.2 Graficar RAiSD y SweepFinder2
+### 1.2 Graficar RAiSD y SweepFinder2
 
 El script plot_manhattan.R toma dos argumentos:
 
@@ -46,7 +46,7 @@ Abran los archivos PNG generados (Manhattan_RAISD_.png y Manhattan_SF2_.png).
 - ¿Ven peaks que superen la línea roja punteada (Top 1%)?
 - ¿Coinciden los peaks entre ambos métodos?
 
-1.3 "Highlight": ¿Cayó mi gen en un barrido?
+### 1.3 "Highlight": ¿Cayó mi gen en un barrido?
 
 Supongamos que nos interesa el gen Akirin2 (relacionado con sistema inmune). ¿Está bajo selección?
 
@@ -81,9 +81,9 @@ Estos listados lo ingresamos en la pagina web https://bioinformatics.psb.ugent.b
 
 Pregunta: ¿Cuántos genes están en la intersección (el centro)? Esos son sus genes candidatos con mayor respaldo.
 
-En un trabajo completo deberiamos quedarnos con aquellos genes en la interseccion de ambos metodos, o mejor aun si agregamos un tercer metodo que esten en la intersección de 2 o mas metodos.
+En un trabajo completo deberiamos quedarnos con aquellos genes en la interseccion de ambos metodos, o mejor aun si agregamos un tercer metodo que esten en la intersección de 2 o mas métodos.
 
-3. Análisis de Enriquecimiento (Gene Ontology)
+## 3. Análisis de Enriquecimiento (Gene Ontology)
 
 Como estamos trabajando con un dataset reducido puede ser que no encontremos muchos genes en común pr lo que usaremos los 3 dataset, RAiSD, SF2 y comunes para hacer los analisis de enriquecimiento.
 

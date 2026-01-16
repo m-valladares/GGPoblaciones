@@ -4,9 +4,8 @@
 
 Mientras que RAiSD usaba múltiples estadísticas (LD, diversidad, etc.), SweepFinder2 (SF2) se basa puramente en el Espectro de Frecuencias Alélicas (SFS).
 
- - La pregunta que hace SF2: "¿Se parece la distribución de frecuencias de alelos en esta pequeña región a la distribución de todo el genoma?"
-
- - La señal: Un "barrido selectivo" distorsiona el SFS local, creando un exceso de alelos raros y de alta frecuencia, eliminando la variabilidad intermedia.
+- La pregunta que hace SF2: "¿Se parece la distribución de frecuencias de alelos en esta pequeña región a la distribución de todo el genoma?"
+- La señal: Un "barrido selectivo" distorsiona el SFS local, creando un exceso de alelos raros y de alta frecuencia, eliminando la variabilidad intermedia.
 
 ## 2.1: Generación del Input (Formato de Conteos)
 
@@ -27,9 +26,7 @@ vcf2sf2.sh santiago.vcf mi_input_lento.sf2
 🛑 ¡STOP! (Simulación) Verás un contador de progreso en la pantalla (Leyendo variante n°...).En un cromosoma entero con millones de SNPs, esto tardaría 15-20 minutos.
 
  1. Observa cómo funciona el script por unos segundos.
-
  2. Presiona Ctrl + C para cancelar el proceso y no perder tiempo.
-
  3. Copia el archivo listo desde la carpeta de respaldo:
 
 ```bash
@@ -130,7 +127,7 @@ cut -f 8 hits_strict.txt | sort | uniq | wc -l
 
 ### C. Escenario 2: Búsqueda Amplia (±10 kb) - DEFINITIVO
 
-En genética de poblaciones real, la señal de selección deace a medida que nos alejamos del sitio causal debido a la recombinación. Dado que nuestra grilla no es tan densa, debemos ampliar la búsqueda para no perder el gen candidato.
+En genética de poblaciones real, la señal de selección decae a medida que nos alejamos del sitio causal debido a la recombinación. Dado que nuestra grilla no es tan densa, debemos ampliar la búsqueda para no perder el gen candidato.
 
 ```bash
 

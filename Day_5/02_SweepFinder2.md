@@ -175,7 +175,7 @@ head genes_candidatos_SANTIAGO_sf2.txt
 ```
 *(Deberías obtener ~16 genes. Usaremos esta lista para la comparación final).*
 
-Nota para investigación.
+**Para recordar**
 
 En el comando SweepFinder2 -l 1000 usamos 1000 puntos por rapidez.
 

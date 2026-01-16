@@ -73,9 +73,12 @@ cp ../Data/CDS_genes_Rra.bed .
 
 A diferencia de otros métodos que buscan una sola señal, RAiSD calcula un estadístico compuesto (llamado μ) que busca la "tormenta perfecta" de una barrida selectiva (Selective Sweep):
 
- 1. Reducción de variabilidad: ¿Todos los individuos se parecen mucho en esta zona?
- 2. Desviación del SFS: ¿Hay un exceso de variantes raras (muchos singletons)?
- 3. Desequilibrio de Ligamiento (LD): ¿Hay bloques de variantes que se heredan juntas más de lo esperado?
+ 1. Reducción de variabilidad: Como todos descienden del mismo cromosoma "ganador", la diversidad baja drásticamente (Valle de diversidad) ¿Todos los individuos se parecen mucho en esta zona?
+ 2. Desviación del SFS: Aparecen muchas mutaciones nuevas y raras (exceso de singletons) recuperándose del barrido. ¿Hay un exceso de variantes raras (muchos singletons)?
+ 3. Desequilibrio de Ligamiento (LD): Se forman bloques largos de variantes que se heredan juntas más de lo esperado.
+
+
+
 
 ### 1.1 Preparación y Ejecución
 
@@ -154,7 +157,9 @@ Para cruzar datos genómicos, usamos el estándar universal BED. Es un archivo d
 
 ### 1.3: Anotación Funcional (cruce con genes)
 
-Tener una lista de coordenadas no nos dice mucho biológicamente. Necesitamos saber si esos sitios bajo selección "cayeron" dentro de un gen. Para eso usaremos bedtools intersect, que actúa como un mapa digital superponiendo nuestra lista de candidatos (Top 1%) con el archivo de anotación de genes (CDS_genes_Rra.bed).
+Tener una lista de coordenadas no nos dice mucho biológicamente. Necesitamos saber si esos sitios bajo selección "cayeron" dentro de un gen. 
+
+Para eso usaremos *bedtools intersect*, que actúa como un mapa digital superponiendo nuestra lista de candidatos (Top 1%) con el archivo de anotación de genes (CDS_genes_Rra.bed).
 
 **¿De dónde salió el archivo CDS_genes_Rra.bed?**
 

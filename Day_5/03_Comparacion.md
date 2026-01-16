@@ -5,14 +5,15 @@ Luego de esto tendremos 2 listas de genes, una que corresponde al 1% de los valo
 
 Al final de esta sesión tendremos:
 
- - Gráficos de los barridos selectivos.
- - Una lista de genes "consensus" (apoyada por ambos métodos).
- - Una interpretación biológica de qué funciones están siendo seleccionadas.
+- Gráficos de los barridos selectivos.
+- Una lista de genes "consensus" (apoyada por ambos métodos).
+- Una interpretación biológica de qué funciones están siendo seleccionadas.
+
  ---
 
 ## 1. Visualización: Manhattan Plots
 
-Usaremos un script de R personalizado para visualizar los barridos selectivos a lo largo del cromosoma y ver si coinciden con nuestros genes de interés.
+Usaremos un script de R personalizado para visualizar los barridos selectivos a lo largo del cromosoma y ver si coinciden con nuestros genes de interés, aqui utilizamos todas las posiciones no solo aquellas que presentan señal de selección
 
 ### 1.1 Preparar el Entorno R
 
@@ -63,7 +64,7 @@ Si la franja verde (el gen) cae sobre un pico de puntos azules, ¡tenemos un can
 
 Un método puede dar falsos positivos. Si dos métodos distintos señalan el mismo gen, la evidencia es mucho más robusta.
 
-En los scripts anteriores (SweepFinder2.md y RAiSD.md) generamos las listas de genes candidatos (Top 1%). No es necesario descargarlos; imprimiremos el contenido en pantalla para copiarlo.
+En los scripts anteriores (SweepFinder2.md y RAiSD.md) generamos las listas de genes candidatos (Top 1% y 5%). No es necesario descargarlos; imprimiremos el contenido en pantalla para copiarlo.
 
 Este listado es plano por lo que pueden mostrar en pantalla la lista.
 
@@ -85,18 +86,23 @@ En un trabajo completo deberiamos quedarnos con aquellos genes en la interseccio
 
 ## 3. Análisis de Enriquecimiento (Gene Ontology)
 
-Como estamos trabajando con un dataset reducido puede ser que no encontremos muchos genes en común pr lo que usaremos los 3 dataset, RAiSD, SF2 y comunes para hacer los analisis de enriquecimiento.
+Como estamos trabajando con un dataset reducido puede ser que no encontremos muchos genes en común por lo que usaremos los 3 dataset, RAiSD, SF2 y comunes para hacer los analisis de enriquecimiento.
 
 Tener una lista de nombres como "LOC100..." o "Akirin2" no nos dice qué función biológica está siendo seleccionada globalmente (¿Inmunidad? ¿Metabolismo? ¿Reproducción?). Hay muchas plataformas que realizan este tipo de analisis (G:profiler, Panther, entre otras) para este practico utilizaremos Metascape.org
 
-IMPORTANTE (Input/Analysis Species):
+### 3.1 Configuración (Ortología)
 
-Busquen y seleccionen "*Rattus norvegicus*".
+Al entrar a Metascape.org, en "Input Species" y "Analysis Species", seleccionen: *Rattus norvegicus* (Norway Rat)
 
-¿Por qué? *Rattus rattus* tiene poca anotación funcional. Usamos a una especie cercana con historia similar como referencia para saber qué hacen los genes.
+**Nota Teórica:** ¿Por qué usamos otra rata?
 
-Hagan clic en Express Analysis.
+El Problema: El genoma de nuestra especie (Rattus rattus) está "pobremente anotado". Muchos genes no tienen función descrita en las bases de datos.
 
+La Solución (Ortología): Usamos a su primo de laboratorio (*Rattus norvegicus*). Como son evolutivamente muy cercanos, asumimos que el gen Akirin2 hace lo mismo en ambas ratas. *R. norvegicus* es un "Organismo Modelo" y tiene casi todos sus genes funcionalmente descritos.
 
+### 3.2 Pasos en Metascape
 
+1. Peguen la lista de genes de la Intersección (o la de RAiSD si la intersección es muy pequeña, <10 genes).
+2. Asegúrense de seleccionar *Rattus norvegicus*.
+3. Hagan clic en Express Analysis.
 

@@ -83,7 +83,7 @@ Generaremos un gráfico de barras apiladas que clasifica la endogamia en tres ca
 - Medio (150-300 kb)
 - Largo (>300 kb)
 
-4.1 Crear el Script de R
+### 4.1 Crear el Script de R
 
 Copia y pega el siguiente bloque completo en tu terminal para generar el archivo plot_roh_stacked.R.
 
@@ -204,7 +204,7 @@ EOL
 
 ```
 
-4.2 Ejecutar la Visualización
+### 4.2 Ejecutar la Visualización
 
 ```bash
 

@@ -209,7 +209,8 @@ EOL
 ```bash
 
 Rscript plot_roh_stacked.R
+Rscript plot_roh.R
 
 ```
 
-Descarguen o abran la imagen ROH_Stacked_Analysis.png en VS code.
+Descarguen o abran las imagenes en VS code.

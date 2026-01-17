@@ -162,7 +162,7 @@ En el Triplot generado, observamos tres elementos:
 
 ### 2. Validación con Modelos Mixtos de Factores Latentes (LFMM)
 
-Una vez identificadas las señales de selección con RDA, utilizamos LFMM (Latent Factor Mixed Models) para validar estas asociaciones. Mientras que el RDA es excelente para detectar señales poligénicas (muchos SNPs con efectos pequeños), el LFMM es más riguroso al evaluar la asociación de cada SNP individualmente, controlando por la estructura poblacional.
+Una vez identificadas las señales de selección con RDA, utilizamos LFMM (Latent Factor Mixed Models) ([Kaye et al., 2019](https://doi.org/10.1093/molbev/msz008)) para validar estas asociaciones. Mientras que el RDA es excelente para detectar señales poligénicas (muchos SNPs con efectos pequeños), el LFMM es más riguroso al evaluar la asociación de cada SNP individualmente, controlando por la estructura poblacional.
 
 1. ¿Qué hace el LFMM?
 
@@ -204,7 +204,7 @@ Los SNPs que aparecen en ambos análisis son nuestros candidatos más robustos. 
 
 #### 3.1 Instalación de pyRONA
 
-Antes de proceder con los cálculos de vulnerabilidad, debemos asegurarnos de contar con las herramientas necesarias. pyRONA es una suite de Python diseñada para el cálculo del Genomic Offset, y su documentación oficial puede consultarse en este [link](https://pyrona.readthedocs.io/en/latest/).
+Antes de proceder con los cálculos de vulnerabilidad, debemos asegurarnos de contar con las herramientas necesarias. pyRONA ([Rellstab et al., 2016](https://doi.org/10.1111/mec.13889)) es una suite de Python diseñada para el cálculo del Genomic Offset, y su documentación oficial puede consultarse en este [link](https://pyrona.readthedocs.io/en/latest/).
 
 1. Verificación de Requisitos
 

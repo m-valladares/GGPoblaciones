@@ -135,6 +135,8 @@ Una vez terminado este proceso, se tendrán 677 archivo en el directorio `RAXML/
 
 ### ASTRAL-III
 
+Entren al directorio `RAXML/Resultados` donde encontrarán los resultados del paso anterior:
+
 ```bash
 cd RAXML/Resultados
 ```
@@ -158,7 +160,7 @@ conda init
 source ~/.bashrc
 ```
 
-#### Luego, cambiarse al directorio de trabajo donde están los árboles de RAxML
+#### Luego, podemos correr ASTRAL
 
 ```bash
 astral -i ASTRAL_trees.tre -o ASTRAL_Orestias.tre

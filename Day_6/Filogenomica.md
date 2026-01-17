@@ -131,6 +131,8 @@ tail raxml_%j.out
 
 Una vez terminado este proceso, se tendrán 676 archivo en el directorio `RAXML/`. Entre ellos, se encontrará el archivo `ASTRAL_trees.tre` que contiene los árboles de los 100 genes concatenados. Éste es el archivo que utilizará ASTRAL para reconstruir el árbol de especies.
 
+Este procedimiento toma un poco de tiempo, pero el archivo resultante que necesitamos para correr ASTRAL, `ASTRAL_trees.tre`, lo pueden encontrar en el directorio `RAXML/Resultados`.
+
 ---
 
 ### ASTRAL-III

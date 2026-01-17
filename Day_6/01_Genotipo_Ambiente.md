@@ -202,7 +202,36 @@ Los SNPs que aparecen en ambos análisis son nuestros candidatos más robustos. 
 
 ### 3. Risk of non Adaptedness
 
-#### 3.1 Obtención de Datos Ambientales Futuros (2060)
+#### 3.1 Instalación de pyRONA
+
+Antes de proceder con los cálculos de vulnerabilidad, debemos asegurarnos de contar con las herramientas necesarias. pyRONA es una suite de Python diseñada para el cálculo del Genomic Offset, y su documentación oficial puede consultarse en este [link](https://pyrona.readthedocs.io/en/latest/).
+
+1. Verificación de Requisitos
+
+Para utilizar este programa de forma local en nuestros computadores, primero comprobamos si tenemos instalada la versión correcta de Python mediante el siguiente comando en la terminal:
+
+```bash
+python3 --version
+```
+
+2. Gestión de Entornos (Recomendado)
+
+Instalar programas de Python directamente en el sistema debe hacerse con cautela. Una instalación descuidada puede generar conflictos entre diferentes versiones de Python que otros programas del sistema utilicen.
+
+Para un manejo profesional y seguro, recomendamos el uso de Miniconda o Anaconda. Estas herramientas nos permiten crear "ambientes virtuales" (aislados del resto del sistema), donde podemos instalar versiones específicas de Python y sus librerías sin riesgo de incompatibilidades.
+
+3. Instalación
+
+Una vez confirmado el entorno, instalamos pyRONA utilizando el gestor de paquetes pip:
+
+```bash
+pip3 install pyRONA
+```
+
+**Nota para el taller:** Si estamos trabajando en un sistema local, podemos vincular Visual Studio Code directamente a nuestra terminal. Esto nos permite mantener un flujo de trabajo fluido, similar al que hemos utilizado en el clúster HPC, facilitando la edición de scripts y la ejecución de comandos en una sola interfaz.
+
+
+#### 3.2 Obtención de Datos Ambientales Futuros (2060)
 
 Para calcular el Genomic Offset, no solo necesitamos conocer el ambiente actual, sino también predecir cómo cambiarán esas variables en las localidades de muestreo. Este proceso nos permite evaluar si las variantes genéticas actuales de *Haematobia irritans* serán aptas para las condiciones del mañana.
 
@@ -225,5 +254,55 @@ Para construir nuestra matriz de predicción, seguimos este protocolo:
 - Nota Pedagógica: Es fundamental entender que el Genomic Offset no es una medida de cuánto cambiará el clima, sino de cuánto "atrás" quedará el genotipo actual respecto a ese clima nuevo. Si una población de la zona central de Chile enfrenta en 2060 un clima que hoy es típico de una zona mucho más cálida, calculamos la distancia genética necesaria para alcanzar ese nuevo óptimo ambiental.
 
 
+#### 3.3 Cálculo del Genomic Offset con pyRONA
 
+En esta etapa final, estimamos el Risk of Non-Adaptation (RONA) o riesgo de desadaptación. Esta métrica cuantifica la magnitud del cambio en las frecuencias alélicas necesario en una población para seguir el ritmo del cambio climático proyectado al año 2060.
 
+1. Preparación de Archivos para pyRONA
+
+pyRONA es una herramienta basada en Python que requiere formatos específicos. Dado que en los módulos anteriores identificamos que solo un SNP coincidía estrictamente entre RDA y LFMM, para fines pedagógicos en este taller utilizaremos los 156 SNPs identificados por LFMM. Esto nos permite trabajar con un set de datos más robusto y observar patrones de vulnerabilidad más claros.
+
+- Exportación desde R
+
+Debemos generar archivos de texto plano sin encabezados, asegurando que el orden de los individuos sea idéntico en todos los archivos:
+- Genotipos: Formato .lfmm (espacios, sin nombres de filas/columnas).
+- Ambiente: Archivos .env para el presente y futuro.
+- P-values: Un archivo por cada variable climática, asociando la significancia estadística calculada previamente.
+
+**Nota Técnica**: Si un SNP tiene un valor NA en sus p-values, lo reemplazamos por 1.0. Esto le indica al software que no hay asociación significativa para ese sitio, evitando errores en el procesamiento de la matriz.
+
+2. Ejecución usando Línea de Comandos
+
+Tenemos que abrir una terminal en la cual definamos el directorio de trabajo que contenga los datos para pyRONA. Esto lo podemos hacer de forma local usando Visual Studio Code. Luego, ejecutamos pyRONA para cada variable ambiental. La lógica del comando es la siguiente:
+
+```bash
+# Para Rango Diurno Medio
+pyRONA lfmm -pc clima_presente_final.env -fc clima_futuro_final.env -geno genotypes_lfmm.txt -assoc pvalues_Rango_Diurno_Medio.txt -covar_names covar_names.txt -P 0.1 -out rona_Rango_Diurno.csv
+
+# Para Isotermalidad
+pyRONA lfmm -pc clima_presente_final.env -fc clima_futuro_final.env -geno genotypes_lfmm.txt -assoc pvalues_Isotermalidad.txt -covar_names covar_names.txt -P 0.1 -out rona_Isotermalidad.csv
+
+# Para Temperatura del Trimestre más Húmedo
+pyRONA lfmm -pc clima_presente_final.env -fc clima_futuro_final.env -geno genotypes_lfmm.txt -assoc pvalues_Temp_Trimestre_Humedo.txt -covar_names covar_names.txt -P 0.1 -out rona_TempHumeda.csv
+
+# Para Precipitación del Trimestre más Cálido
+pyRONA lfmm -pc clima_presente_final.env -fc clima_futuro_final.env -geno genotypes_lfmm.txt -assoc pvalues_Precip_Trimestre_Calido.txt -covar_names covar_names.txt -P 0.1 -out rona_PrecipCalida.csv
+```
+
+¿Qué estamos calculando aquí? El software ajusta una regresión lineal entre las frecuencias alélicas actuales y las variables del presente. Luego, proyecta esa regresión hacia el valor climático del futuro (2060). El RONA Score es la diferencia teórica entre la frecuencia alélica actual y la necesaria para el futuro.
+
+3. Visualización de la Vulnerabilidad Genómica
+
+Tras obtener los resultados, regresamos a R para graficar el Mean RONA (promedio de todas las variables) y el desajuste por factor climático.
+- RONA Promedio por Localidad: Este gráfico resume la vulnerabilidad global de cada población frente al escenario SSP5-8.5.
+- Riesgo Genómico por Variable Ambiental: No todas las variables climáticas ejercen la misma presión de selección. Al desglosar el RONA por variable, podemos identificar qué factor (ej. temperatura o precipitación) es el principal motor de la desadaptación en cada zona de Chile.
+
+4. Interpretación de Resultados
+
+Al observar los gráficos, analizamos:
+- ¿Qué población presenta el mayor RONA? Una puntuación más alta indica que la población actual de *Haematobia irritans* en esa localidad está genéticamente más alejada de lo que requerirá para sobrevivir óptimamente en 2060.
+- Gradiente Latitudinal: Observamos si el riesgo aumenta hacia el norte o hacia el sur. En general, las poblaciones que enfrentan cambios más drásticos en sus variables críticas (como el Rango Diurno o la Temperatura del Trimestre más Húmedo) mostrarán una mayor vulnerabilidad.
+- Implicancias Biológicas: Un RONA elevado sugiere que, para no extinguirse localmente o ver reducido su fitness, la población debe:
+  - Evolucionar rápidamente (cambio en frecuencias alélicas).
+  - Migrar hacia condiciones más favorables.
+  - Depender de la plasticidad fenotípica.

@@ -160,13 +160,49 @@ En el Triplot generado, observamos tres elementos:
 - Símbolos (Individuos): Agrupados por localidad para ver si la genética sigue un patrón geográfico.
 
 
+### 2. Validación con Modelos Mixtos de Factores Latentes (LFMM)
 
+Una vez identificadas las señales de selección con RDA, utilizamos LFMM (Latent Factor Mixed Models) para validar estas asociaciones. Mientras que el RDA es excelente para detectar señales poligénicas (muchos SNPs con efectos pequeños), el LFMM es más riguroso al evaluar la asociación de cada SNP individualmente, controlando por la estructura poblacional.
 
+1. ¿Qué hace el LFMM?
 
+El LFMM es un modelo estadístico diseñado para detectar asociaciones entre variables ambientales y variaciones genéticas, mientras corrige simultáneamente por la estructura de la población (causada por la demografía o la historia evolutiva).
 
+En términos biológicos: Actúa como una prueba de asociación donde los "Factores Latentes" (K) representan la estructura poblacional no observada. Al incluir estos factores, nos aseguramos de que la asociación entre un SNP y el clima sea real y no un artefacto derivado de que los individuos simplemente se parecen porque viven cerca (Aislamiento por Distancia).
 
+2. Definición del Valor K
 
-#### 1.X Obtención de Datos Ambientales Futuros (2060)
+Para este análisis, establecemos **K=3**.
+
+Justificación: Este valor refleja nuestras 3 localidades de muestreo (Quellón, Quillota y Talca). Al usar K=3, le pedimos al modelo que "aprenda" la estructura de estos tres grupos y la use como una corrección de fondo antes de buscar asociaciones con el clima.
+
+3. Calibración y el Factor de Inflación Genómica (GIF)
+
+Ejecutamos el test con la opción calibrate = "gif".
+
+¿Qué es el GIF? El Genomic Inflation Factor (GIF) mide cuánto se desvían nuestros valores p observados de lo que esperaríamos por puro azar.
+- Un GIF cercano a 1.0 indica que el modelo está bien calibrado y que la estructura poblacional ha sido corregida correctamente.
+- Si el GIF es muy alto (>2.0), los valores p están "inflados", lo que generaría demasiados falsos positivos. La calibración ajusta estos valores para que el test sea estadísticamente confiable.
+
+4. De *P*-values a Q-values (FDR)
+
+En genómica, al realizar 50,000 pruebas estadísticas (una por cada SNP), la probabilidad de encontrar algo por azar es muy alta. Para solucionar esto, no usamos el valor *p* estándar, sino el valor *q* (*q*-value).
+
+**FDR** (False Discovery Rate): Al establecer un umbral de FDR < 0.1, aceptamos que un 10% de los SNPs detectados podrían ser falsos positivos. Es un equilibrio común en estudios de adaptación local para no perder señales biológicas importantes.
+
+5. Intersección de Candidatos:
+
+El paso final del script es cruzar los resultados: `candidatos_finales <- intersect(nombres_candidatos, snps_lfmm)`
+
+¿Por qué hacemos esto? Cada método tiene sus debilidades:
+- El RDA puede detectar falsas asociaciones si hay una estructura poblacional muy fuerte que coincide con el gradiente ambiental.
+- El LFMM puede perder señales sutiles al ser un test individual SNP-a-SNP.
+
+Los SNPs que aparecen en ambos análisis son nuestros candidatos más robustos. Representan variantes genéticas que no solo tienen un peso importante en la arquitectura multivariada de la adaptación (RDA), sino que también superan un estricto control de estructura poblacional (LFMM). Estos son los SNPs que utilizaremos para los análisis de vulnerabilidad climática.
+
+### 3. Risk of non Adaptedness
+
+#### 3.1 Obtención de Datos Ambientales Futuros (2060)
 
 Para calcular el Genomic Offset, no solo necesitamos conocer el ambiente actual, sino también predecir cómo cambiarán esas variables en las localidades de muestreo. Este proceso nos permite evaluar si las variantes genéticas actuales de *Haematobia irritans* serán aptas para las condiciones del mañana.
 
@@ -187,4 +223,7 @@ Para construir nuestra matriz de predicción, seguimos este protocolo:
 - Extracción Espacial: Utilizando las coordenadas de nuestros 30 individuos, extrajimos de las capas raster del futuro (año 2060) los valores proyectados en esos mismos puntos geográficos.
 - Cálculo de la Anomalía Climática: Observamos la diferencia entre el presente y el futuro. En el gradiente latitudinal de Chile, esto generalmente se traduce en un aumento de la temperatura hacia el norte y una disminución de las precipitaciones en la zona central y sur.
 - Nota Pedagógica: Es fundamental entender que el Genomic Offset no es una medida de cuánto cambiará el clima, sino de cuánto "atrás" quedará el genotipo actual respecto a ese clima nuevo. Si una población de la zona central de Chile enfrenta en 2060 un clima que hoy es típico de una zona mucho más cálida, calculamos la distancia genética necesaria para alcanzar ese nuevo óptimo ambiental.
+
+
+
 

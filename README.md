@@ -14,6 +14,7 @@ Esta diversidad institucional y temática enriqueció significativamente las dis
   <img src="Images/Foto_Curso.jpg" alt="Participantes Enero 2026">
 </p>
 
+---
 ### Fechas: lunes 12 al sábado 17 de enero de 2026 (6 días)
 ### Horario: 9:30 – 17:30
 ### Lugar: Sala Alberto Veloso, Facultad de Ciencias, Universidad de Chile

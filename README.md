@@ -2,6 +2,18 @@
 
 ## Dr. Moisés A. Valladares, Dra. Pamela Morales, MSc. Paulo S. Zepeda
 
+## Participantes – Enero 2026
+
+Para esta versión del curso fueron seleccionados 22 participantes, a partir de un número elevado de postulaciones recibidas. El grupo final se caracterizó por su diversidad académica, incluyendo estudiantes y jóvenes investigadores/as provenientes de distintas líneas de investigación dentro de la biología evolutiva, genética y genómica.
+
+Los/as participantes pertenecieron a diversas instituciones de Chile, incluyendo (en orden alfabético): PUC, PUCV, UACh, UBB, UChile, UdeC, ULagos, UNAB, USACH, UTal y UV, así como a universidades de Sudamérica, específicamente la UdelaR (Uruguay) y la UFRGS (Brasil).
+
+Esta diversidad institucional y temática enriqueció significativamente las discusiones y el desarrollo del curso.
+
+<p align="center">
+  <img src="Images/Foto_Curso.jpg" alt="Participantes Enero 2026">
+</p>
+
 ### Fechas: lunes 12 al sábado 17 de enero de 2026 (6 días)
 ### Horario: 9:30 – 17:30
 ### Lugar: Sala Alberto Veloso, Facultad de Ciencias, Universidad de Chile

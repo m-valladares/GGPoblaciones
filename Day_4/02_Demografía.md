@@ -13,13 +13,6 @@ Para obtener una visión robusta y contrastada, utilizaremos dos aproximaciones 
     - Fortaleza: Es extremadamente sensible y preciso para la historia reciente (desde hace unas pocas generaciones hasta hace unos pocos cientos de años). Es ideal para detectar impactos humanos recientes o cambios climáticos post-glaciares inmediatos.
     - Entrada: Utilizaremos archivos en formato PLINK (.ped/.map).
 
-### 1.1 ¿Por qué usar ambos?
-
-La demografía es compleja y ningún software puede capturar toda la historia por sí solo. Al combinar Stairway Plot 2 y GONE, aplicamos un enfoque de "multimensajero":
-- El flujo genético es la fuerza microevolutiva que mantiene la cohesión de las especies. A diferencia de la deriva genética, que promueve la divergencia, el intercambio de alelos entre poblaciones tiende a homogeneizar las frecuencias alélicas y a aumentar la diversidad genética local.
-
-En este taller, pasaremos de la teoría de los modelos a la práctica con datos genómicos reales, explorando cómo el movimiento de individuos (o gametos) moldea la arquitectura genética de las poblaciones de estudio.
-
 ### 2. Eventos demográficos antiguos
 
 Stairway Plot 2 es una herramienta de inferencia demográfica no paramétrica que nos permite estimar las variaciones del tamaño efectivo poblacional (N<sub>e</sub>) a lo largo del tiempo. A diferencia de otros métodos que asumen un modelo predefinido (como un cuello de botella específico), Stairway Plot "deja que los datos hablen", ajustando una serie de pasos (como una escalera) para representar la historia demográfica.

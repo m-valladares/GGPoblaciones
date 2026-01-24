@@ -308,7 +308,7 @@ cat ezekiel.txt
 ```
 
 ---
-`awk` es una herramienta clásica de Unix/Linux diseñada para el procesamiento de texto estructurado, especialmente archivos organizados en filas y columnas. Su nombre proviene de las iniciales de sus creadores: Alfred Aho, Peter Weinberger y Brian Kernighan, quienes lo desarrollaron en los Bell Labs a fines de los años 70.
+`awk` es una herramienta clásica de Unix/Linux diseñada para el procesamiento de texto estructurado, especialmente archivos organizados en filas y columnas. Su nombre proviene de las iniciales de los apellidos de sus creadores: Alfred **A**ho, Peter **W**einberger y Brian **K**ernighan, quienes lo desarrollaron en los Bell Labs a fines de los años 70.
 
 Conceptualmente, `awk` funciona leyendo un archivo línea por línea, separando cada línea en campos (por defecto, usando espacios o tabulaciones) y ejecutando acciones sobre esos campos cuando se cumplen ciertas condiciones. Por esta razón, se lo suele describir como un pequeño lenguaje de programación orientado al análisis de texto.
 

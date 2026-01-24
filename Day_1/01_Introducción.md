@@ -343,7 +343,7 @@ En el comando anterior, la función de cada argumento es:
 - `print`: imprime en pantalla el contenido de la línea actual, después de haber aplicado la sustitución.
 - `~/ezekiel.txt`: es la ruta al archivo de texto que awk va a leer.
 
-En caso que queramos aplicar el mismo flujo, pero en la línea 3 del texto usaríamos:
+En caso que queramos aplicar el mismo flujo, pero en la línea 4 del texto usaríamos:
 
 ```bash
 awk 'NR==4 { gsub(/ /,"-"); print }' ezekiel.txt

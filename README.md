@@ -33,7 +33,7 @@ Esta versión del curso pone especial énfasis en aproximaciones aplicadas a la 
 
 ## Repositorios del curso
 
-Para el curso hemos dispuesto de dos repositorios donde se alojarán datos, scripts, presentaciones y otros documentos necesarios para las actividades. En este repositorio de **GitHub** estarán disponibles las instrucciones para los talleres y algunos scripts con información necesaria. También tendremos un repositorio en **Dropbox** en el siguiente **link** (asistentes al curso solicitar el enlace al coordinador del curso) donde subiremos las presentaciones, referencias y otros documentos que usaremos durante el curso. Ambos repositorios se actualizarán constantemente, así que les recomendamos revisarlos cada día. 
+Para el curso hemos dispuesto de dos repositorios donde se alojarán datos, scripts, presentaciones y otros documentos necesarios para las actividades. En este repositorio de **GitHub** estarán disponibles las instrucciones para los talleres y algunos scripts con información necesaria. También tendremos un repositorio en **Dropbox** en el siguiente **link** (*asistentes al curso solicitar el enlace al coordinador del curso*) donde subiremos las presentaciones, referencias y otros documentos que usaremos durante el curso. Ambos repositorios se actualizarán constantemente, así que les recomendamos revisarlos cada día. 
 
 Ambos repositorios estarán disponibles una vez finalizado el curso, tiempo en el que podrán descargar y actualizar los documentos que les sean necesarios. Por último, cabe mencionar que los repositorios fueron diseñados específicamente para las/os asistentes al curso, por ende, les solicitamos no compartir la información y archivos alojados en ellos.
 
